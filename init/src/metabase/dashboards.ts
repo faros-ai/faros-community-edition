@@ -103,7 +103,7 @@ export class Dashboards {
     const description = dashboard.description ?? undefined;
     const {tableNames, fieldNames} = await this.getDatabaseMetadata();
     const cardNames: Record<number, string> = {};
-    const sourceCardById = new Map<number, any>();
+    const parentCardById = new Map<number, any>();
     for (const cardLayout of dashboard.ordered_cards) {
       const cardId = cardLayout.card_id;
       if (cardId) {
@@ -111,11 +111,11 @@ export class Dashboards {
       }
 
       // If this card references another card, then add it
-      const sourceCardId = Dashboards.sourceCardId(cardLayout.card);
-      if (sourceCardId && !sourceCardById.has(sourceCardId)) {
-        const sourceCard = await this.metabase.getCard(sourceCardId);
-        sourceCardById.set(sourceCardId, sourceCard);
-        cardNames[sourceCardId] = sourceCard.name;
+      const parentCardId = Dashboards.parentCardId(cardLayout.card);
+      if (parentCardId && !parentCardById.has(parentCardId)) {
+        const parentCard = await this.metabase.getCard(parentCardId);
+        parentCardById.set(parentCardId, parentCard);
+        cardNames[parentCardId] = parentCard.name;
       }
 
       for (const seriesLayout of cardLayout.series) {
@@ -159,17 +159,17 @@ export class Dashboards {
     });
 
     // Add all source cards first...
-    for (const sourceCard of sourceCardById.values()) {
+    for (const parentCard of parentCardById.values()) {
       // Since source cards are not part of the dashboard
       // we need to templatize them separately
       this.templatize(
-        sourceCard,
+        parentCard,
         tableNames,
         fieldNames,
         cardNames,
         dashboardNames
       );
-      cards.push(toCard(sourceCard));
+      cards.push(toCard(parentCard));
     }
     // ...then add cards in the dashboard
     for (const cardLayout of dashboard.ordered_cards) {
@@ -263,9 +263,9 @@ export class Dashboards {
           if (key === 'query') {
             cfg[key] = val.replace(/{{/g, '\\{{');
           } else if (key === 'source-table') {
-            const cardId = Dashboards.sourceCardId(val);
+            const cardId = Dashboards.parentCardId(val);
             if (!cardId) {
-              throw new VError('unable to extract source card from: %s', val);
+              throw new VError('unable to extract parent card from: %s', val);
             }
             cfg[key] = `{{ card "${cardNames[cardId]}" }}`;
           } else if (key === 'text') {
@@ -376,6 +376,34 @@ export class Dashboards {
     return fieldsByTable;
   }
 
+  /** Returns a map from card name to its parent card name */
+  private getCardDependencies(template: string): Map<string, string> {
+    const handlebars = Handlebars.create();
+    handlebars.registerHelper('table', (): number => 0);
+    handlebars.registerHelper('field', (): number => 0);
+    handlebars.registerHelper('dashboard', (): number => 0);
+    handlebars.registerHelper('card', (name: string): SafeString =>
+      new SafeString(`"${name}"`)
+    );
+    const dashboard = JSON.parse(handlebars.compile(template)({}));
+    const cardDependencies = new Map<string, string>();
+    for (const card of dashboard.cards) {
+      const sourceTable = card.dataset_query?.query?.['source-table'];
+      if (isString(sourceTable)) {
+        cardDependencies.set(card.name, sourceTable);
+        if (cardDependencies.has(sourceTable)) {
+          throw new VError(
+            'cards referenced by other cards must be based on tables, ' +
+            // eslint-disable-next-line @typescript-eslint/quotes
+            `but card '%s', which is referenced by card '%s', is not`,
+            sourceTable, card.name
+          );
+        }
+      }
+    }
+    return cardDependencies;
+  }
+
   private renderTemplate(
     template: string,
     tableIds: Record<string, number | string>,
@@ -471,11 +499,47 @@ export class Dashboards {
 
     // Second pass on the templates now that we have card and dashboard ids
     for (const [name, template] of Object.entries(templatesByName)) {
-      const cardIds = await this.createCards(
+      const cardDependencies = this.getCardDependencies(template);
+      const parentCardNames = new Set(cardDependencies.values());
+      const parentCards: any[] = [];
+      const otherCards: any[] = [];
+      for (const card of cards[name]) {
+        if (parentCardNames.has(card.name)) {
+          parentCards.push(card);
+        } else {
+          otherCards.push(card);
+        }
+      }
+
+      const parentCardIds = await this.createCards(
         collectionIds[name],
-        cards[name],
+        parentCards,
         true
       );
+
+      // Replace empty references to parent cards with parent card id
+      for (const card of otherCards) {
+        const parentCardName = cardDependencies.get(card.name);
+        if (parentCardName) {
+          const parentCardId = parentCardIds[parentCardName];
+          if (!parentCardId) {
+            throw new VError(
+              // eslint-disable-next-line @typescript-eslint/quotes
+              `unable to find parent card '%s' of card '%s'`,
+              parentCardName, card.name
+            );
+          }
+          const cardRef = `card__${parentCardId}`;
+          card.dataset_query.query['source-table'] = cardRef;
+        }
+      }
+
+      const otherCardIds = await this.createCards(
+        collectionIds[name],
+        otherCards,
+        true
+      );
+      const cardIds = {...parentCardIds, ...otherCardIds};
       const cfg = this.renderTemplate(
         template,
         tableIds,
@@ -569,7 +633,7 @@ export class Dashboards {
     return await this.metabase.postCollectionPath(path);
   }
 
-  private static sourceCardId(cardOrRef: any | string): number | undefined {
+  private static parentCardId(cardOrRef: any | string): number | undefined {
     const cardRef = !isString(cardOrRef)
       ? cardOrRef.dataset_query?.query?.['source-table']
       : cardOrRef;

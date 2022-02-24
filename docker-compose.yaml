@@ -74,7 +74,8 @@ services:
       HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
       HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://${DATABASE_USER?}:${DATABASE_PASSWORD?}@faros-db:5432/${HASURA_DB_NAME?}
   metabase:
-    image: metabase/metabase:${METABASE_VERSION}
+    build:
+      context: ./metabase
     container_name: metabase
     ports:
       - ${METABASE_PORT?}:3000

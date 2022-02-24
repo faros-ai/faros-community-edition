@@ -27,3 +27,22 @@
     expand_issue_changelog: true
     enable_experimental_streams: true
   tombstone: false
+- name: "My Jenkins Source"
+  sourceDefinitionId: "4c4613d8-ffcd-4db8-a8f8-d325052aec11"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "55b0325e-4bc7-49b4-b230-36c5a67df068"
+  configuration:
+    user: "my jenkins userid"
+    token: "my jenkins token"
+    pageSize: 10
+    server_url: "my jenkins url"
+    last100Builds: false
+  tombstone: false
+- name: "My PagerDuty Source"
+  sourceDefinitionId: "aee89078-5c00-429e-90bf-cec0174dbb76"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "8b5b955e-7d8f-4b9c-88a0-0732efa9a395"
+  configuration:
+    token: "my pagerduty api key"
+    incidentLogEntriesOverview: true
+  tombstone: false

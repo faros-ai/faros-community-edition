@@ -45,4 +45,4 @@ Follow us on [Twitter](https://twitter.com/Faros_AI) or [LinkedIn](https://www.l
 
 ## License
 
-See the [LICENSE](LICENSE) file for licensing information.
+[Apache License 2.0](LICENSE)

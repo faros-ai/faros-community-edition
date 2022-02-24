@@ -376,9 +376,7 @@ export class Dashboards {
     return fieldsByTable;
   }
 
-  /**
-   * Return a map from card name to its parent card name
-   */
+  /** Returns a map from card name to its parent card name */
   private getCardDependencies(template: string): Map<string, string> {
     const handlebars = Handlebars.create();
     handlebars.registerHelper('table', (): number => 0);
@@ -519,7 +517,8 @@ export class Dashboards {
         true
       );
 
-      for (const card of cards[name]) {
+      // Replace empty references to parent cards with parent card id
+      for (const card of otherCards) {
         const parentCardName = cardDependencies.get(card.name);
         if (parentCardName) {
           const parentCardId = parentCardIds[parentCardName];

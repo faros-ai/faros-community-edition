@@ -1,12 +1,15 @@
-#  ![](img/faros.ico) Faros Community Edition (CE)
+# ![](img/faros.ico) Faros Community Edition (CE)
 
-[![GitHub stars](https://img.shields.io/github/stars/faros-ai/faros-community-edition?style=social&label=Star&maxAge=2592000)](https://github.com/faros-ai/faros-community-edition/stargazers/)
+[![GitHub Stars](https://img.shields.io/github/stars/faros-ai/faros-community-edition?style=social)](https://github.com/faros-ai/faros-community-edition/stargazers/)
+[![Community Slack](https://img.shields.io/badge/chat-Slack-%234a154b)](https://community.faros.ai/slack)
 
 Faros CE is an operational data platform that brings all engineering data in one place to give engineering teams a no-code/low-code BI, API and automation layer for their operational data, usable in minutes.
 
+![Metrics](img/metrics.png)
+
 ## Quickstart
 
-Follow our [🏁 Quickstart Guide](https://community.faros.ai/docs/quickstart) to connect your engineering systems and explore the metrics, all in a matter of minutes! 
+Follow our [🏁 Quickstart Guide](https://community.faros.ai/docs/quickstart) to connect your engineering systems and explore the metrics, all in a matter of minutes!
 
 ## Features
 
@@ -29,7 +32,7 @@ Built **100%** with open-source components:
 - **[PostgreSQL](https://www.postgresql.org)**: Stores all the your data in canonical representation
 - **[Docker](https://www.docker.com)**: Container runtime to run the services
 - **[Flyway](https://flywaydb.org)**: Schema evolution for the database schema
-- **[Faros Events CLI](https://github.com/faros-ai/faros-events-cli)**: CLI for reporting events to Faros platform, e.g builds & deployments from your CI/CD pipelines 
+- **[Faros Events CLI](https://github.com/faros-ai/faros-events-cli)**: CLI for reporting events to Faros platform, e.g builds & deployments from your CI/CD pipelines
 
 ## Community support
 

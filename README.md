@@ -6,7 +6,7 @@ Faros CE is an operational data platform that brings all engineering data in one
 
 ## Quickstart
 
-Follow our [🏁 Quickstart Guide](https://faros-ce.readme.io/docs/quickstart) to connect your engineering systems and explore the metrics, all in a matter of minutes! 
+Follow our [🏁 Quickstart Guide](https://community.faros.ai/docs/quickstart) to connect your engineering systems and explore the metrics, all in a matter of minutes! 
 
 ## Features
 
@@ -33,7 +33,7 @@ Built **100%** with open-source components:
 
 ## Community support
 
-For general help using Faros CE, please refer to the [official documentation](https://faros-ce.readme.io). For additional help, you can use one of these channels to ask a question:
+For general help using Faros CE, please refer to the [official documentation](https://community.faros.ai). For additional help, you can use one of these channels to ask a question:
 
 - **[Slack](https://community.faros.ai/slack)**: Live discussions with the Community and Faros team
 - **[GitHub Issues](https://github.com/faros-ai/faros-community-edition/issues)**: Bug reports, suggestions, contributions

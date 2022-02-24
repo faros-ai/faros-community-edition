@@ -13,11 +13,12 @@ Follow our [🏁 Quickstart Guide](https://community.faros.ai/docs/quickstart) t
 
 ## Features
 
-- **Container based deployment**: Run on your laptop, private or public cloud, with no external dependencies.
-- **Import from a variety of sources**: Easy data import from Task Management, Version Control, Incident Management, and CI/CD systems
-- **Flexible GraphQL API**: Browse imported data in a canonical representation
+- **Rich Data Schema**: Connected canonical models for the whole SDLC; 50+ entities, from tasks to deployments
+- **Import from a variety of sources**: Easy data import onto our models from Task Management, Version Control, Incident Management, and CI/CD systems
+- **Flexible GraphQL API**: Leverage imported data for automation / exploration in our canonical representation
 - **Preconfigured dashboards**: View well known engineering metrics such as [DORA](https://cloud.google.com/blog/products/devops-sre/using-the-four-keys-to-measure-your-devops-performance) and [SPACE](https://queue.acm.org/detail.cfm?id=3454124)
 - **Extensibility and shareability**: Build and share custom metrics and dashboards
+- **Container based deployment**: Run on your laptop, private or public cloud, with no external dependencies.
 
 ## Components
 

@@ -2110,7 +2110,7 @@
 - destinationDefinitionId: "6c6366b8-11f9-419a-8cdc-9209def71e1f"
   name: "Faros Destination"
   dockerRepository: "farosai/airbyte-faros-destination"
-  dockerImageTag: "0.1.36"
+  dockerImageTag: "0.1.39"
   documentationUrl: "https://docs.faros.ai"
   spec:
     documentationUrl: "https://docs.faros.ai"

@@ -1,0 +1,161 @@
+{
+  "name": "Welcome!",
+  "description": "",
+  "cards": [
+    {
+      "name": "Number of PRs",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "Number of Tasks",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "Number of Builds",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "cicd_Build" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "cicd_Build" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "Number of Incidents",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "ims_Incident" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "ims_Incident" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {}
+    }
+  ],
+  "parameters": [],
+  "layout": [
+    {
+      "row": 0,
+      "col": 1,
+      "sizeX": 12,
+      "sizeY": 9,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "# Welcome to Faros Community Edition\n\nOur documentation is [here](https://docs.faros.ai); take the 10 minute tutorial!\n\n![architecture](https://github.com/faros-ai/faros-community-edition/blob/main/img/architecture.png?raw=true)"
+      }
+    },
+    {
+      "row": 0,
+      "col": 13,
+      "sizeX": 4,
+      "sizeY": 9,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "# Quick Links\n\n## Components\n* [Airbyte](http://localhost:8000)\n* [Hasura](http://localhost:8080)\n* [n8n](https://localhost:5678)\n\n## Dashboards\n* [PRs](http://localhost:3000/dashboard/{{ dashboard "PRs dashboard" }})\n* [Tasks](http://localhost:3000/dashboard/{{ dashboard "Tasks dashboard" }})\n* Builds (Coming Soon)\n* Incidents (Coming Soon)\n\n"
+      }
+    },
+    {
+      "row": 9,
+      "col": 1,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Number of PRs" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    },
+    {
+      "row": 9,
+      "col": 5,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Number of Tasks" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    },
+    {
+      "row": 9,
+      "col": 9,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Number of Builds" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    },
+    {
+      "row": 9,
+      "col": 13,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Number of Incidents" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    }
+  ],
+  "path": "/Faros CE",
+  "priority": 1
+}

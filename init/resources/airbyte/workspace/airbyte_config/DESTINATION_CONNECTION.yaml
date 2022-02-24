@@ -1,0 +1,30 @@
+---
+- name: "My Faros Destination"
+  destinationDefinitionId: "6c6366b8-11f9-419a-8cdc-9209def71e1f"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
+  configuration:
+    dry_run: false
+    jsonata_mode: "FALLBACK"
+    edition_configs:
+      edition: "community"
+      hasura_url: "http://localhost:8080"
+      segment_user_id: "{{ segment_user_id }}"
+    invalid_record_strategy: "SKIP"
+    source_specific_configs:
+      jira:
+        exclude_fields: []
+        use_board_ownership: false
+      bitbucket:
+        application_mapping: "{}"
+      pagerduty:
+        application_mapping: "{}"
+      squadcast:
+        application_mapping: "{}"
+      victorops:
+        application_field: "service"
+        application_mapping: "{}"
+      statuspage:
+        application_mapping: "{}"
+      agileaccelerator: {}
+  tombstone: false

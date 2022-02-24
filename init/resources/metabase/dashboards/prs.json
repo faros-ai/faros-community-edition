@@ -1,0 +1,273 @@
+{
+  "name": "PRs dashboard",
+  "cards": [
+    {
+      "name": "PRs Merged last 30 Days",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "filter": [
+            "time-interval",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ],
+            -30,
+            "day",
+            {
+              "include-current": true
+            }
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "mergedAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "PRs Merged by Author last 30 days",
+      "description": null,
+      "display": "row",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "filter": [
+            "time-interval",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ],
+            -30,
+            "day",
+            {
+              "include-current": true
+            }
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_User.uid" }},
+              {
+                "source-field": {{ field "vcs_PullRequest.author" }}
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "uid",
+        "table.cell_column": "count",
+        "graph.dimensions": [
+          "uid"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "PRs by Repository by Week",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "filter": [
+            "time-interval",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ],
+            -30,
+            "day",
+            {
+              "include-current": true
+            }
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "source-field": {{ field "vcs_PullRequest.repository" }}
+              }
+            ],
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "mergedAt",
+          "name"
+        ],
+        "graph.metrics": [
+          "count"
+        ],
+        "graph.x_axis.title_text": "Repository "
+      }
+    },
+    {
+      "name": "PR Average Reviews last 30 days",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "vcs_PullRequestReview" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-query": {
+            "source-table": {{ table "vcs_PullRequestReview" }},
+            "filter": [
+              "time-interval",
+              [
+                "field",
+                {{ field "vcs_PullRequest.mergedAt" }},
+                {
+                  "source-field": {{ field "vcs_PullRequestReview.pullRequest" }}
+                }
+              ],
+              -30,
+              "day",
+              {
+                "include-current": true
+              }
+            ],
+            "aggregation": [
+              [
+                "count"
+              ]
+            ],
+            "breakout": [
+              [
+                "field",
+                {{ field "vcs_PullRequest.id" }},
+                {
+                  "source-field": {{ field "vcs_PullRequestReview.pullRequest" }}
+                }
+              ]
+            ]
+          },
+          "aggregation": [
+            [
+              "avg",
+              [
+                "field",
+                "count",
+                {
+                  "base-type": "type/Integer"
+                }
+              ]
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "PR Cycle Time last 30 days",
+      "description": null,
+      "display": "scalar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "with CycleTime as (\n  SELECT \n    justify_interval(\n      avg(\n        \"vcs_PullRequest\".\"mergedAt\" - \"vcs_PullRequest\".\"createdAt\"\n      )\n    ) as cycle_time \n  FROM \n    \"vcs_PullRequest\" \n  WHERE \n    \"vcs_PullRequest\".\"mergedAt\" IS NOT NULL \n    AND \"vcs_PullRequest\".\"mergedAt\" >= CAST(\n      (\n        CAST(now() AS timestamp) + (INTERVAL '-30 day')\n      ) AS date\n    )\n) \nselect \n  array_to_string(ARRAY(select a.e from unnest(ARRAY[concat(\n    extract(\n      year \n      from \n        cycle_time\n    ), \n    ' years'\n  ), \n  concat(\n    extract(\n      month \n      from \n        cycle_time\n    ), \n    ' months'\n  ), \n  concat(\n    extract(\n      day \n      from \n        cycle_time\n    ), \n    ' days'\n  ), \n  concat(\n    extract(\n      hour \n      from \n        cycle_time\n    ), \n    ' hours'\n  ), \n  concat(\n    extract(\n      minute \n      from \n        cycle_time\n    ), \n    ' minutes'\n  ), \n  concat(\n    extract(\n      second \n      from \n        cycle_time\n    ):: integer, \n    ' seconds'\n  ) ]) as a(e) where a.e not like '0 %' and a.e not like ' %'), ' ') as timeparts \nfrom \n  CycleTime;\n",
+          "template-tags": {}
+        }
+      },
+      "visualization_settings": {}
+    }
+  ],
+  "parameters": [],
+  "layout": [
+    {
+      "row": 0,
+      "col": 1,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "PRs Merged last 30 Days" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "sizeX": 8,
+      "sizeY": 6,
+      "card_id": {{ card "PRs Merged by Author last 30 days" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 9,
+      "sizeX": 8,
+      "sizeY": 6,
+      "card_id": {{ card "PRs by Repository by Week" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 12,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "PR Average Reviews last 30 days" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 6,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "PR Cycle Time last 30 days" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    }
+  ],
+  "path": "/Faros CE/PR"
+}

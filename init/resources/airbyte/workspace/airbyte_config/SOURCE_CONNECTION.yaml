@@ -1,0 +1,28 @@
+---
+- name: "My GitHub Source"
+  sourceDefinitionId: "ef69ef6e-aa7f-4af1-a01d-ef775033524e"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "5d9079ca-8173-406f-bfdb-41f19c62daff"
+  configuration:
+    repository: "github/repo1 github/repo2"
+    start_date: "2022-01-01T00:00:00Z"
+    credentials:
+      option_title: "PAT Credentials"
+      personal_access_token: "My Personal Access Token"
+  tombstone: false
+- name: "My Jira Source"
+  sourceDefinitionId: "68e63de2-bb83-4c7e-93fa-a8a9051e3993"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "22852029-670c-4296-958e-c581fa76ae98"
+  configuration:
+    email: "my jira email"
+    domain: "my jira domain"
+    projects:
+    - "KEY1"
+    - "KEY2"
+    api_token: "my jira api token"
+    start_date: "2022-01-01T00:00:00Z"
+    render_fields: true
+    expand_issue_changelog: true
+    enable_experimental_streams: true
+  tombstone: false

@@ -1,0 +1,152 @@
+{
+  "name": "Tasks dashboard",
+  "cards": [
+    {
+      "name": "Tasks Created by Day last 30 days",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT CAST(\"public\".\"tms_Task\".\"createdAt\" AS date) AS \"createdAt\", count(*) AS \"count\"\nFROM \"public\".\"tms_Task\"\nWHERE (\"public\".\"tms_Task\".\"createdAt\" >= CAST((CAST(now() AS timestamp) + (INTERVAL '-30 day')) AS date)\n   AND \"public\".\"tms_Task\".\"createdAt\" < CAST((CAST(now() AS timestamp) + (INTERVAL '1 day')) AS date))\n   AND \"public\".\"tms_Task\".\"status\"::json->>'category' = 'Todo'\nGROUP BY CAST(\"public\".\"tms_Task\".\"createdAt\" AS date)\nORDER BY CAST(\"public\".\"tms_Task\".\"createdAt\" AS date) ASC",
+          "template-tags": {}
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "createdAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ],
+        "graph.x_axis.title_text": "date"
+      }
+    },
+    {
+      "name": "Tasks Completed by Day last 30 days",
+      "description": null,
+      "display": "line",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT CAST(\"public\".\"tms_Task\".\"updatedAt\" AS date) AS \"updatedAt\", count(*) AS \"count\"\nFROM \"public\".\"tms_Task\"\nWHERE (\"public\".\"tms_Task\".\"updatedAt\" >= CAST((CAST(now() AS timestamp) + (INTERVAL '-30 day')) AS date)\n   AND \"public\".\"tms_Task\".\"updatedAt\" < CAST((CAST(now() AS timestamp) + (INTERVAL '1 day')) AS date))\n   AND \"public\".\"tms_Task\".\"status\"::json->>'category' = 'Done'\nGROUP BY CAST(\"public\".\"tms_Task\".\"updatedAt\" AS date)\nORDER BY CAST(\"public\".\"tms_Task\".\"updatedAt\" AS date) ASC",
+          "template-tags": {}
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "updatedAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ],
+        "graph.x_axis.title_text": "date"
+      }
+    },
+    {
+      "name": "Tasks Currently Open",
+      "description": null,
+      "display": "scalar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT count(*) AS \"count\"\nFROM \"public\".\"tms_Task\"\nWHERE \"public\".\"tms_Task\".\"status\"::jsonb->>'category' = 'Todo'",
+          "template-tags": {}
+        }
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "Tasks Created last 30 days",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "filter": [
+            "time-interval",
+            [
+              "field",
+              {{ field "tms_Task.createdAt" }},
+              null
+            ],
+            -30,
+            "day"
+          ],
+          "aggregation": [
+            [
+              "cum-count"
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "Tasks Completed last 30 Days",
+      "description": null,
+      "display": "scalar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT count(*) AS \"count\"\nFROM \"public\".\"tms_Task\"\nWHERE (\"public\".\"tms_Task\".\"updatedAt\" >= CAST((CAST(now() AS timestamp) + (INTERVAL '-30 day')) AS date)\n   AND \"public\".\"tms_Task\".\"updatedAt\" < CAST((CAST(now() AS timestamp) + (INTERVAL '1 day')) AS date))\n   AND \"public\".\"tms_Task\".\"status\"::json->>'category' = 'Done'",
+          "template-tags": {}
+        }
+      },
+      "visualization_settings": {}
+    }
+  ],
+  "parameters": [],
+  "layout": [
+    {
+      "row": 4,
+      "col": 1,
+      "sizeX": 16,
+      "sizeY": 8,
+      "card_id": {{ card "Tasks Created by Day last 30 days" }},
+      "series": [
+        {
+          "id": {{ card "Tasks Completed by Day last 30 days" }}
+        }
+      ],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 7,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "Tasks Currently Open" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Tasks Created last 30 days" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 12,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "Tasks Completed last 30 Days" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    }
+  ],
+  "path": "/Faros CE/Tasks"
+}

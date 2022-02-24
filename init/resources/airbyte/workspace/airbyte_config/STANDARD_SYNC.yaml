@@ -1,0 +1,5151 @@
+---
+- namespaceDefinition: "source"
+  namespaceFormat: "${SOURCE_NAMESPACE}"
+  prefix: "mygithubsrc__github__"
+  sourceId: "5d9079ca-8173-406f-bfdb-41f19c62daff"
+  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
+  operationIds: []
+  connectionId: "6421df4e-0c5a-4666-a530-9c01de683518"
+  name: "default"
+  catalog:
+    streams:
+    - stream:
+        name: "assignees"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            url:
+              type:
+              - "null"
+              - "string"
+            type:
+              type:
+              - "null"
+              - "string"
+            login:
+              type:
+              - "null"
+              - "string"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            gists_url:
+              type:
+              - "null"
+              - "string"
+            repos_url:
+              type:
+              - "null"
+              - "string"
+            avatar_url:
+              type:
+              - "null"
+              - "string"
+            events_url:
+              type:
+              - "null"
+              - "string"
+            repository:
+              type:
+              - "string"
+            site_admin:
+              type:
+              - "null"
+              - "boolean"
+            gravatar_id:
+              type:
+              - "null"
+              - "string"
+            starred_url:
+              type:
+              - "null"
+              - "string"
+            followers_url:
+              type:
+              - "null"
+              - "string"
+            following_url:
+              type:
+              - "null"
+              - "string"
+            organizations_url:
+              type:
+              - "null"
+              - "string"
+            subscriptions_url:
+              type:
+              - "null"
+              - "string"
+            received_events_url:
+              type:
+              - "null"
+              - "string"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "branches"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            name:
+              type:
+              - "null"
+              - "string"
+            commit:
+              type:
+              - "null"
+              - "object"
+              properties:
+                sha:
+                  type:
+                  - "null"
+                  - "string"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+            protected:
+              type:
+              - "null"
+              - "boolean"
+            protection:
+              type:
+              - "null"
+              - "object"
+              properties:
+                required_status_checks:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    contexts:
+                      type:
+                      - "null"
+                      - "array"
+                      items:
+                        type:
+                        - "null"
+                        - "string"
+                    enforcement_level:
+                      type:
+                      - "null"
+                      - "string"
+            repository:
+              type:
+              - "string"
+            protection_url:
+              type:
+              - "null"
+              - "string"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key: []
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key: []
+    - stream:
+        name: "collaborators"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            url:
+              type:
+              - "null"
+              - "string"
+            type:
+              type:
+              - "null"
+              - "string"
+            login:
+              type:
+              - "null"
+              - "string"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            gists_url:
+              type:
+              - "null"
+              - "string"
+            repos_url:
+              type:
+              - "null"
+              - "string"
+            avatar_url:
+              type:
+              - "null"
+              - "string"
+            events_url:
+              type:
+              - "null"
+              - "string"
+            repository:
+              type:
+              - "string"
+            site_admin:
+              type:
+              - "null"
+              - "boolean"
+            gravatar_id:
+              type:
+              - "null"
+              - "string"
+            permissions:
+              type:
+              - "null"
+              - "object"
+              properties:
+                pull:
+                  type:
+                  - "null"
+                  - "boolean"
+                push:
+                  type:
+                  - "null"
+                  - "boolean"
+                admin:
+                  type:
+                  - "null"
+                  - "boolean"
+            starred_url:
+              type:
+              - "null"
+              - "string"
+            followers_url:
+              type:
+              - "null"
+              - "string"
+            following_url:
+              type:
+              - "null"
+              - "string"
+            organizations_url:
+              type:
+              - "null"
+              - "string"
+            subscriptions_url:
+              type:
+              - "null"
+              - "string"
+            received_events_url:
+              type:
+              - "null"
+              - "string"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "commits"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            sha:
+              type:
+              - "null"
+              - "string"
+            url:
+              type:
+              - "null"
+              - "string"
+            author:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            commit:
+              type:
+              - "null"
+              - "object"
+              properties:
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                tree:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    sha:
+                      type:
+                      - "null"
+                      - "string"
+                    url:
+                      type:
+                      - "null"
+                      - "string"
+                author:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    date:
+                      type:
+                      - "null"
+                      - "string"
+                      format: "date-time"
+                    name:
+                      type:
+                      - "null"
+                      - "string"
+                    email:
+                      type:
+                      - "null"
+                      - "string"
+                message:
+                  type:
+                  - "null"
+                  - "string"
+                committer:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    date:
+                      type:
+                      - "null"
+                      - "string"
+                      format: "date-time"
+                    name:
+                      type:
+                      - "null"
+                      - "string"
+                    email:
+                      type:
+                      - "null"
+                      - "string"
+                verification:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    reason:
+                      type:
+                      - "null"
+                      - "string"
+                    payload:
+                      type:
+                      - "null"
+                      - "string"
+                    verified:
+                      type:
+                      - "null"
+                      - "boolean"
+                    signature:
+                      type:
+                      - "null"
+                      - "string"
+                comment_count:
+                  type:
+                  - "null"
+                  - "integer"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            parents:
+              type:
+              - "null"
+              - "array"
+              items:
+                type:
+                - "null"
+                - "object"
+                properties:
+                  sha:
+                    type:
+                    - "null"
+                    - "string"
+                  url:
+                    type:
+                    - "null"
+                    - "string"
+                  html_url:
+                    type:
+                    - "null"
+                    - "string"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            committer:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            created_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            repository:
+              type:
+              - "string"
+            comments_url:
+              type:
+              - "null"
+              - "string"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "created_at"
+        source_defined_primary_key:
+        - - "sha"
+      sync_mode: "incremental"
+      cursor_field:
+      - "created_at"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "sha"
+    - stream:
+        name: "issue_labels"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            url:
+              type:
+              - "null"
+              - "string"
+            name:
+              type:
+              - "null"
+              - "string"
+            color:
+              type:
+              - "null"
+              - "string"
+            default:
+              type:
+              - "null"
+              - "boolean"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            repository:
+              type:
+              - "string"
+            description:
+              type:
+              - "null"
+              - "string"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "issue_milestones"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            url:
+              type:
+              - "null"
+              - "string"
+            state:
+              type:
+              - "null"
+              - "string"
+            title:
+              type:
+              - "null"
+              - "string"
+            due_on:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            number:
+              type:
+              - "null"
+              - "integer"
+            creator:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            closed_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            created_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            labels_url:
+              type:
+              - "null"
+              - "string"
+            repository:
+              type:
+              - "string"
+            updated_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            description:
+              type:
+              - "null"
+              - "string"
+            open_issues:
+              type:
+              - "null"
+              - "integer"
+            closed_issues:
+              type:
+              - "null"
+              - "integer"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "updated_at"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "updated_at"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "issues"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            url:
+              type:
+              - "null"
+              - "string"
+            body:
+              type:
+              - "null"
+              - "string"
+            user:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            state:
+              type:
+              - "null"
+              - "string"
+            title:
+              type:
+              - "null"
+              - "string"
+            labels:
+              type:
+              - "null"
+              - "array"
+              items:
+                type:
+                - "null"
+                - "object"
+                properties:
+                  id:
+                    type:
+                    - "null"
+                    - "integer"
+                  url:
+                    type:
+                    - "null"
+                    - "string"
+                  name:
+                    type:
+                    - "null"
+                    - "string"
+                  color:
+                    type:
+                    - "null"
+                    - "string"
+                  default:
+                    type:
+                    - "null"
+                    - "boolean"
+                  node_id:
+                    type:
+                    - "null"
+                    - "string"
+                  description:
+                    type:
+                    - "null"
+                    - "string"
+            locked:
+              type:
+              - "null"
+              - "boolean"
+            number:
+              type:
+              - "null"
+              - "integer"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            user_id:
+              type:
+              - "null"
+              - "integer"
+            assignee:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            comments:
+              type:
+              - "null"
+              - "integer"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            assignees:
+              type:
+              - "null"
+              - "array"
+              items:
+                type:
+                - "null"
+                - "object"
+                properties:
+                  id:
+                    type:
+                    - "null"
+                    - "integer"
+                  url:
+                    type:
+                    - "null"
+                    - "string"
+                  type:
+                    type:
+                    - "null"
+                    - "string"
+                  login:
+                    type:
+                    - "null"
+                    - "string"
+                  node_id:
+                    type:
+                    - "null"
+                    - "string"
+                  html_url:
+                    type:
+                    - "null"
+                    - "string"
+                  gists_url:
+                    type:
+                    - "null"
+                    - "string"
+                  repos_url:
+                    type:
+                    - "null"
+                    - "string"
+                  avatar_url:
+                    type:
+                    - "null"
+                    - "string"
+                  events_url:
+                    type:
+                    - "null"
+                    - "string"
+                  site_admin:
+                    type:
+                    - "null"
+                    - "boolean"
+                  gravatar_id:
+                    type:
+                    - "null"
+                    - "string"
+                  starred_url:
+                    type:
+                    - "null"
+                    - "string"
+                  followers_url:
+                    type:
+                    - "null"
+                    - "string"
+                  following_url:
+                    type:
+                    - "null"
+                    - "string"
+                  organizations_url:
+                    type:
+                    - "null"
+                    - "string"
+                  subscriptions_url:
+                    type:
+                    - "null"
+                    - "string"
+                  received_events_url:
+                    type:
+                    - "null"
+                    - "string"
+            closed_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            milestone:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                state:
+                  type:
+                  - "null"
+                  - "string"
+                title:
+                  type:
+                  - "null"
+                  - "string"
+                due_on:
+                  type:
+                  - "null"
+                  - "string"
+                  format: "date-time"
+                number:
+                  type:
+                  - "null"
+                  - "integer"
+                creator:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    id:
+                      type:
+                      - "null"
+                      - "integer"
+                    url:
+                      type:
+                      - "null"
+                      - "string"
+                    type:
+                      type:
+                      - "null"
+                      - "string"
+                    login:
+                      type:
+                      - "null"
+                      - "string"
+                    node_id:
+                      type:
+                      - "null"
+                      - "string"
+                    html_url:
+                      type:
+                      - "null"
+                      - "string"
+                    gists_url:
+                      type:
+                      - "null"
+                      - "string"
+                    repos_url:
+                      type:
+                      - "null"
+                      - "string"
+                    avatar_url:
+                      type:
+                      - "null"
+                      - "string"
+                    events_url:
+                      type:
+                      - "null"
+                      - "string"
+                    site_admin:
+                      type:
+                      - "null"
+                      - "boolean"
+                    gravatar_id:
+                      type:
+                      - "null"
+                      - "string"
+                    starred_url:
+                      type:
+                      - "null"
+                      - "string"
+                    followers_url:
+                      type:
+                      - "null"
+                      - "string"
+                    following_url:
+                      type:
+                      - "null"
+                      - "string"
+                    organizations_url:
+                      type:
+                      - "null"
+                      - "string"
+                    subscriptions_url:
+                      type:
+                      - "null"
+                      - "string"
+                    received_events_url:
+                      type:
+                      - "null"
+                      - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                closed_at:
+                  type:
+                  - "null"
+                  - "string"
+                  format: "date-time"
+                created_at:
+                  type:
+                  - "null"
+                  - "string"
+                  format: "date-time"
+                labels_url:
+                  type:
+                  - "null"
+                  - "string"
+                updated_at:
+                  type:
+                  - "null"
+                  - "string"
+                  format: "date-time"
+                description:
+                  type:
+                  - "null"
+                  - "string"
+                open_issues:
+                  type:
+                  - "null"
+                  - "integer"
+                closed_issues:
+                  type:
+                  - "null"
+                  - "integer"
+            created_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            events_url:
+              type:
+              - "null"
+              - "string"
+            labels_url:
+              type:
+              - "null"
+              - "string"
+            repository:
+              type:
+              - "string"
+            updated_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            comments_url:
+              type:
+              - "null"
+              - "string"
+            pull_request:
+              type:
+              - "null"
+              - "object"
+              properties:
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                diff_url:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                patch_url:
+                  type:
+                  - "null"
+                  - "string"
+            repository_url:
+              type:
+              - "null"
+              - "string"
+            active_lock_reason:
+              type:
+              - "null"
+              - "string"
+            author_association:
+              type:
+              - "null"
+              - "string"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "updated_at"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "updated_at"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "organizations"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            url:
+              type:
+              - "null"
+              - "string"
+            blog:
+              type:
+              - "null"
+              - "string"
+            name:
+              type:
+              - "null"
+              - "string"
+            plan:
+              type:
+              - "null"
+              - "object"
+              properties:
+                name:
+                  type:
+                  - "null"
+                  - "string"
+                seats:
+                  type:
+                  - "null"
+                  - "integer"
+                space:
+                  type:
+                  - "null"
+                  - "integer"
+                filled_seats:
+                  type:
+                  - "null"
+                  - "integer"
+                private_repos:
+                  type:
+                  - "null"
+                  - "integer"
+            type:
+              type:
+              - "null"
+              - "string"
+            email:
+              type:
+              - "null"
+              - "string"
+            login:
+              type:
+              - "null"
+              - "string"
+            company:
+              type:
+              - "null"
+              - "string"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            location:
+              type:
+              - "null"
+              - "string"
+            followers:
+              type:
+              - "null"
+              - "integer"
+            following:
+              type:
+              - "null"
+              - "integer"
+            hooks_url:
+              type:
+              - "null"
+              - "string"
+            repos_url:
+              type:
+              - "null"
+              - "string"
+            avatar_url:
+              type:
+              - "null"
+              - "string"
+            created_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            disk_usage:
+              type:
+              - "null"
+              - "integer"
+            events_url:
+              type:
+              - "null"
+              - "string"
+            issues_url:
+              type:
+              - "null"
+              - "string"
+            updated_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            description:
+              type:
+              - "null"
+              - "string"
+            is_verified:
+              type:
+              - "null"
+              - "boolean"
+            members_url:
+              type:
+              - "null"
+              - "string"
+            public_gists:
+              type:
+              - "null"
+              - "integer"
+            public_repos:
+              type:
+              - "null"
+              - "integer"
+            billing_email:
+              type:
+              - "null"
+              - "string"
+            collaborators:
+              type:
+              - "null"
+              - "integer"
+            private_gists:
+              type:
+              - "null"
+              - "integer"
+            twitter_username:
+              type:
+              - "null"
+              - "string"
+            public_members_url:
+              type:
+              - "null"
+              - "string"
+            owned_private_repos:
+              type:
+              - "null"
+              - "integer"
+            total_private_repos:
+              type:
+              - "null"
+              - "integer"
+            has_repository_projects:
+              type:
+              - "null"
+              - "boolean"
+            members_can_create_pages:
+              type:
+              - "null"
+              - "boolean"
+            has_organization_projects:
+              type:
+              - "null"
+              - "boolean"
+            default_repository_permission:
+              type:
+              - "null"
+              - "string"
+            two_factor_requirement_enabled:
+              type:
+              - "null"
+              - "boolean"
+            members_can_create_public_pages:
+              type:
+              - "null"
+              - "boolean"
+            members_can_create_repositories:
+              type:
+              - "null"
+              - "boolean"
+            members_can_create_private_pages:
+              type:
+              - "null"
+              - "boolean"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "projects"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            url:
+              type:
+              - "null"
+              - "string"
+            body:
+              type:
+              - "null"
+              - "string"
+            name:
+              type:
+              - "null"
+              - "string"
+            state:
+              type:
+              - "null"
+              - "string"
+            number:
+              type:
+              - "null"
+              - "integer"
+            creator:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            owner_url:
+              type:
+              - "null"
+              - "string"
+            created_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            repository:
+              type:
+              - "string"
+            updated_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            columns_url:
+              type:
+              - "null"
+              - "string"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "updated_at"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "updated_at"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "pull_request_stats"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            merged:
+              type:
+              - "null"
+              - "boolean"
+            number:
+              type:
+              - "null"
+              - "integer"
+            commits:
+              type:
+              - "null"
+              - "integer"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            comments:
+              type:
+              - "null"
+              - "integer"
+            additions:
+              type:
+              - "null"
+              - "integer"
+            deletions:
+              type:
+              - "null"
+              - "integer"
+            mergeable:
+              type:
+              - "null"
+              - "boolean"
+            merged_by:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            rebaseable:
+              type:
+              - "null"
+              - "boolean"
+            repository:
+              type:
+              - "string"
+            updated_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            changed_files:
+              type:
+              - "null"
+              - "integer"
+            mergeable_state:
+              type:
+              - "null"
+              - "string"
+            review_comments:
+              type:
+              - "null"
+              - "integer"
+            maintainer_can_modify:
+              type:
+              - "null"
+              - "boolean"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "updated_at"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "updated_at"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "pull_requests"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            url:
+              type:
+              - "null"
+              - "string"
+            base:
+              type:
+              - "null"
+              - "object"
+              properties:
+                ref:
+                  type:
+                  - "null"
+                  - "string"
+                sha:
+                  type:
+                  - "null"
+                  - "string"
+                label:
+                  type:
+                  - "null"
+                  - "string"
+                repo_id:
+                  type:
+                  - "null"
+                  - "integer"
+                user_id:
+                  type:
+                  - "null"
+                  - "integer"
+            body:
+              type:
+              - "null"
+              - "string"
+            head:
+              type:
+              - "null"
+              - "object"
+              properties:
+                ref:
+                  type:
+                  - "null"
+                  - "string"
+                sha:
+                  type:
+                  - "null"
+                  - "string"
+                label:
+                  type:
+                  - "null"
+                  - "string"
+                repo_id:
+                  type:
+                  - "null"
+                  - "integer"
+                user_id:
+                  type:
+                  - "null"
+                  - "integer"
+            user:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            draft:
+              type:
+              - "null"
+              - "boolean"
+            state:
+              type:
+              - "null"
+              - "string"
+            title:
+              type:
+              - "null"
+              - "string"
+            _links:
+              type:
+              - "null"
+              - "object"
+              properties:
+                html:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+                self:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+                issue:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+                commits:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+                comments:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+                statuses:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+                review_comment:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+                review_comments:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+            labels:
+              type:
+              - "null"
+              - "array"
+              items:
+                type:
+                - "null"
+                - "object"
+                properties:
+                  id:
+                    type:
+                    - "null"
+                    - "integer"
+                  url:
+                    type:
+                    - "null"
+                    - "string"
+                  name:
+                    type:
+                    - "null"
+                    - "string"
+                  color:
+                    type:
+                    - "null"
+                    - "string"
+                  default:
+                    type:
+                    - "null"
+                    - "boolean"
+                  node_id:
+                    type:
+                    - "null"
+                    - "string"
+                  description:
+                    type:
+                    - "null"
+                    - "string"
+            locked:
+              type:
+              - "null"
+              - "boolean"
+            number:
+              type:
+              - "null"
+              - "integer"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            assignee:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            diff_url:
+              type:
+              - "null"
+              - "string"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            assignees:
+              type:
+              - "null"
+              - "array"
+              items:
+                type:
+                - "null"
+                - "object"
+                properties:
+                  id:
+                    type:
+                    - "null"
+                    - "integer"
+                  url:
+                    type:
+                    - "null"
+                    - "string"
+                  type:
+                    type:
+                    - "null"
+                    - "string"
+                  login:
+                    type:
+                    - "null"
+                    - "string"
+                  node_id:
+                    type:
+                    - "null"
+                    - "string"
+                  html_url:
+                    type:
+                    - "null"
+                    - "string"
+                  gists_url:
+                    type:
+                    - "null"
+                    - "string"
+                  repos_url:
+                    type:
+                    - "null"
+                    - "string"
+                  avatar_url:
+                    type:
+                    - "null"
+                    - "string"
+                  events_url:
+                    type:
+                    - "null"
+                    - "string"
+                  site_admin:
+                    type:
+                    - "null"
+                    - "boolean"
+                  gravatar_id:
+                    type:
+                    - "null"
+                    - "string"
+                  starred_url:
+                    type:
+                    - "null"
+                    - "string"
+                  followers_url:
+                    type:
+                    - "null"
+                    - "string"
+                  following_url:
+                    type:
+                    - "null"
+                    - "string"
+                  organizations_url:
+                    type:
+                    - "null"
+                    - "string"
+                  subscriptions_url:
+                    type:
+                    - "null"
+                    - "string"
+                  received_events_url:
+                    type:
+                    - "null"
+                    - "string"
+            closed_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            issue_url:
+              type:
+              - "null"
+              - "string"
+            merged_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            milestone:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                state:
+                  type:
+                  - "null"
+                  - "string"
+                title:
+                  type:
+                  - "null"
+                  - "string"
+                due_on:
+                  type:
+                  - "null"
+                  - "string"
+                  format: "date-time"
+                number:
+                  type:
+                  - "null"
+                  - "integer"
+                creator:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    id:
+                      type:
+                      - "null"
+                      - "integer"
+                    url:
+                      type:
+                      - "null"
+                      - "string"
+                    type:
+                      type:
+                      - "null"
+                      - "string"
+                    login:
+                      type:
+                      - "null"
+                      - "string"
+                    node_id:
+                      type:
+                      - "null"
+                      - "string"
+                    html_url:
+                      type:
+                      - "null"
+                      - "string"
+                    gists_url:
+                      type:
+                      - "null"
+                      - "string"
+                    repos_url:
+                      type:
+                      - "null"
+                      - "string"
+                    avatar_url:
+                      type:
+                      - "null"
+                      - "string"
+                    events_url:
+                      type:
+                      - "null"
+                      - "string"
+                    site_admin:
+                      type:
+                      - "null"
+                      - "boolean"
+                    gravatar_id:
+                      type:
+                      - "null"
+                      - "string"
+                    starred_url:
+                      type:
+                      - "null"
+                      - "string"
+                    followers_url:
+                      type:
+                      - "null"
+                      - "string"
+                    following_url:
+                      type:
+                      - "null"
+                      - "string"
+                    organizations_url:
+                      type:
+                      - "null"
+                      - "string"
+                    subscriptions_url:
+                      type:
+                      - "null"
+                      - "string"
+                    received_events_url:
+                      type:
+                      - "null"
+                      - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                closed_at:
+                  type:
+                  - "null"
+                  - "string"
+                  format: "date-time"
+                created_at:
+                  type:
+                  - "null"
+                  - "string"
+                  format: "date-time"
+                labels_url:
+                  type:
+                  - "null"
+                  - "string"
+                updated_at:
+                  type:
+                  - "null"
+                  - "string"
+                  format: "date-time"
+                description:
+                  type:
+                  - "null"
+                  - "string"
+                open_issues:
+                  type:
+                  - "null"
+                  - "integer"
+                closed_issues:
+                  type:
+                  - "null"
+                  - "integer"
+            patch_url:
+              type:
+              - "null"
+              - "string"
+            auto_merge:
+              type:
+              - "null"
+              - "boolean"
+            created_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            repository:
+              type:
+              - "string"
+            updated_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            commits_url:
+              type:
+              - "null"
+              - "string"
+            comments_url:
+              type:
+              - "null"
+              - "string"
+            statuses_url:
+              type:
+              - "null"
+              - "string"
+            requested_teams:
+              type:
+              - "null"
+              - "array"
+              items:
+                type:
+                - "null"
+                - "object"
+                properties:
+                  id:
+                    type:
+                    - "null"
+                    - "integer"
+                  url:
+                    type:
+                    - "null"
+                    - "string"
+                  name:
+                    type:
+                    - "null"
+                    - "string"
+                  slug:
+                    type:
+                    - "null"
+                    - "string"
+                  parent:
+                    type:
+                    - "null"
+                    - "object"
+                    properties: {}
+                  node_id:
+                    type:
+                    - "null"
+                    - "string"
+                  privacy:
+                    type:
+                    - "null"
+                    - "string"
+                  html_url:
+                    type:
+                    - "null"
+                    - "string"
+                  permission:
+                    type:
+                    - "null"
+                    - "string"
+                  description:
+                    type:
+                    - "null"
+                    - "string"
+                  members_url:
+                    type:
+                    - "null"
+                    - "string"
+                  repositories_url:
+                    type:
+                    - "null"
+                    - "string"
+            merge_commit_sha:
+              type:
+              - "null"
+              - "string"
+            active_lock_reason:
+              type:
+              - "null"
+              - "string"
+            author_association:
+              type:
+              - "null"
+              - "string"
+            review_comment_url:
+              type:
+              - "null"
+              - "string"
+            requested_reviewers:
+              type:
+              - "null"
+              - "array"
+              items:
+                type:
+                - "null"
+                - "object"
+                properties:
+                  id:
+                    type:
+                    - "null"
+                    - "integer"
+                  url:
+                    type:
+                    - "null"
+                    - "string"
+                  type:
+                    type:
+                    - "null"
+                    - "string"
+                  login:
+                    type:
+                    - "null"
+                    - "string"
+                  node_id:
+                    type:
+                    - "null"
+                    - "string"
+                  html_url:
+                    type:
+                    - "null"
+                    - "string"
+                  gists_url:
+                    type:
+                    - "null"
+                    - "string"
+                  repos_url:
+                    type:
+                    - "null"
+                    - "string"
+                  avatar_url:
+                    type:
+                    - "null"
+                    - "string"
+                  events_url:
+                    type:
+                    - "null"
+                    - "string"
+                  site_admin:
+                    type:
+                    - "null"
+                    - "boolean"
+                  gravatar_id:
+                    type:
+                    - "null"
+                    - "string"
+                  starred_url:
+                    type:
+                    - "null"
+                    - "string"
+                  followers_url:
+                    type:
+                    - "null"
+                    - "string"
+                  following_url:
+                    type:
+                    - "null"
+                    - "string"
+                  organizations_url:
+                    type:
+                    - "null"
+                    - "string"
+                  subscriptions_url:
+                    type:
+                    - "null"
+                    - "string"
+                  received_events_url:
+                    type:
+                    - "null"
+                    - "string"
+            review_comments_url:
+              type:
+              - "null"
+              - "string"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "updated_at"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "updated_at"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "releases"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            url:
+              type:
+              - "null"
+              - "string"
+            body:
+              type:
+              - "null"
+              - "string"
+            name:
+              type:
+              - "null"
+              - "string"
+            draft:
+              type:
+              - "null"
+              - "boolean"
+            assets:
+              type:
+              - "null"
+              - "array"
+              items:
+                type:
+                - "null"
+                - "object"
+                properties:
+                  id:
+                    type:
+                    - "null"
+                    - "integer"
+                  url:
+                    type:
+                    - "null"
+                    - "string"
+                  name:
+                    type:
+                    - "null"
+                    - "string"
+                  size:
+                    type:
+                    - "null"
+                    - "integer"
+                  label:
+                    type:
+                    - "null"
+                    - "string"
+                  state:
+                    type:
+                    - "null"
+                    - "string"
+                  node_id:
+                    type:
+                    - "null"
+                    - "string"
+                  created_at:
+                    type:
+                    - "null"
+                    - "string"
+                    format: "date-time"
+                  updated_at:
+                    type:
+                    - "null"
+                    - "string"
+                    format: "date-time"
+                  uploader_id:
+                    type:
+                    - "null"
+                    - "integer"
+                  content_type:
+                    type:
+                    - "null"
+                    - "string"
+                  download_count:
+                    type:
+                    - "null"
+                    - "integer"
+                  browser_download_url:
+                    type:
+                    - "null"
+                    - "string"
+            author:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            tag_name:
+              type:
+              - "null"
+              - "string"
+            assets_url:
+              type:
+              - "null"
+              - "string"
+            created_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            prerelease:
+              type:
+              - "null"
+              - "boolean"
+            repository:
+              type:
+              - "string"
+            upload_url:
+              type:
+              - "null"
+              - "string"
+            tarball_url:
+              type:
+              - "null"
+              - "string"
+            zipball_url:
+              type:
+              - "null"
+              - "string"
+            published_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            target_commitish:
+              type:
+              - "null"
+              - "string"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "created_at"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "created_at"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "repositories"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            url:
+              type:
+              - "null"
+              - "string"
+            fork:
+              type:
+              - "null"
+              - "boolean"
+            name:
+              type:
+              - "null"
+              - "string"
+            size:
+              type:
+              - "null"
+              - "integer"
+            owner:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            topics:
+              type:
+              - "null"
+              - "array"
+              items:
+                type:
+                - "null"
+                - "string"
+            git_url:
+              type:
+              - "null"
+              - "string"
+            license:
+              type:
+              - "null"
+              - "object"
+              properties:
+                key:
+                  type:
+                  - "null"
+                  - "string"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                name:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                spdx_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            private:
+              type:
+              - "null"
+              - "boolean"
+            ssh_url:
+              type:
+              - "null"
+              - "string"
+            svn_url:
+              type:
+              - "null"
+              - "string"
+            archived:
+              type:
+              - "null"
+              - "boolean"
+            disabled:
+              type:
+              - "null"
+              - "boolean"
+            has_wiki:
+              type:
+              - "null"
+              - "boolean"
+            homepage:
+              type:
+              - "null"
+              - "string"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            keys_url:
+              type:
+              - "null"
+              - "string"
+            language:
+              type:
+              - "null"
+              - "string"
+            tags_url:
+              type:
+              - "null"
+              - "string"
+            blobs_url:
+              type:
+              - "null"
+              - "string"
+            clone_url:
+              type:
+              - "null"
+              - "string"
+            forks_url:
+              type:
+              - "null"
+              - "string"
+            full_name:
+              type:
+              - "null"
+              - "string"
+            has_pages:
+              type:
+              - "null"
+              - "boolean"
+            hooks_url:
+              type:
+              - "null"
+              - "string"
+            pulls_url:
+              type:
+              - "null"
+              - "string"
+            pushed_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            teams_url:
+              type:
+              - "null"
+              - "string"
+            trees_url:
+              type:
+              - "null"
+              - "string"
+            created_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            events_url:
+              type:
+              - "null"
+              - "string"
+            has_issues:
+              type:
+              - "null"
+              - "boolean"
+            issues_url:
+              type:
+              - "null"
+              - "string"
+            labels_url:
+              type:
+              - "null"
+              - "string"
+            merges_url:
+              type:
+              - "null"
+              - "string"
+            mirror_url:
+              type:
+              - "null"
+              - "string"
+            updated_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            visibility:
+              type:
+              - "null"
+              - "string"
+            archive_url:
+              type:
+              - "null"
+              - "string"
+            commits_url:
+              type:
+              - "null"
+              - "string"
+            compare_url:
+              type:
+              - "null"
+              - "string"
+            description:
+              type:
+              - "null"
+              - "string"
+            forks_count:
+              type:
+              - "null"
+              - "integer"
+            is_template:
+              type:
+              - "null"
+              - "boolean"
+            permissions:
+              type:
+              - "null"
+              - "object"
+              properties:
+                pull:
+                  type:
+                  - "null"
+                  - "boolean"
+                push:
+                  type:
+                  - "null"
+                  - "boolean"
+                admin:
+                  type:
+                  - "null"
+                  - "boolean"
+            branches_url:
+              type:
+              - "null"
+              - "string"
+            comments_url:
+              type:
+              - "null"
+              - "string"
+            contents_url:
+              type:
+              - "null"
+              - "string"
+            git_refs_url:
+              type:
+              - "null"
+              - "string"
+            git_tags_url:
+              type:
+              - "null"
+              - "string"
+            has_projects:
+              type:
+              - "null"
+              - "boolean"
+            releases_url:
+              type:
+              - "null"
+              - "string"
+            statuses_url:
+              type:
+              - "null"
+              - "string"
+            assignees_url:
+              type:
+              - "null"
+              - "string"
+            downloads_url:
+              type:
+              - "null"
+              - "string"
+            has_downloads:
+              type:
+              - "null"
+              - "boolean"
+            languages_url:
+              type:
+              - "null"
+              - "string"
+            default_branch:
+              type:
+              - "null"
+              - "string"
+            milestones_url:
+              type:
+              - "null"
+              - "string"
+            stargazers_url:
+              type:
+              - "null"
+              - "string"
+            watchers_count:
+              type:
+              - "null"
+              - "integer"
+            deployments_url:
+              type:
+              - "null"
+              - "string"
+            git_commits_url:
+              type:
+              - "null"
+              - "string"
+            subscribers_url:
+              type:
+              - "null"
+              - "string"
+            contributors_url:
+              type:
+              - "null"
+              - "string"
+            issue_events_url:
+              type:
+              - "null"
+              - "string"
+            stargazers_count:
+              type:
+              - "null"
+              - "integer"
+            subscription_url:
+              type:
+              - "null"
+              - "string"
+            collaborators_url:
+              type:
+              - "null"
+              - "string"
+            issue_comment_url:
+              type:
+              - "null"
+              - "string"
+            notifications_url:
+              type:
+              - "null"
+              - "string"
+            open_issues_count:
+              type:
+              - "null"
+              - "integer"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "review_comments"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            url:
+              type:
+              - "null"
+              - "string"
+            body:
+              type:
+              - "null"
+              - "string"
+            line:
+              type:
+              - "null"
+              - "integer"
+            path:
+              type:
+              - "null"
+              - "string"
+            side:
+              type:
+              - "null"
+              - "string"
+            user:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            _links:
+              type:
+              - "null"
+              - "object"
+              properties:
+                html:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+                self:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+                pull_request:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            position:
+              type:
+              - "null"
+              - "integer"
+            commit_id:
+              type:
+              - "null"
+              - "string"
+            diff_hunk:
+              type:
+              - "null"
+              - "string"
+            created_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            repository:
+              type:
+              - "string"
+            start_line:
+              type:
+              - "null"
+              - "integer"
+            start_side:
+              type:
+              - "null"
+              - "string"
+            updated_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            original_line:
+              type:
+              - "null"
+              - "integer"
+            in_reply_to_id:
+              type:
+              - "null"
+              - "integer"
+            pull_request_url:
+              type:
+              - "null"
+              - "string"
+            original_position:
+              type:
+              - "null"
+              - "integer"
+            author_association:
+              type:
+              - "null"
+              - "string"
+            original_commit_id:
+              type:
+              - "null"
+              - "string"
+            original_start_line:
+              type:
+              - "null"
+              - "integer"
+            pull_request_review_id:
+              type:
+              - "null"
+              - "integer"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "updated_at"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "updated_at"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "reviews"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            body:
+              type:
+              - "null"
+              - "string"
+            user:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "integer"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                login:
+                  type:
+                  - "null"
+                  - "string"
+                node_id:
+                  type:
+                  - "null"
+                  - "string"
+                html_url:
+                  type:
+                  - "null"
+                  - "string"
+                gists_url:
+                  type:
+                  - "null"
+                  - "string"
+                repos_url:
+                  type:
+                  - "null"
+                  - "string"
+                avatar_url:
+                  type:
+                  - "null"
+                  - "string"
+                events_url:
+                  type:
+                  - "null"
+                  - "string"
+                site_admin:
+                  type:
+                  - "null"
+                  - "boolean"
+                gravatar_id:
+                  type:
+                  - "null"
+                  - "string"
+                starred_url:
+                  type:
+                  - "null"
+                  - "string"
+                followers_url:
+                  type:
+                  - "null"
+                  - "string"
+                following_url:
+                  type:
+                  - "null"
+                  - "string"
+                organizations_url:
+                  type:
+                  - "null"
+                  - "string"
+                subscriptions_url:
+                  type:
+                  - "null"
+                  - "string"
+                received_events_url:
+                  type:
+                  - "null"
+                  - "string"
+            state:
+              type:
+              - "null"
+              - "string"
+            _links:
+              type:
+              - "null"
+              - "object"
+              properties:
+                html:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+                pull_request:
+                  type:
+                  - "null"
+                  - "object"
+                  properties:
+                    href:
+                      type:
+                      - "null"
+                      - "string"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            commit_id:
+              type:
+              - "null"
+              - "string"
+            repository:
+              type:
+              - "string"
+            submitted_at:
+              type:
+              - "null"
+              - "string"
+              format: "date-time"
+            pull_request_url:
+              type:
+              - "null"
+              - "string"
+            author_association:
+              type:
+              - "null"
+              - "string"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "submitted_at"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "submitted_at"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "tags"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            name:
+              type:
+              - "null"
+              - "string"
+            commit:
+              type:
+              - "null"
+              - "object"
+              properties:
+                sha:
+                  type:
+                  - "null"
+                  - "string"
+                url:
+                  type:
+                  - "null"
+                  - "string"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            repository:
+              type:
+              - "string"
+            tarball_url:
+              type:
+              - "null"
+              - "string"
+            zipball_url:
+              type:
+              - "null"
+              - "string"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key: []
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key: []
+    - stream:
+        name: "users"
+        json_schema:
+          type:
+          - "null"
+          - "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "integer"
+            url:
+              type:
+              - "null"
+              - "string"
+            type:
+              type:
+              - "null"
+              - "string"
+            login:
+              type:
+              - "null"
+              - "string"
+            node_id:
+              type:
+              - "null"
+              - "string"
+            html_url:
+              type:
+              - "null"
+              - "string"
+            gists_url:
+              type:
+              - "null"
+              - "string"
+            repos_url:
+              type:
+              - "null"
+              - "string"
+            avatar_url:
+              type:
+              - "null"
+              - "string"
+            events_url:
+              type:
+              - "null"
+              - "string"
+            site_admin:
+              type:
+              - "null"
+              - "boolean"
+            gravatar_id:
+              type:
+              - "null"
+              - "string"
+            starred_url:
+              type:
+              - "null"
+              - "string"
+            organization:
+              type:
+              - "null"
+              - "string"
+            followers_url:
+              type:
+              - "null"
+              - "string"
+            following_url:
+              type:
+              - "null"
+              - "string"
+            organizations_url:
+              type:
+              - "null"
+              - "string"
+            subscriptions_url:
+              type:
+              - "null"
+              - "string"
+            received_events_url:
+              type:
+              - "null"
+              - "string"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+  status: "active"
+  manual: true
+  resourceRequirements: {}
+- namespaceDefinition: "source"
+  namespaceFormat: "${SOURCE_NAMESPACE}"
+  prefix: "myjirasrc__jira__"
+  sourceId: "22852029-670c-4296-958e-c581fa76ae98"
+  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
+  operationIds: []
+  connectionId: "577ceecf-a92a-4785-b385-c41112d7f537"
+  name: "default"
+  catalog:
+    streams:
+    - stream:
+        name: "board_issues"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type: "string"
+            key:
+              type: "string"
+            self:
+              type: "string"
+            expand:
+              type: "string"
+            fields:
+              type: "object"
+              properties:
+                epic:
+                  type:
+                  - "null"
+                  - "object"
+                sprint:
+                  type:
+                  - "null"
+                  - "object"
+                comment:
+                  type:
+                  - "null"
+                  - "array"
+                  items:
+                    type: "object"
+                flagged:
+                  type:
+                  - "null"
+                  - "boolean"
+                project:
+                  type:
+                  - "null"
+                  - "object"
+                updated:
+                  type:
+                  - "null"
+                  - "string"
+                  format: "date-time"
+                worklog:
+                  type:
+                  - "null"
+                  - "array"
+                  items:
+                    type: "object"
+                description:
+                  type:
+                  - "null"
+                  - "string"
+                timetracking:
+                  type:
+                  - "null"
+                  - "object"
+                closedSprints:
+                  type:
+                  - "null"
+                  - "object"
+            boardId:
+              type: "integer"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "fields"
+        - "updated"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "fields"
+      - "updated"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "boards"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type: "integer"
+            name:
+              type: "string"
+            self:
+              type: "string"
+            type:
+              type: "string"
+            projectId:
+              type: "string"
+            projectKey:
+              type: "string"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "epics"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type: "string"
+              readOnly: true
+              description: "The ID of the epic."
+            key:
+              type: "string"
+              readOnly: true
+              description: "The key of the epic."
+            self:
+              type: "string"
+              format: "uri"
+              readOnly: true
+              description: "The URL of the epic details."
+            expand:
+              xml:
+                attribute: true
+              type: "string"
+              readOnly: true
+              description: "Expand options that include additional issue details in\
+                \ the response."
+            fields:
+              type: "object"
+              properties:
+                status:
+                  type:
+                  - "string"
+                  - "object"
+                  description: "Epic status"
+                summary:
+                  type:
+                  - "string"
+                  - "null"
+                  description: "Epic summary"
+                updated:
+                  type:
+                  - "string"
+                  - "null"
+                  format: "date-time"
+                  description: "This field is not shown in schema / swagger, but exists\
+                    \ in records and we use it as cursor fiekd."
+                description:
+                  type:
+                  - "string"
+                  - "null"
+                  description: "Epic description"
+              additionalProperties: {}
+            projectId:
+              type: "string"
+              readOnly: true
+              description: "The ID of the project containing the epic."
+            projectKey:
+              type: "string"
+              readOnly: true
+              description: "The key of the project containing the epic."
+          additionalProperties: false
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "fields"
+        - "updated"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "fields"
+      - "updated"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "issue_fields"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type: "string"
+              description: "The ID of the field."
+            key:
+              type: "string"
+              description: "The key of the field."
+            name:
+              type: "string"
+              description: "The name of the field."
+            scope:
+              type:
+              - "object"
+              - "null"
+              properties:
+                type:
+                  enum:
+                  - "PROJECT"
+                  - "TEMPLATE"
+                  type: "string"
+                  readOnly: true
+                  description: "The type of scope."
+                project:
+                  type: "object"
+                  readOnly: true
+                  properties:
+                    id:
+                      type: "string"
+                      description: "The ID of the project."
+                    key:
+                      type: "string"
+                      readOnly: true
+                      description: "The key of the project."
+                    name:
+                      type: "string"
+                      readOnly: true
+                      description: "The name of the project."
+                    self:
+                      type: "string"
+                      readOnly: true
+                      description: "The URL of the project details."
+                    avatarUrls:
+                      type: "object"
+                      readOnly: true
+                      properties:
+                        "16x16":
+                          type: "string"
+                          format: "uri"
+                          description: "The URL of the item's 16x16 pixel avatar."
+                        "24x24":
+                          type: "string"
+                          format: "uri"
+                          description: "The URL of the item's 24x24 pixel avatar."
+                        "32x32":
+                          type: "string"
+                          format: "uri"
+                          description: "The URL of the item's 32x32 pixel avatar."
+                        "48x48":
+                          type: "string"
+                          format: "uri"
+                          description: "The URL of the item's 48x48 pixel avatar."
+                      description: "The URLs of the project's avatars."
+                    simplified:
+                      type: "boolean"
+                      readOnly: true
+                      description: "Whether or not the project is simplified."
+                    projectTypeKey:
+                      enum:
+                      - "software"
+                      - "service_desk"
+                      - "business"
+                      type: "string"
+                      readOnly: true
+                      description: "The [project type](https://confluence.atlassian.com/x/GwiiLQ#Jiraapplicationsoverview-Productfeaturesandprojecttypes)\
+                        \ of the project."
+                    projectCategory:
+                      type: "object"
+                      readOnly: true
+                      properties:
+                        id:
+                          type: "string"
+                          readOnly: true
+                          description: "The ID of the project category."
+                        name:
+                          type: "string"
+                          readOnly: true
+                          description: "The description of the project category."
+                        self:
+                          type: "string"
+                          readOnly: true
+                          description: "The URL of the project category."
+                        description:
+                          type: "string"
+                          readOnly: true
+                          description: "The name of the project category."
+                      description: "The category the project belongs to."
+                  description: "The project the item has scope in."
+              description: "The scope of the field."
+            custom:
+              type: "boolean"
+              description: "Whether the field is a custom field."
+            schema:
+              type: "object"
+              properties:
+                type:
+                  type: "string"
+                  readOnly: true
+                  description: "The data type of the field."
+                items:
+                  type: "string"
+                  readOnly: true
+                  description: "When the data type is an array, the name of the field\
+                    \ items within the array."
+                custom:
+                  type: "string"
+                  readOnly: true
+                  description: "If the field is a custom field, the URI of the field."
+                system:
+                  type: "string"
+                  readOnly: true
+                  description: "If the field is a system field, the name of the field."
+                customId:
+                  type: "integer"
+                  format: "int64"
+                  readOnly: true
+                  description: "If the field is a custom field, the custom ID of the\
+                    \ field."
+                configuration:
+                  type: "object"
+                  readOnly: true
+                  description: "If the field is a custom field, the configuration\
+                    \ of the field."
+                  additionalProperties:
+                    readOnly: true
+              description: "The data schema for the field."
+            navigable:
+              type: "boolean"
+              description: "Whether the field can be used as a column on the issue\
+                \ navigator."
+            orderable:
+              type: "boolean"
+              description: "Whether the content of the field can be used to order\
+                \ lists."
+            searchable:
+              type: "boolean"
+              description: "Whether the content of the field can be searched."
+            clauseNames:
+              type: "array"
+              items:
+                type: "string"
+              description: "The names that can be used to reference the field in an\
+                \ advanced search. For more information, see [Advanced searching -\
+                \ fields reference](https://confluence.atlassian.com/x/gwORLQ)."
+              uniqueItems: true
+          description: "Details about a field."
+          additionalProperties: true
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "issues"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type: "string"
+              readOnly: true
+              description: "The ID of the issue."
+            key:
+              type: "string"
+              readOnly: true
+              description: "The key of the issue."
+            self:
+              type: "string"
+              format: "uri"
+              readOnly: true
+              description: "The URL of the issue details."
+            names:
+              type: "object"
+              readOnly: true
+              description: "The ID and name of each field present on the issue."
+              additionalProperties:
+                type: "string"
+                readOnly: true
+            expand:
+              xml:
+                attribute: true
+              type: "string"
+              readOnly: true
+              description: "Expand options that include additional issue details in\
+                \ the response."
+            fields:
+              type: "object"
+              properties:
+                created:
+                  type:
+                  - "string"
+                  - "null"
+                  format: "date-time"
+                  description: "This field is not shown in schema / swagger, but exists\
+                    \ in records and we use it as cursor fiekd. Updated may be absent.\
+                    \ Added to solve the #4341"
+                updated:
+                  type:
+                  - "string"
+                  - "null"
+                  format: "date-time"
+                  description: "This field is not shown in schema / swagger, but exists\
+                    \ in records and we use it as cursor fiekd. Updated may be absent.\
+                    \ Added to solve the #4341"
+              additionalProperties: {}
+            schema:
+              type: "object"
+              readOnly: true
+              description: "The schema describing each field present on the issue."
+            editmeta:
+              readOnly: true
+              description: "The metadata for the fields on the issue that can be amended."
+            changelog:
+              readOnly: true
+              description: "Details of changelogs associated with the issue."
+            projectId:
+              type: "string"
+              readOnly: true
+              description: "The ID of the project containing the issue."
+            operations:
+              readOnly: true
+              description: "The operations that can be performed on the issue."
+            projectKey:
+              type: "string"
+              readOnly: true
+              description: "The key of the project containing the issue."
+            properties:
+              type: "object"
+              readOnly: true
+              description: "Details of the issue properties identified in the request."
+              additionalProperties:
+                readOnly: true
+            transitions:
+              type: "array"
+              readOnly: true
+              description: "The transitions that can be performed on the issue."
+            renderedFields:
+              type: "object"
+              readOnly: true
+              description: "The rendered value of each field present on the issue."
+              additionalProperties:
+                readOnly: true
+            fieldsToInclude:
+              type: "object"
+            versionedRepresentations:
+              type: "object"
+              readOnly: true
+              description: "The versions of each field on the issue."
+              additionalProperties:
+                type: "object"
+                readOnly: true
+                additionalProperties:
+                  readOnly: true
+          additionalProperties: false
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "fields"
+        - "updated"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "fields"
+      - "updated"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "project_versions"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          readOnly: true
+          properties:
+            id:
+              type: "string"
+              readOnly: true
+              description: "The ID of the version."
+            name:
+              type: "string"
+              description: "The unique name of the version. Required when creating\
+                \ a version. Optional when updating a version. The maximum length\
+                \ is 255 characters."
+            self:
+              type: "string"
+              format: "uri"
+              readOnly: true
+              description: "The URL of the version."
+            expand:
+              xml:
+                attribute: true
+              type:
+              - "string"
+              - "null"
+              description: "Use [expand](em>#expansion) to include additional information\
+                \ about version in the response. This parameter accepts a comma-separated\
+                \ list. Expand options include:\n\n *  `operations` Returns the list\
+                \ of operations available for this version.\n *  `issuesstatus` Returns\
+                \ the count of issues in this version for each of the status categories\
+                \ *to do*, *in progress*, *done*, and *unmapped*. The *unmapped* property\
+                \ contains a count of issues with a status other than *to do*, *in\
+                \ progress*, and *done*.\n\nOptional for create and update."
+            overdue:
+              type: "boolean"
+              readOnly: true
+              description: "Indicates that the version is overdue."
+            project:
+              type: "string"
+              description: "Deprecated. Use `projectId`."
+            archived:
+              type: "boolean"
+              description: "Indicates that the version is archived. Optional when\
+                \ creating or updating a version."
+            released:
+              type: "boolean"
+              description: "Indicates that the version is released. If the version\
+                \ is released a request to release again is ignored. Not applicable\
+                \ when creating a version. Optional when updating a version."
+            projectId:
+              type: "integer"
+              format: "int64"
+              description: "The ID of the project to which this version is attached.\
+                \ Required when creating a version. Not applicable when updating a\
+                \ version."
+            startDate:
+              type: "string"
+              format: "date"
+              description: "The start date of the version. Expressed in ISO 8601 format\
+                \ (yyyy-mm-dd). Optional when creating or updating a version."
+            operations:
+              type: "array"
+              items:
+                type: "object"
+                properties:
+                  id:
+                    type: "string"
+                  href:
+                    type: "string"
+                  label:
+                    type: "string"
+                  title:
+                    type: "string"
+                  weight:
+                    type: "integer"
+                    format: "int32"
+                  iconClass:
+                    type: "string"
+                  styleClass:
+                    type: "string"
+              readOnly: true
+              description: "If the expand option `operations` is used, returns the\
+                \ list of operations available for this version."
+            description:
+              type: "string"
+              description: "The description of the version. Optional when creating\
+                \ or updating a version."
+            releaseDate:
+              type: "string"
+              format: "date"
+              description: "The release date of the version. Expressed in ISO 8601\
+                \ format (yyyy-mm-dd). Optional when creating or updating a version."
+            userStartDate:
+              type: "string"
+              readOnly: true
+              description: "The date on which work on this version is expected to\
+                \ start, expressed in the instance's *Day/Month/Year Format* date\
+                \ format."
+            userReleaseDate:
+              type: "string"
+              readOnly: true
+              description: "The date on which work on this version is expected to\
+                \ finish, expressed in the instance's *Day/Month/Year Format* date\
+                \ format."
+            moveUnfixedIssuesTo:
+              type: "string"
+              format: "uri"
+              description: "The URL of the self link to the version to which all unfixed\
+                \ issues are moved when a version is released. Not applicable when\
+                \ creating a version. Optional when updating a version."
+            issuesStatusForFixVersion:
+              type: "object"
+              readOnly: true
+              properties:
+                done:
+                  type: "integer"
+                  format: "int64"
+                  readOnly: true
+                  description: "Count of issues with status *done*."
+                toDo:
+                  type: "integer"
+                  format: "int64"
+                  readOnly: true
+                  description: "Count of issues with status *to do*."
+                unmapped:
+                  type: "integer"
+                  format: "int64"
+                  readOnly: true
+                  description: "Count of issues with a status other than *to do*,\
+                    \ *in progress*, and *done*."
+                inProgress:
+                  type: "integer"
+                  format: "int64"
+                  readOnly: true
+                  description: "Count of issues with status *in progress*."
+              description: "If the expand option `issuesstatus` is used, returns the\
+                \ count of issues in this version for each of the status categories\
+                \ *to do*, *in progress*, *done*, and *unmapped*. The *unmapped* property\
+                \ contains a count of issues with a status other than *to do*, *in\
+                \ progress*, and *done*."
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "projects"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type: "string"
+              description: "The ID of the project."
+            key:
+              type: "string"
+              readOnly: true
+              description: "The key of the project."
+            url:
+              type: "string"
+              readOnly: true
+              description: "A link to information about this project, such as project\
+                \ documentation."
+            lead:
+              readOnly: true
+              description: "The username of the project lead."
+            name:
+              type: "string"
+              readOnly: true
+              description: "The name of the project."
+            self:
+              type: "string"
+              format: "uri"
+              readOnly: true
+              description: "The URL of the project details."
+            uuid:
+              type: "string"
+              format: "uuid"
+              readOnly: true
+              description: "Unique ID for next-gen projects."
+            email:
+              type: "string"
+              description: "An email address associated with the project."
+            roles:
+              type: "object"
+              readOnly: true
+              description: "The name and self URL for each role defined in the project.\
+                \ For more information, see [Create project role](#api-rest-api-3-role-post)."
+              additionalProperties:
+                type: "string"
+                format: "uri"
+                readOnly: true
+            style:
+              enum:
+              - "classic"
+              - "next-gen"
+              type: "string"
+              readOnly: true
+              description: "The type of the project."
+            expand:
+              xml:
+                attribute: true
+              type: "string"
+              readOnly: true
+              description: "Expand options that include additional project details\
+                \ in the response."
+            deleted:
+              type: "boolean"
+              readOnly: true
+              description: "Whether the project is marked as deleted."
+            insight:
+              readOnly: true
+              description: "Insights about the project."
+            archived:
+              type: "boolean"
+              readOnly: true
+              description: "Whether the project is archived."
+            versions:
+              type: "array"
+              readOnly: true
+              description: "The versions defined in the project. For more information,\
+                \ see [Create version](#api-rest-api-3-version-post)."
+            deletedBy:
+              readOnly: true
+              description: "The user who marked the project as deleted."
+            favourite:
+              type: "boolean"
+              description: "Whether the project is selected as a favorite."
+            isPrivate:
+              type: "boolean"
+              readOnly: true
+              description: "Whether the project is private."
+            archivedBy:
+              readOnly: true
+              description: "The user who archived the project."
+            avatarUrls:
+              readOnly: true
+              description: "The URLs of the project's avatars."
+            components:
+              type: "array"
+              readOnly: true
+              description: "List of the components contained in the project."
+            issueTypes:
+              type: "array"
+              readOnly: true
+              description: "List of the issue types available in the project."
+            properties:
+              type: "object"
+              readOnly: true
+              description: "Map of project properties"
+              additionalProperties:
+                readOnly: true
+            simplified:
+              type: "boolean"
+              readOnly: true
+              description: "Whether the project is simplified."
+            deletedDate:
+              type: "string"
+              format: "date-time"
+              readOnly: true
+              description: "The date when the project was marked as deleted."
+            description:
+              type: "string"
+              readOnly: true
+              description: "A brief description of the project."
+            permissions:
+              readOnly: true
+              description: "User permissions on the project"
+            archivedDate:
+              type: "string"
+              format: "date-time"
+              readOnly: true
+              description: "The date when the project was archived."
+            assigneeType:
+              enum:
+              - "PROJECT_LEAD"
+              - "UNASSIGNED"
+              type: "string"
+              readOnly: true
+              description: "The default assignee when creating issues for this project."
+            projectTypeKey:
+              enum:
+              - "software"
+              - "service_desk"
+              - "business"
+              type: "string"
+              readOnly: true
+              description: "The [project type](https://confluence.atlassian.com/x/GwiiLQ#Jiraapplicationsoverview-Productfeaturesandprojecttypes)\
+                \ of the project."
+            projectCategory:
+              readOnly: true
+              description: "The category the project belongs to."
+            retentionTillDate:
+              type: "string"
+              format: "date-time"
+              readOnly: true
+              description: "The date when the project is deleted permanently."
+            issueTypeHierarchy:
+              readOnly: true
+              description: "The issue type hierarchy for the project"
+          description: "Details about a project."
+          additionalProperties: false
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "pull_requests"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type:
+              - "null"
+              - "string"
+            updated:
+              type: "string"
+              format: "date-time"
+            branches:
+              type:
+              - "null"
+              - "array"
+              items:
+                type:
+                - "null"
+                - "object"
+            _instance:
+              type:
+              - "null"
+              - "object"
+              properties:
+                id:
+                  type:
+                  - "null"
+                  - "string"
+                name:
+                  type:
+                  - "null"
+                  - "string"
+                type:
+                  type:
+                  - "null"
+                  - "string"
+                baseUrl:
+                  type:
+                  - "null"
+                  - "string"
+                typeName:
+                  type:
+                  - "null"
+                  - "string"
+                singleInstance:
+                  type:
+                  - "null"
+                  - "boolean"
+            pullRequests:
+              type:
+              - "null"
+              - "array"
+              items:
+                type:
+                - "null"
+                - "object"
+            repositories:
+              type:
+              - "null"
+              - "array"
+              items:
+                type:
+                - "null"
+                - "object"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "updated"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "updated"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "sprint_issues"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type: "string"
+            key:
+              type: "string"
+            self:
+              type: "string"
+            expand:
+              type: "string"
+            fields:
+              type: "object"
+              properties:
+                epic:
+                  type:
+                  - "null"
+                  - "object"
+                sprint:
+                  type:
+                  - "null"
+                  - "object"
+                comment:
+                  type:
+                  - "null"
+                  - "array"
+                  items:
+                    type: "object"
+                flagged:
+                  type:
+                  - "null"
+                  - "boolean"
+                project:
+                  type:
+                  - "null"
+                  - "object"
+                updated:
+                  type:
+                  - "null"
+                  - "string"
+                  format: "date-time"
+                worklog:
+                  type:
+                  - "null"
+                  - "array"
+                  items:
+                    type: "object"
+                description:
+                  type:
+                  - "null"
+                  - "string"
+                timetracking:
+                  type:
+                  - "null"
+                  - "object"
+                closedSprints:
+                  type:
+                  - "null"
+                  - "object"
+            issueId:
+              type: "number"
+            sprintId:
+              type: "number"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "fields"
+        - "updated"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "fields"
+      - "updated"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "sprints"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type: "integer"
+            goal:
+              type: "string"
+            name:
+              type: "string"
+            self:
+              type: "string"
+            state:
+              type: "string"
+            endDate:
+              type: "string"
+              format: "date-time"
+            startDate:
+              type: "string"
+              format: "date-time"
+            completeDate:
+              type: "string"
+              format: "date-time"
+            originBoardId:
+              type: "integer"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "users"
+        json_schema:
+          xml:
+            name: "user"
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            key:
+              type: "string"
+              description: "This property is no longer available and will be removed\
+                \ from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/)\
+                \ for details."
+            name:
+              type: "string"
+              description: "This property is no longer available and will be removed\
+                \ from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/)\
+                \ for details."
+            self:
+              type: "string"
+              format: "uri"
+              readOnly: true
+              description: "The URL of the user."
+            active:
+              type: "boolean"
+              readOnly: true
+              description: "Whether the user is active."
+            expand:
+              xml:
+                attribute: true
+              type: "string"
+              readOnly: true
+              description: "Expand options that include additional user details in\
+                \ the response."
+            groups:
+              type: "object"
+              readOnly: true
+              properties:
+                size:
+                  xml:
+                    attribute: true
+                  type: "integer"
+                  format: "int32"
+                items:
+                  type: "array"
+                  items:
+                    type: "object"
+                    properties:
+                      name:
+                        type: "string"
+                        description: "The name of group."
+                      self:
+                        type: "string"
+                        format: "uri"
+                        readOnly: true
+                        description: "The URL for these group details."
+                callback:
+                  type: "object"
+                max-results:
+                  xml:
+                    name: "max-results"
+                    attribute: true
+                  type: "integer"
+                  format: "int32"
+                pagingCallback:
+                  type: "object"
+              description: "The groups that the user belongs to."
+            locale:
+              type: "string"
+              readOnly: true
+              description: "The locale of the user. Depending on the user’s privacy\
+                \ setting, this may be returned as null."
+            timeZone:
+              type: "string"
+              readOnly: true
+              description: "The time zone specified in the user's profile. Depending\
+                \ on the user’s privacy setting, this may be returned as null."
+            accountId:
+              type: "string"
+              maxLength: 128
+              description: "The account ID of the user, which uniquely identifies\
+                \ the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.\
+                \ Required in requests."
+            avatarUrls:
+              type: "object"
+              readOnly: true
+              properties:
+                "16x16":
+                  type: "string"
+                  format: "uri"
+                  description: "The URL of the item's 16x16 pixel avatar."
+                "24x24":
+                  type: "string"
+                  format: "uri"
+                  description: "The URL of the item's 24x24 pixel avatar."
+                "32x32":
+                  type: "string"
+                  format: "uri"
+                  description: "The URL of the item's 32x32 pixel avatar."
+                "48x48":
+                  type: "string"
+                  format: "uri"
+                  description: "The URL of the item's 48x48 pixel avatar."
+              description: "The avatars of the user."
+            accountType:
+              enum:
+              - "atlassian"
+              - "app"
+              - "customer"
+              - "unknown"
+              type: "string"
+              readOnly: true
+              description: "The user account type. Can take the following values:\n\
+                \n *  `atlassian` regular Atlassian user account\n *  `app` system\
+                \ account used for Connect applications and OAuth to represent external\
+                \ systems\n *  `customer` Jira Service Desk account representing an\
+                \ external service desk"
+            displayName:
+              type: "string"
+              readOnly: true
+              description: "The display name of the user. Depending on the user’s\
+                \ privacy setting, this may return an alternative value."
+            emailAddress:
+              type: "string"
+              readOnly: true
+              description: "The email address of the user. Depending on the user’\
+                s privacy setting, this may be returned as null."
+            applicationRoles:
+              type: "object"
+              readOnly: true
+              properties:
+                size:
+                  xml:
+                    attribute: true
+                  type: "integer"
+                  format: "int32"
+                items:
+                  type: "array"
+                  items:
+                    type: "object"
+                    properties:
+                      key:
+                        type: "string"
+                        description: "The key of the application role."
+                      name:
+                        type: "string"
+                        description: "The display name of the application role."
+                      groups:
+                        type: "array"
+                        items:
+                          type: "string"
+                        description: "The groups associated with the application role."
+                        uniqueItems: true
+                      defined:
+                        type: "boolean"
+                        description: "Deprecated."
+                      platform:
+                        type: "boolean"
+                        description: "Indicates if the application role belongs to\
+                          \ Jira platform (`jira-core`)."
+                      userCount:
+                        type: "integer"
+                        format: "int32"
+                        description: "The number of users counting against your license."
+                      defaultGroups:
+                        type: "array"
+                        items:
+                          type: "string"
+                        description: "The groups that are granted default access for\
+                          \ this application role."
+                        uniqueItems: true
+                      numberOfSeats:
+                        type: "integer"
+                        format: "int32"
+                        description: "The maximum count of users on your license."
+                      remainingSeats:
+                        type: "integer"
+                        format: "int32"
+                        description: "The count of users remaining on your license."
+                      hasUnlimitedSeats:
+                        type: "boolean"
+                      selectedByDefault:
+                        type: "boolean"
+                        description: "Determines whether this application role should\
+                          \ be selected by default on user creation."
+                      userCountDescription:
+                        type: "string"
+                        description: "The [type of users](https://confluence.atlassian.com/x/lRW3Ng)\
+                          \ being counted against your license."
+                callback:
+                  type: "object"
+                max-results:
+                  xml:
+                    name: "max-results"
+                    attribute: true
+                  type: "integer"
+                  format: "int32"
+                pagingCallback:
+                  type: "object"
+              description: "The application roles the user is assigned to."
+          description: "A user with details as permitted by the user's Atlassian Account\
+            \ privacy settings. However, be aware of these exceptions:\n\n *  User\
+            \ record deleted from Atlassian: This occurs as the result of a right\
+            \ to be forgotten request. In this case, `displayName` provides an indication\
+            \ and other parameters have default values or are blank (for example,\
+            \ email is blank).\n *  User record corrupted: This occurs as a results\
+            \ of events such as a server import and can only happen to deleted users.\
+            \ In this case, `accountId` returns *unknown* and all other parameters\
+            \ have fallback values.\n *  User record unavailable: This usually occurs\
+            \ due to an internal service outage. In this case, all parameters have\
+            \ fallback values."
+          additionalProperties: false
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key: []
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key: []
+    - stream:
+        name: "workflow_statuses"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          properties:
+            id:
+              type: "string"
+              readOnly: true
+              description: "The ID of the status."
+            name:
+              type: "string"
+              readOnly: true
+              description: "The name of the status."
+            self:
+              type: "string"
+              readOnly: true
+              description: "The URL of the status."
+            iconUrl:
+              type: "string"
+              readOnly: true
+              description: "The URL of the icon used to represent the status."
+            description:
+              type: "string"
+              readOnly: true
+              description: "The description of the status."
+            statusCategory:
+              type: "object"
+              readOnly: true
+              properties:
+                id:
+                  type: "integer"
+                  format: "int64"
+                  readOnly: true
+                  description: "The ID of the status category."
+                key:
+                  type: "string"
+                  readOnly: true
+                  description: "The key of the status category."
+                name:
+                  type: "string"
+                  readOnly: true
+                  description: "The name of the status category."
+                self:
+                  type: "string"
+                  readOnly: true
+                  description: "The URL of the status category."
+                colorName:
+                  type: "string"
+                  readOnly: true
+                  description: "The name of the color used to represent the status\
+                    \ category."
+              description: "The category assigned to the status."
+          description: "A status."
+          additionalProperties: true
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+  status: "active"
+  manual: true
+  resourceRequirements: {}

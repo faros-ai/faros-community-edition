@@ -1,0 +1,102 @@
+services:
+  airbyte-init:
+    extends:
+      file: airbyte-services.yaml
+      service: init
+  airbyte-bootloader:
+    extends:
+      file: airbyte-services.yaml
+      service: bootloader
+  airbyte-scheduler:
+    extends:
+      file: airbyte-services.yaml
+      service: scheduler
+  airbyte-worker:
+    extends:
+      file: airbyte-services.yaml
+      service: worker
+  airbyte-server:
+    extends:
+      file: airbyte-services.yaml
+      service: server
+  airbyte-webapp:
+    extends:
+      file: airbyte-services.yaml
+      service: webapp
+  airbyte-temporal:
+    extends:
+      file: airbyte-services.yaml
+      service: airbyte-temporal
+  faros-db:
+    extends:
+      file: airbyte-services.yaml
+      service: db
+    ports:
+      - ${FAROS_DB_PORT?}:5432
+    restart: unless-stopped
+  faros-init:
+    build:
+      context: .
+    depends_on:
+      - airbyte-webapp
+      - faros-db
+    restart: on-failure
+    environment:
+      AIRBYTE_FORCE_SETUP: ${FAROS_AIRBYTE_FORCE_SETUP:-false}
+      AIRBYTE_URL: http://airbyte-webapp:80
+      FAROS_AIRBYTE_DESTINATION_VERSION: ${FAROS_AIRBYTE_DESTINATION_VERSION?}
+      FAROS_DB_HOST: faros-db
+      FAROS_DB_NAME: ${FAROS_DB_NAME?}
+      FAROS_DB_PASSWORD: ${DATABASE_PASSWORD?}
+      FAROS_DB_PORT: 5432
+      FAROS_DB_USER: ${DATABASE_USER?}
+      HASURA_DB_NAME: ${HASURA_DB_NAME?}
+      HASURA_URL: http://hasura:8080
+      LOG_LEVEL: ${FAROS_INIT_LOG_LEVEL:-info}
+      METABASE_DB_NAME: ${METABASE_DB_NAME?}
+      METABASE_PASSWORD: ${METABASE_PASSWORD?}
+      METABASE_URL: http://metabase:3000
+      METABASE_USER: ${METABASE_USER?}
+  hasura:
+    image: hasura/graphql-engine:${HASURA_VERSION?}
+    container_name: hasura
+    ports:
+      - ${HASURA_PORT?}:8080
+    depends_on:
+      - faros-db
+      - faros-init
+    restart: unless-stopped
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://${DATABASE_USER?}:${DATABASE_PASSWORD?}@faros-db:5432/${FAROS_DB_NAME?}
+      HASURA_GRAPHQL_DEV_MODE: "false"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://${DATABASE_USER?}:${DATABASE_PASSWORD?}@faros-db:5432/${HASURA_DB_NAME?}
+  metabase:
+    image: metabase/metabase:${METABASE_VERSION}
+    container_name: metabase
+    ports:
+      - ${METABASE_PORT?}:3000
+    depends_on:
+      - faros-db
+      - faros-init
+    restart: unless-stopped
+    environment:
+      MB_ANON_TRACKING_ENABLED: "false"
+      MB_DB_DBNAME: ${METABASE_DB_NAME?}
+      MB_DB_HOST: faros-db
+      MB_DB_PASS: ${DATABASE_PASSWORD?}
+      MB_DB_PORT: 5432
+      MB_DB_TYPE: postgres
+      MB_DB_USER: ${DATABASE_USER?}
+      MB_PASSWORD_COMPLEXITY: weak
+      MB_PASSWORD_LENGTH: 1
+      MB_SEND_EMAIL_ON_FIRST_LOGIN_FROM_NEW_DEVICE: "false"
+volumes:
+  workspace:
+    name: ${WORKSPACE_DOCKER_MOUNT}
+  data:
+    name: ${DATA_DOCKER_MOUNT}
+  db:
+    name: ${DB_DOCKER_MOUNT}

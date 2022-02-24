@@ -3861,6 +3861,230 @@
   resourceRequirements: {}
 - namespaceDefinition: "source"
   namespaceFormat: "${SOURCE_NAMESPACE}"
+  prefix: "myjenkinssrc__jenkins__"
+  sourceId: "55b0325e-4bc7-49b4-b230-36c5a67df068"
+  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
+  operationIds: []
+  connectionId: "bd8ead71-0911-4b72-9916-245624fc44c1"
+  name: "default"
+  catalog:
+    streams:
+    - stream:
+        name: "builds"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          required:
+          - "_class"
+          - "building"
+          - "displayName"
+          - "duration"
+          - "fullDisplayName"
+          - "id"
+          - "number"
+          - "result"
+          - "timestamp"
+          - "url"
+          properties:
+            id:
+              type: "string"
+            url:
+              type: "string"
+            _class:
+              type: "string"
+            number:
+              type: "number"
+            result:
+              type: "string"
+            actions:
+              type: "array"
+              items:
+                type: "object"
+                properties:
+                  _class:
+                    type: "string"
+                  lastBuiltRevision:
+                    type: "object"
+                    properties:
+                      SHA1:
+                        type: "string"
+                      remoteUrls:
+                        type: "array"
+                        items:
+                          type: "string"
+            building:
+              type: "boolean"
+            duration:
+              type: "number"
+            timestamp:
+              type: "number"
+            displayName:
+              type: "string"
+            fullDisplayName:
+              type: "string"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "number"
+        source_defined_primary_key:
+        - - "fullDisplayName"
+      sync_mode: "incremental"
+      cursor_field:
+      - "number"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "fullDisplayName"
+    - stream:
+        name: "jobs"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          required:
+          - "_class"
+          - "fullName"
+          - "name"
+          - "url"
+          properties:
+            url:
+              type: "string"
+            name:
+              type: "string"
+            _class:
+              type: "string"
+            builds:
+              type: "array"
+              items:
+                type: "object"
+                required:
+                - "_class"
+                - "building"
+                - "displayName"
+                - "duration"
+                - "fullDisplayName"
+                - "id"
+                - "number"
+                - "result"
+                - "timestamp"
+                - "url"
+                properties:
+                  id:
+                    type: "string"
+                  url:
+                    type: "string"
+                  _class:
+                    type: "string"
+                  number:
+                    type: "number"
+                  result:
+                    type: "string"
+                  actions:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        _class:
+                          type: "string"
+                        lastBuiltRevision:
+                          type: "object"
+                          properties:
+                            SHA1:
+                              type: "string"
+                            remoteUrls:
+                              type: "array"
+                              items:
+                                type: "string"
+                  building:
+                    type: "boolean"
+                  duration:
+                    type: "number"
+                  timestamp:
+                    type: "number"
+                  displayName:
+                    type: "string"
+                  jobFullName:
+                    type: "string"
+            fullName:
+              type: "string"
+            allBuilds:
+              type: "array"
+              items:
+                type: "object"
+                required:
+                - "_class"
+                - "building"
+                - "displayName"
+                - "duration"
+                - "fullDisplayName"
+                - "id"
+                - "number"
+                - "result"
+                - "timestamp"
+                - "url"
+                properties:
+                  id:
+                    type: "string"
+                  url:
+                    type: "string"
+                  _class:
+                    type: "string"
+                  number:
+                    type: "number"
+                  result:
+                    type: "string"
+                  actions:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        _class:
+                          type: "string"
+                        lastBuiltRevision:
+                          type: "object"
+                          properties:
+                            SHA1:
+                              type: "string"
+                            remoteUrls:
+                              type: "array"
+                              items:
+                                type: "string"
+                  building:
+                    type: "boolean"
+                  duration:
+                    type: "number"
+                  timestamp:
+                    type: "number"
+                  displayName:
+                    type: "string"
+                  jobFullName:
+                    type: "string"
+            lastCompletedBuild:
+              type: "object"
+              required:
+              - "number"
+              properties:
+                number:
+                  type: "number"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "url"
+        source_defined_primary_key:
+        - - "fullName"
+      sync_mode: "incremental"
+      cursor_field:
+      - "url"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "fullName"
+  status: "active"
+  manual: true
+  resourceRequirements: {}
+- namespaceDefinition: "source"
+  namespaceFormat: "${SOURCE_NAMESPACE}"
   prefix: "myjirasrc__jira__"
   sourceId: "22852029-670c-4296-958e-c581fa76ae98"
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
@@ -5136,6 +5360,295 @@
               description: "The category assigned to the status."
           description: "A status."
           additionalProperties: true
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+  status: "active"
+  manual: true
+  resourceRequirements: {}
+- namespaceDefinition: "source"
+  namespaceFormat: "${SOURCE_NAMESPACE}"
+  prefix: "mypagerdutysrc__pagerduty__"
+  sourceId: "8b5b955e-7d8f-4b9c-88a0-0732efa9a395"
+  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
+  operationIds: []
+  connectionId: "aa44865f-704f-42cb-95f3-086d063581cc"
+  name: "default"
+  catalog:
+    streams:
+    - stream:
+        name: "incident_log_entries"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          required:
+          - "id"
+          - "type"
+          - "summary"
+          - "self"
+          - "html_url"
+          - "created_at"
+          - "incident"
+          - "service"
+          - "event_details"
+          properties:
+            id:
+              type: "string"
+            self:
+              type: "string"
+            type:
+              type: "string"
+            service:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                self:
+                  type: "string"
+                type:
+                  type: "string"
+                summary:
+                  type: "string"
+                html_url:
+                  type: "string"
+            summary:
+              type: "string"
+            html_url:
+              type: "string"
+            incident:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                self:
+                  type: "string"
+                type:
+                  type: "string"
+                summary:
+                  type: "string"
+                html_url:
+                  type: "string"
+            created_at:
+              type: "string"
+            event_details:
+              type: "object"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "created_at"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "created_at"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "incidents"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          required:
+          - "id"
+          - "type"
+          - "summary"
+          - "self"
+          - "html_url"
+          - "description"
+          - "status"
+          - "acknowledgements"
+          - "incident_key"
+          - "urgency"
+          - "title"
+          - "created_at"
+          - "service"
+          - "assignments"
+          - "last_status_change_at"
+          properties:
+            id:
+              type: "string"
+            self:
+              type: "string"
+            type:
+              type: "string"
+            title:
+              type: "string"
+            status:
+              type: "string"
+            service:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                self:
+                  type: "string"
+                type:
+                  type: "string"
+                summary:
+                  type: "string"
+                html_url:
+                  type: "string"
+            summary:
+              type: "string"
+            urgency:
+              type: "string"
+            html_url:
+              type: "string"
+            priority:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                name:
+                  type: "string"
+                self:
+                  type: "string"
+                type:
+                  type: "string"
+                summary:
+                  type: "string"
+                html_url:
+                  type: "string"
+                description:
+                  type: "string"
+            created_at:
+              type: "string"
+            assignments:
+              type: "array"
+              items:
+                type: "object"
+                properties:
+                  at:
+                    type: "string"
+                  assignee:
+                    type: "object"
+                    properties:
+                      id:
+                        type: "string"
+                      self:
+                        type: "string"
+                      type:
+                        type: "string"
+                      summary:
+                        type: "string"
+                      html_url:
+                        type: "string"
+            description:
+              type: "string"
+            incident_key:
+              type: "string"
+            acknowledgements:
+              type: "array"
+              items:
+                type: "object"
+                properties:
+                  at:
+                    type: "string"
+                  acknowledger:
+                    type: "object"
+                    properties:
+                      id:
+                        type: "string"
+                      self:
+                        type: "string"
+                      type:
+                        type: "string"
+                      summary:
+                        type: "string"
+                      html_url:
+                        type: "string"
+            last_status_change_at:
+              type: "string"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "created_at"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "created_at"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "priorities_resource"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          required:
+          - "id"
+          - "type"
+          - "summary"
+          - "self"
+          - "html_url"
+          - "description"
+          - "name"
+          properties:
+            id:
+              type: "string"
+            name:
+              type: "string"
+            self:
+              type: "string"
+            type:
+              type: "string"
+            summary:
+              type: "string"
+            html_url:
+              type: "string"
+            description:
+              type: "string"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "users"
+        json_schema:
+          type: "object"
+          $schema: "http://json-schema.org/draft-07/schema#"
+          required:
+          - "id"
+          - "type"
+          - "summary"
+          - "self"
+          - "html_url"
+          - "email"
+          - "name"
+          properties:
+            id:
+              type: "string"
+            name:
+              type: "string"
+            self:
+              type: "string"
+            type:
+              type: "string"
+            email:
+              type: "string"
+            summary:
+              type: "string"
+            html_url:
+              type: "string"
         supported_sync_modes:
         - "full_refresh"
         default_cursor_field: []

@@ -9,6 +9,7 @@
     credentials:
       option_title: "PAT Credentials"
       personal_access_token: "My Personal Access Token"
+    page_size_for_large_streams: 10
   tombstone: false
 - name: "My Jira Source"
   sourceDefinitionId: "68e63de2-bb83-4c7e-93fa-a8a9051e3993"

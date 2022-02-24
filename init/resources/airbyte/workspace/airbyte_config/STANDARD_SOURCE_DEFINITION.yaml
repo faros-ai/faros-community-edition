@@ -2064,6 +2064,36 @@
     supportsNormalization: false
     supportsDBT: false
     supported_destination_sync_modes: []
+- sourceDefinitionId: "4b3cd0a4-4994-4616-af28-9871e28a8368"
+  name: "Statuspage"
+  dockerRepository: "farosai/airbyte-statuspage-source"
+  dockerImageTag: "0.1.33"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/statuspage-source"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "StatusPage Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "page_id"
+      - "api_key"
+      properties:
+        org_id:
+          type: "string"
+          title: "StatusPage Organization ID"
+        api_key:
+          type: "string"
+          title: "StatusPage API key"
+          airbyte_secret: true
+        page_id:
+          type: "string"
+          title: "StatusPage Page ID"
+          airbyte_secret: true
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
 - sourceDefinitionId: "4bfac00d-ce15-44ff-95b9-9e3c3e8fbd35"
   name: "TikTok Marketing"
   dockerRepository: "airbyte/source-tiktok-marketing"
@@ -2153,6 +2183,56 @@
     - "overwrite"
     - "append"
     - "append_dedup"
+- sourceDefinitionId: "4c4613d8-ffcd-4db8-a8f8-d325052aec11"
+  name: "Jenkins"
+  dockerRepository: "farosai/airbyte-jenkins-source"
+  dockerImageTag: "0.1.33"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/jenkins-source"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "Jenkins Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "server_url"
+      - "user"
+      - "token"
+      properties:
+        user:
+          type: "string"
+          description: "Jenkins User"
+        depth:
+          type: "number"
+          title: "Depth"
+          description: "Jenkins JSON API does not support deep scan, it is required\
+            \ to generate a suitable tree for the corresponding depth. Job in some\
+            \ cases have many sub jobs, depth needs to quantify how many sub jobs\
+            \ are showed. If depth is not provided we will try to compute it automatically"
+        token:
+          type: "string"
+          title: "Jenkins Token"
+          airbyte_secret: true
+        pageSize:
+          type: "integer"
+          title: "Page Size"
+          default: 10
+          minimum: 1
+          description: "Quantity of jobs on a single page fetched from Jenkins"
+        server_url:
+          type: "string"
+          title: "Jenkins Server URL"
+          examples:
+          - "https://my-jenkins-server.example.com"
+        last100Builds:
+          type: "boolean"
+          title: "Last 100 Builds Only"
+          default: false
+          description: "Fetch only 100 last builds from Jenkins server"
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
 - sourceDefinitionId: "59c5501b-9f95-411e-9269-7143c939adbd"
   name: "BigCommerce"
   dockerRepository: "airbyte/source-bigcommerce"
@@ -3801,6 +3881,47 @@
               - "credentials"
               - "client_secret"
           additionalProperties: false
+- sourceDefinitionId: "8b3ac13b-f1b1-4644-bec2-e7b6be6d64c4"
+  name: "VictorOps"
+  dockerRepository: "farosai/airbyte-victorops-source"
+  dockerImageTag: "0.1.33"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/victorops-source"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "VictorOps Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "apiId"
+      - "apiKey"
+      properties:
+        apiId:
+          type: "string"
+          title: "VictorOps API ID"
+          airbyte_secret: true
+        apiKey:
+          type: "string"
+          title: "VictorOps API key"
+          airbyte_secret: true
+        pageLimit:
+          type: "number"
+          title: "VictorOps Page Limit"
+          default: 100
+        currentPhase:
+          type: "string"
+          title: "VictorOps Current Phase"
+          default: "triggered,acknowledged,resolved"
+        maxContentLength:
+          type: "number"
+          title: "VictorOps Content Length"
+          default: 500000
+          description: "VictorOps API response content length limit, try increasing\
+            \ if 'RequestError' is encountered."
+      additionalProperties: true
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
 - sourceDefinitionId: "8d7ef552-2c0f-11ec-8d3d-0242ac130003"
   name: "SearchMetrics"
   dockerRepository: "airbyte/source-search-metrics"
@@ -4397,6 +4518,59 @@
           description: "Zoom JWT Token. See the <a href=\"https://docs.airbyte.io/integrations/sources/zoom\"\
             >docs</a> for more information on how to obtain this key."
           airbyte_secret: true
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
+- sourceDefinitionId: "aee89078-5c00-429e-90bf-cec0174dbb76"
+  name: "PagerDuty"
+  dockerRepository: "farosai/airbyte-pagerduty-source"
+  dockerImageTag: "0.1.33"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/pagerduty-source"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "PagerDuty Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "token"
+      properties:
+        token:
+          type: "string"
+          title: "PagerDuty API key"
+          airbyte_secret: true
+        pageSize:
+          type: "number"
+          title: "Page Size"
+          default: 25
+          maximum: 25
+          minimum: 1
+          description: "page size to use when querying PagerDuty API"
+        cutoffDays:
+          type: "number"
+          title: "Cutoff Days"
+          default: 90
+          minimum: 1
+          description: "fetch pipelines updated in the last number of days"
+        defaultSeverity:
+          type: "string"
+          title: "Severity category"
+          pattern: "^(Sev[0-5])?(Custom)?$"
+          examples:
+          - "Sev1"
+          - "Sev2"
+          - "Sev3"
+          - "Sev4"
+          - "Sev5"
+          - "Custom"
+          description: "A default severity category if not present"
+        incidentLogEntriesOverview:
+          type: "boolean"
+          title: "Incident Log Entries Overview"
+          default: true
+          description: "If true, will return a subset of log entries that show only\
+            \ the most important changes to the incident."
       additionalProperties: false
     supportsNormalization: false
     supportsDBT: false
@@ -6575,6 +6749,54 @@
     supportsNormalization: false
     supportsDBT: false
     supported_destination_sync_modes: []
+- sourceDefinitionId: "d8d05baf-bbda-49b3-9489-542e77cbd820"
+  name: "Harness"
+  dockerRepository: "farosai/airbyte-harness-source"
+  dockerImageTag: "0.1.33"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/harness-source"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "Harness Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "api_key"
+      - "account_id"
+      properties:
+        api_key:
+          type: "string"
+          title: "Harness API key"
+          airbyte_secret: true
+        api_url:
+          type: "string"
+          title: "Harness API URL"
+          default: "https://app.harness.io"
+          examples:
+          - "https://my-harness-server.example.com"
+        page_size:
+          type: "number"
+          title: "Harness Page Size"
+          default: 100
+          description: "number of pipelines (builds) to fetch per call"
+        account_id:
+          type: "string"
+          title: "Harness account ID"
+        cutoff_days:
+          type: "number"
+          title: "Harness Cutoff Days"
+          default: 90
+          description: "Only fetch deployments updated after cutoff"
+        deployment_timeout:
+          type: "number"
+          title: "Harness Deployment Timeout"
+          default: 24
+          description: "Max number of hours to consider for a deployment to be running/queued\
+            \ before giving up on syncing it"
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
 - sourceDefinitionId: "d913b0f2-cc51-4e55-a44c-8ba1697b9239"
   name: "Paypal Transaction"
   dockerRepository: "airbyte/source-paypal-transaction"
@@ -8273,10 +8495,9 @@
 - sourceDefinitionId: "ef69ef6e-aa7f-4af1-a01d-ef775033524e"
   name: "GitHub"
   dockerRepository: "airbyte/source-github"
-  dockerImageTag: "0.2.10"
+  dockerImageTag: "0.2.19"
   documentationUrl: "https://docs.airbyte.io/integrations/sources/github"
   icon: "github.svg"
-  sourceType: "api"
   spec:
     documentationUrl: "https://docs.airbyte.io/integrations/sources/github"
     connectionSpecification:
@@ -8291,7 +8512,7 @@
           type: "string"
           title: "Branch"
           examples:
-          - "airbytehq/airbyte/master"
+          - "airbytehq/airbyte/master airbytehq/airbyte/my-branch"
           description: "Space-delimited list of GitHub repository branches to pull\
             \ commits for, e.g. `airbytehq/airbyte/master`. If no branches are specified\
             \ for a repository, the default branch will be pulled."
@@ -8299,11 +8520,13 @@
           type: "string"
           title: "GitHub Repositories"
           examples:
-          - "airbytehq/airbyte"
+          - "airbytehq/airbyte airbytehq/another-repo"
           - "airbytehq/*"
-          description: "Space-delimited list of GitHub repositories/organizations,\
-            \ e.g. `airbytehq/airbyte` for single repository and `airbytehq/*` for\
-            \ get all repositories from organization"
+          - "airbytehq/airbyte"
+          description: "Space-delimited list of GitHub organizations/repositories,\
+            \ e.g. `airbytehq/airbyte` for single repository, `airbytehq/*` for get\
+            \ all repositories from organization and `airbytehq/airbyte airbytehq/another-repo`\
+            \ for multiple repositories."
         start_date:
           type: "string"
           title: "Start Date"
@@ -8352,6 +8575,15 @@
                 airbyte_secret: true
           title: "Authentication Mechanism"
           description: "Choose how to authenticate to GitHub"
+        page_size_for_large_streams:
+          type: "integer"
+          title: "Page size for large streams"
+          default: 10
+          maximum: 100
+          minimum: 1
+          description: "The Github connector contains several streams with a large\
+            \ load. The page size of such streams depends on the size of your repository.\
+            \ Recommended to specify values between 10 and 30."
       additionalProperties: true
     supportsNormalization: false
     supportsDBT: false

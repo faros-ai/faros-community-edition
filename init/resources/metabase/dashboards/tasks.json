@@ -34,10 +34,10 @@
         "graph.dimensions": [
           "createdAt"
         ],
+        "graph.x_axis.title_text": "date",
         "graph.metrics": [
           "count"
-        ],
-        "graph.x_axis.title_text": "date"
+        ]
       }
     },
     {
@@ -55,10 +55,10 @@
         "graph.dimensions": [
           "updatedAt"
         ],
+        "graph.x_axis.title_text": "date",
         "graph.metrics": [
           "count"
-        ],
-        "graph.x_axis.title_text": "date"
+        ]
       }
     },
     {
@@ -241,11 +241,11 @@
           "status_stage_detail",
           "Task Stage Cycle Time Category"
         ],
+        "graph.y_axis.title_text": "Number of tasks",
+        "graph.x_axis.title_text": "Status stage detail",
         "graph.metrics": [
           "count"
-        ],
-        "graph.y_axis.title_text": "Number of tasks",
-        "graph.x_axis.title_text": "Status stage detail"
+        ]
       }
     }
   ],
@@ -263,7 +263,25 @@
         }
       ],
       "parameter_mappings": [],
-      "visualization_settings": {}
+      "visualization_settings": {
+        "graph.dimensions": [
+          "createdAt"
+        ],
+        "graph.x_axis.title_text": "date",
+        "graph.y_axis.title_text": "Number of tasks",
+        "card.title": "Number of Tasks Created vs Completed last 30 days",
+        "series_settings": {
+          "count": {
+            "title": "Tasks Created"
+          },
+          "Tasks Completed by Day last 30 days": {
+            "title": "Tasks Completed"
+          }
+        },
+        "graph.metrics": [
+          "count"
+        ]
+      }
     },
     {
       "row": 0,
@@ -308,3 +326,4 @@
   ],
   "path": "/Faros CE/Tasks"
 }
+

@@ -63,7 +63,7 @@ export interface QueryCollection {
 export interface Endpoint {
   name: string;
   url: string;
-  comment: string|null;
+  comment: string | null;
   methods: ReadonlyArray<string>;
   definition: {
     query: {

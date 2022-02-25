@@ -26,7 +26,7 @@ const WORKSPACE_TEMPLATE_DIR = path.join(
 
 const UUID_NAMESPACE = 'bb229e18-eb5f-4309-a863-893cbec53758';
 
-class AirbyteInit {
+export class AirbyteInit {
   constructor(private readonly api: AxiosInstance) {}
 
   async waitUntilHealthy(): Promise<void> {
@@ -112,7 +112,35 @@ class AirbyteInit {
     }
   }
 
-  async setupFarosDestinationDefinition(version: string): Promise<void> {
+  static async getLatestFarosDestinationVersion(
+    page = 1,
+    pageSize = 10
+  ): Promise<string> {
+    const response = await axios.get(
+      'https://hub.docker.com/v2/repositories/farosai/airbyte-faros-destination/tags',
+      {params: {page, page_size: pageSize, ordering: 'last_updated'}}
+    );
+    const tags: {name: string}[] = response.data.results;
+    const version = find(
+      tags,
+      (t) => t.name !== 'latest' && !t.name.endsWith('-rc')
+    )?.name;
+    if (!version) {
+      if (response.data.next) {
+        return await AirbyteInit.getLatestFarosDestinationVersion(
+          page + 1,
+          pageSize
+        );
+      }
+      throw new VError(
+        'Unable to determine latest image version of Faros Destination'
+      );
+    }
+    return version;
+  }
+
+  async setupFarosDestinationDefinition(): Promise<void> {
+    const version = await AirbyteInit.getLatestFarosDestinationVersion();
     const listResponse = await this.api.post('/destination_definitions/list');
     const destDefs = listResponse.data.destinationDefinitions;
     const farosDestDef = find(
@@ -130,11 +158,6 @@ class AirbyteInit {
       });
     } else if (farosDestDef.dockerImageTag === version) {
       logger.info('Faros Destination is already at %s', version);
-    } else if (farosDestDef.dockerImageTag > version) {
-      logger.info(
-        'Faros Destination is already at a newer version: %s',
-        farosDestDef.dockerImageTag
-      );
     } else {
       logger.info(
         'Updating Faros Destination from %s to %s',
@@ -151,14 +174,12 @@ class AirbyteInit {
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
-  if (args.length < 2) {
+  if (args.length < 1) {
     throw new VError(
-      'Usage: node init.js' +
-        ' <airbyte url> <faros destination version>' +
-        ' [true|false force re-setup]'
+      'Usage: node init.js <airbyte url> [true|false force re-setup]'
     );
   }
-  const [airbyteUrl, farosDestVersion, forceSetup] = args;
+  const [airbyteUrl, forceSetup] = args;
   const airbyte = new AirbyteInit(
     axios.create({
       baseURL: `${airbyteUrl}/api/v1`,
@@ -167,7 +188,7 @@ async function main(): Promise<void> {
 
   await airbyte.waitUntilHealthy();
   await airbyte.setupWorkspace(forceSetup === 'true');
-  await airbyte.setupFarosDestinationDefinition(farosDestVersion);
+  await airbyte.setupFarosDestinationDefinition();
   logger.info('Airbyte setup is complete');
 }
 

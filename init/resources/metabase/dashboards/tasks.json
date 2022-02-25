@@ -2,6 +2,23 @@
   "name": "Tasks dashboard",
   "cards": [
     {
+      "name": "Task Status Detail",
+      "description": null,
+      "display": "table",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "with task as (\n  select distinct on (\"tms_Task\".\"id\")\n    \"tms_Task\".\"origin\",\n    \"tms_Task\".\"id\",\n    \"tms_Task\".\"uid\",\n    \"tms_Task\".\"name\",\n    \"tms_Task\".\"statusCategory\" as current_status_category,\n    \"tms_Task\".\"createdAt\" as created_at,\n    \"tms_Task\".\"statusChangedAt\" as current_status_changed_at,\n    \"tms_Task\".\"statusChangelog\"\n  from \"tms_Task\"\n  where \"tms_Task\".\"origin\" = 'myjirasrc'\n  order by \"tms_Task\".\"id\", \"tms_Task\".\"statusChangedAt\" desc\n),\ntask_status_log as (\n  select\n    task.origin,\n    task.id,\n    cl->'status'->>'category' as status_stage_category,\n    cl->'status'->>'detail' status_stage_detail,\n    to_timestamp((cl->>'changedAt')::double precision / 1000) as status_stage_start,\n    lead (to_timestamp((cl->>'changedAt')::double precision / 1000), 1, now()) over (\n      partition by id\n      order by (cl->>'changedAt')::double precision asc\n    ) as status_stage_end\n  from task\n  cross join jsonb_array_elements(\"statusChangelog\") cl\n),\nunique_stages as (\n  select distinct\n    origin,\n    status_stage_category,\n    status_stage_detail\n  from task_status_log\n),\ndone_tasks_stages as (\n  select\n    task.origin,\n    task.id,\n    unique_stages.status_stage_category,\n    unique_stages.status_stage_detail\n  from task\n  cross join unique_stages\n  where lower(task.current_status_category) = 'done'\n),\ntask_status_duration as (\n  select\n    *,\n    extract(epoch from (status_stage_end - status_stage_start)) * 1000 as status_stage_duration\n  from task_status_log\n),\ntask_status_duration_agg as (\n  select\n    id,\n    status_stage_category,\n    status_stage_detail,\n    sum(status_stage_duration) as status_stage_duration\n  from task_status_duration\n  group by id, status_stage_category, status_stage_detail\n),\nskipped_done_stages as (\n  select\n    d.id,\n    d.status_stage_category,\n    d.status_stage_detail,\n    0::bigint as status_stage_duration\n  from done_tasks_stages d\n  where not exists\n    (\n      select id from task_status_duration_agg ta\n      where ta.id = d.id\n        and ta.status_stage_category = d.status_stage_category\n        and ta.status_stage_detail = d.status_stage_detail\n    )\n),\nall_task_stages as (\n  select * from task_status_duration_agg\n  union\n  select * from skipped_done_stages\n)\nselect\n  task.id,\n  task.uid,\n  task.\"name\",\n  task.created_at,\n  task.current_status_category,\n  task.current_status_changed_at,\n  all_task_stages.status_stage_category,\n  all_task_stages.status_stage_detail,\n  all_task_stages.status_stage_duration::bigint\nfrom all_task_stages\ninner join task on task.id = all_task_stages.id\n",
+          "template-tags": {}
+        }
+      },
+      "visualization_settings": {
+        "table.pivot_column": "status_stage_category",
+        "table.cell_column": "status_stage_duration"
+      }
+    },
+    {
       "name": "Tasks Created by Day last 30 days",
       "description": null,
       "display": "line",
@@ -17,10 +34,10 @@
         "graph.dimensions": [
           "createdAt"
         ],
+        "graph.x_axis.title_text": "date",
         "graph.metrics": [
           "count"
-        ],
-        "graph.x_axis.title_text": "date"
+        ]
       }
     },
     {
@@ -38,10 +55,10 @@
         "graph.dimensions": [
           "updatedAt"
         ],
+        "graph.x_axis.title_text": "date",
         "graph.metrics": [
           "count"
-        ],
-        "graph.x_axis.title_text": "date"
+        ]
       }
     },
     {
@@ -99,6 +116,137 @@
         }
       },
       "visualization_settings": {}
+    },
+    {
+      "name": "Task Cycle Time Distribution (days) by Stage Detail",
+      "description": null,
+      "display": "bar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ card "Task Status Detail" }},
+          "expressions": {
+            "Stage Cycle Time In Days": [
+              "*",
+              [
+                "field",
+                "status_stage_duration",
+                {
+                  "base-type": "type/BigInteger"
+                }
+              ],
+              1.15e-8
+            ],
+            "Task Stage Cycle Time Category": [
+              "case",
+              [
+                [
+                  [
+                    "<",
+                    [
+                      "expression",
+                      "Stage Cycle Time In Days"
+                    ],
+                    2
+                  ],
+                  "0-1"
+                ],
+                [
+                  [
+                    "<",
+                    [
+                      "expression",
+                      "Stage Cycle Time In Days"
+                    ],
+                    5
+                  ],
+                  "2-4"
+                ],
+                [
+                  [
+                    "<",
+                    [
+                      "expression",
+                      "Stage Cycle Time In Days"
+                    ],
+                    9
+                  ],
+                  "5-8"
+                ],
+                [
+                  [
+                    "<",
+                    [
+                      "expression",
+                      "Stage Cycle Time In Days"
+                    ],
+                    13
+                  ],
+                  "9-12"
+                ]
+              ],
+              {
+                "default": "over 12"
+              }
+            ]
+          },
+          "filter": [
+            "!=",
+            [
+              "field",
+              "status_stage_category",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "Done"
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                "id",
+                {
+                  "base-type": "type/Text"
+                }
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              "status_stage_category",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            [
+              "field",
+              "status_stage_detail",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            [
+              "expression",
+              "Task Stage Cycle Time Category"
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "status_stage_detail",
+          "Task Stage Cycle Time Category"
+        ],
+        "graph.y_axis.title_text": "Number of tasks",
+        "graph.x_axis.title_text": "Status stage detail",
+        "graph.metrics": [
+          "count"
+        ]
+      }
     }
   ],
   "parameters": [],
@@ -106,8 +254,8 @@
     {
       "row": 4,
       "col": 1,
-      "sizeX": 16,
-      "sizeY": 8,
+      "sizeX": 8,
+      "sizeY": 7,
       "card_id": {{ card "Tasks Created by Day last 30 days" }},
       "series": [
         {
@@ -115,7 +263,25 @@
         }
       ],
       "parameter_mappings": [],
-      "visualization_settings": {}
+      "visualization_settings": {
+        "graph.dimensions": [
+          "createdAt"
+        ],
+        "graph.x_axis.title_text": "date",
+        "graph.y_axis.title_text": "Number of tasks",
+        "card.title": "Number of Tasks Created vs Completed last 30 days",
+        "series_settings": {
+          "count": {
+            "title": "Tasks Created"
+          },
+          "Tasks Completed by Day last 30 days": {
+            "title": "Tasks Completed"
+          }
+        },
+        "graph.metrics": [
+          "count"
+        ]
+      }
     },
     {
       "row": 0,
@@ -146,7 +312,18 @@
       "series": [],
       "parameter_mappings": [],
       "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 9,
+      "sizeX": 8,
+      "sizeY": 7,
+      "card_id": {{ card "Task Cycle Time Distribution (days) by Stage Detail" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
     }
   ],
   "path": "/Faros CE/Tasks"
 }
+

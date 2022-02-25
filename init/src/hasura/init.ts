@@ -262,24 +262,22 @@ class HasuraInit {
       },
     });
 
-    fs.readdir(directory, (err, files) => {
-      files.forEach(async file => {
-        await this.api.post('/v1/metadata', {
-          type: 'create_rest_endpoint',
-          args: {
-            name: file,
-            url: file,
-            methods: ["POST"],
-            definition: {
-              query: {
-                query_name: file,
-                collection_name: "mutations"
-              }
+    await Promise.all(fs.readdirSync(directory).map(async file => {
+      await this.api.post('/v1/metadata', {
+        type: 'create_rest_endpoint',
+        args: {
+          name: file,
+          url: file,
+          methods: ["POST"],
+          definition: {
+            query: {
+              query_name: file,
+              collection_name: "mutations"
             }
-          },
-        });
+          }
+        },
       });
-    });
+    }));
   }
 
   async trackAllTablesAndRelationships(): Promise<void> {

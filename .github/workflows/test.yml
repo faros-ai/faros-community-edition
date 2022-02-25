@@ -22,16 +22,24 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Build
+        run: npm ci --unsafe-perm
+        working-directory: init
+
       - name: Docker Compose version
         run: docker-compose version --short
 
       - name: Start services
         run: docker-compose up --quiet-pull -d
 
-      # TODO: do some actual testing
       - name: Run tests
-        run: sleep 60s
-        shell: bash
+        run: npm test -- --coverage
+        working-directory: init
 
       - name: Show logs
         run: docker-compose logs --tail all

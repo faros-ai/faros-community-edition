@@ -382,8 +382,9 @@ export class Dashboards {
     handlebars.registerHelper('table', (): number => 0);
     handlebars.registerHelper('field', (): number => 0);
     handlebars.registerHelper('dashboard', (): number => 0);
-    handlebars.registerHelper('card', (name: string): SafeString =>
-      new SafeString(`"${name}"`)
+    handlebars.registerHelper(
+      'card',
+      (name: string): SafeString => new SafeString(`"${name}"`)
     );
     const dashboard = JSON.parse(handlebars.compile(template)({}));
     const cardDependencies = new Map<string, string>();
@@ -394,9 +395,10 @@ export class Dashboards {
         if (cardDependencies.has(sourceTable)) {
           throw new VError(
             'cards referenced by other cards must be based on tables, ' +
-            // eslint-disable-next-line @typescript-eslint/quotes
-            `but card '%s', which is referenced by card '%s', is not`,
-            sourceTable, card.name
+              // eslint-disable-next-line @typescript-eslint/quotes
+              `but card '%s', which is referenced by card '%s', is not`,
+            sourceTable,
+            card.name
           );
         }
       }
@@ -526,7 +528,8 @@ export class Dashboards {
             throw new VError(
               // eslint-disable-next-line @typescript-eslint/quotes
               `unable to find parent card '%s' of card '%s'`,
-              parentCardName, card.name
+              parentCardName,
+              card.name
             );
           }
           const cardRef = `card__${parentCardId}`;

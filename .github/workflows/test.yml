@@ -22,6 +22,9 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
+      - name: Docker Compose version
+        run: docker-compose version --short
+
       - name: Start services
         run: docker-compose up --quiet-pull -d
 

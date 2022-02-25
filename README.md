@@ -7,11 +7,11 @@ Faros CE is an operational data platform that brings all engineering data in one
 
 ![Metrics](img/metrics.png)
 
-## Quickstart
+## 🏁 Quickstart
 
 Follow our [🏁 Quickstart Guide](https://community.faros.ai/docs/quickstart) to connect your engineering systems and explore the metrics, all in a matter of minutes!
 
-## Features
+## ✨ Features
 
 - **Rich Data Schema**: Connected canonical models for the whole SDLC; 50+ entities, from tasks to deployments
 - **Import from a variety of sources**: Easy data import onto our models from Task Management, Version Control, Incident Management, and CI/CD systems
@@ -20,7 +20,7 @@ Follow our [🏁 Quickstart Guide](https://community.faros.ai/docs/quickstart) t
 - **Extensibility and shareability**: Build and share custom metrics and dashboards
 - **Container based deployment**: Run on your laptop, private or public cloud, with no external dependencies.
 
-## Components
+## ℹ️ Components
 
 ![Architecture](img/architecture.png)
 
@@ -36,7 +36,7 @@ Built **100%** with open-source components:
 - **[Flyway](https://flywaydb.org)**: Schema evolution for the database schema
 - **[Faros Events CLI](https://github.com/faros-ai/faros-events-cli)**: CLI for reporting events to Faros platform, e.g builds & deployments from your CI/CD pipelines
 
-## Community support
+## 🤗 Community support
 
 For general help using Faros CE, please refer to the [official documentation](https://community.faros.ai). For additional help, you can use one of these channels to ask a question:
 
@@ -45,6 +45,6 @@ For general help using Faros CE, please refer to the [official documentation](ht
 
 Follow us on [Twitter](https://twitter.com/Faros_AI) or [LinkedIn](https://www.linkedin.com/company/faros-ai/) to get the latest company news.
 
-## License
+## 📜 License
 
 [Apache License 2.0](LICENSE)

@@ -1,3 +1,4 @@
+version: "3.7"
 services:
   airbyte-init:
     extends:
@@ -50,6 +51,7 @@ services:
       FAROS_DB_PORT: 5432
       FAROS_DB_USER: ${DATABASE_USER?}
       HASURA_DB_NAME: ${HASURA_DB_NAME?}
+      N8N_DB_NAME: ${N8N_DB_NAME?}
       HASURA_URL: http://hasura:8080
       LOG_LEVEL: ${FAROS_INIT_LOG_LEVEL:-info}
       METABASE_DB_NAME: ${METABASE_DB_NAME?}
@@ -93,6 +95,27 @@ services:
       MB_PASSWORD_COMPLEXITY: weak
       MB_PASSWORD_LENGTH: 1
       MB_SEND_EMAIL_ON_FIRST_LOGIN_FROM_NEW_DEVICE: "false"
+  n8n:
+    image: n8nio/n8n:${N8N_VERSION?}
+    container_name: n8n
+    ports:
+      - ${N8N_PORT?}:5678
+    depends_on:
+      - faros-db
+      - faros-init
+    restart: unless-stopped
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: faros-db
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME?}
+      DB_POSTGRESDB_SCHEMA: public
+      DB_POSTGRESDB_USER: ${DATABASE_USER?}
+      DB_POSTGRESDB_PASSWORD: ${DATABASE_PASSWORD?}
+      N8N_PERSONALIZATION_ENABLED: "false"
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
+
 volumes:
   workspace:
     name: ${WORKSPACE_DOCKER_MOUNT}

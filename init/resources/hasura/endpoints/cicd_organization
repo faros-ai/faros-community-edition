@@ -1,0 +1,6 @@
+mutation insert_cicd_Organization($data_artifact_organization: String!, $data_artifact_source: String) {
+  insert_cicd_Organization_one(object: {uid: $data_artifact_organization, source: $data_artifact_source}, on_conflict: {constraint: cicd_Organization_pkey, update_columns: []}) {
+    id
+  }
+}
+

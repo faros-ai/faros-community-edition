@@ -1,0 +1,25 @@
+mutation insert_cicd_Artifact(
+$data_artifact_repository: String!,
+$data_artifact_id: String!,
+$data_artifact_organization: String!,
+$data_artifact_source: String!) {
+  insert_cicd_Artifact_one(object: {
+		uid: $data_artifact_id,
+    cicd_Repository: {
+      data: {
+        uid: $data_artifact_repository,
+        cicd_Organization: {
+          data: {
+            uid: $data_artifact_organization,
+            source: $data_artifact_source
+          },
+          on_conflict: {constraint: cicd_Organization_pkey, update_columns:[refreshedAt]}
+        }
+      },
+			on_conflict: {constraint: cicd_Repository_pkey, update_columns:[refreshedAt]}
+    }
+  }, on_conflict: {constraint: cicd_Artifact_pkey, update_columns:[refreshedAt]}) 
+  {
+    id
+  }
+}

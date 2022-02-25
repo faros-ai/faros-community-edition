@@ -1,0 +1,51 @@
+mutation insert_cicd_deployment_with_build(
+$data_deploy_id: String!,
+$data_deploy_source: String!,
+$compute_Application: String!,
+$status: jsonb!,
+$env: jsonb!,
+$data_run_id: String!,
+$data_run_pipeline: String!,
+$data_run_organization: String!,
+$data_run_source: String!,
+$deploy_start_time: timestamptz!,
+$deploy_end_time: timestamptz!
+) {
+  insert_cicd_Deployment_one(object: {
+cicd_Build: {
+      data: {
+uid: $data_run_id,
+    cicd_Pipeline: {
+      data: {
+        uid: $data_run_pipeline,
+        cicd_Organization: {
+          data: {
+            uid: $data_run_organization,
+            source: $data_run_source
+          },
+          on_conflict: {constraint: cicd_Organization_pkey, update_columns:[refreshedAt]}
+        }
+      },
+      on_conflict: {constraint: cicd_Pipeline_pkey, update_columns:[refreshedAt]}
+    },
+
+      },
+      on_conflict: {constraint: cicd_Build_pkey, update_columns:[refreshedAt]}
+},
+
+		uid: $data_deploy_id,
+    source: $data_deploy_source,
+    application: $compute_Application,
+    status: $status,
+    env: $env,
+    startedAt: $deploy_start_time,
+    endedAt: $deploy_end_time
+  },
+  on_conflict: {
+    constraint: cicd_Deployment_pkey, 
+    update_columns: [application, status, env, startedAt, endedAt, refreshedAt]
+  }) 
+  {
+		id
+  }
+}

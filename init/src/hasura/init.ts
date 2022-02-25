@@ -236,6 +236,52 @@ class HasuraInit {
     return source;
   }
 
+  async createEndpoints(): Promise<void> {
+    let directory = path.join(RESOURCES_DIR, 'endpoints');
+    let mutations: { name: string; query: string; }[] = [];
+
+    await Promise.all(fs.readdirSync(directory).map(async file => {
+      let fileContents = await fs.readFile(
+        path.join(directory, file),
+        'utf8'
+      );
+
+      mutations.push({
+        name: file,
+        query: fileContents
+      });
+    }));
+
+    await this.api.post('/v1/metadata', {
+      type: 'create_query_collection',
+      args: {
+        name: "mutations",
+        definition: {
+          queries: mutations
+        }
+      },
+    });
+
+    fs.readdir(directory, (err, files) => {
+      files.forEach(async file => {
+        await this.api.post('/v1/metadata', {
+          type: 'create_rest_endpoint',
+          args: {
+            name: file,
+            url: file,
+            methods: ["POST"],
+            definition: {
+              query: {
+                query_name: file,
+                collection_name: "mutations"
+              }
+            }
+          },
+        });
+      });
+    });
+  }
+
   async trackAllTablesAndRelationships(): Promise<void> {
     const allTableNames = await this.listAllTables();
     const source = await this.getDbSource();
@@ -331,6 +377,7 @@ async function main(): Promise<void> {
   );
 
   await hasura.trackAllTablesAndRelationships();
+  await hasura.createEndpoints();
 
   logger.info('Hasura setup is complete');
 }

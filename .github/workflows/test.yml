@@ -31,4 +31,4 @@ jobs:
         shell: bash
 
       - name: Stop all
-        run: docker-compose down --timeout 30
+        run: docker-compose down

@@ -7,6 +7,7 @@ db_pass=${FAROS_DB_PASSWORD}
 faros_db_name=${FAROS_DB_NAME}
 hasura_db_name=${HASURA_DB_NAME}
 metabase_db_name=${METABASE_DB_NAME}
+n8n_db_name=${N8N_DB_NAME}
 
 db_url="postgres://$db_user:$db_pass@$db_host:$db_port"
 
@@ -33,3 +34,4 @@ flyway \
 
 create_database $hasura_db_name
 create_database $metabase_db_name
+create_database $n8n_db_name

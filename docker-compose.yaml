@@ -48,9 +48,10 @@ services:
       FAROS_DB_HOST: faros-db
       FAROS_DB_NAME: ${FAROS_DB_NAME?}
       FAROS_DB_PASSWORD: ${DATABASE_PASSWORD?}
-      FAROS_DB_PORT: 5432
+      FAROS_DB_PORT: ${FAROS_DB_PORT?}
       FAROS_DB_USER: ${DATABASE_USER?}
       HASURA_DB_NAME: ${HASURA_DB_NAME?}
+      N8N_DB_NAME: ${N8N_DB_NAME?}
       HASURA_URL: http://hasura:8080
       LOG_LEVEL: ${FAROS_INIT_LOG_LEVEL:-info}
       METABASE_DB_NAME: ${METABASE_DB_NAME?}
@@ -67,12 +68,12 @@ services:
       - faros-init
     restart: unless-stopped
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://${DATABASE_USER?}:${DATABASE_PASSWORD?}@faros-db:5432/${FAROS_DB_NAME?}
+      HASURA_GRAPHQL_DATABASE_URL: postgres://${DATABASE_USER?}:${DATABASE_PASSWORD?}@faros-db:${FAROS_DB_PORT?}/${FAROS_DB_NAME?}
       HASURA_GRAPHQL_DEV_MODE: "false"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
-      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://${DATABASE_USER?}:${DATABASE_PASSWORD?}@faros-db:5432/${HASURA_DB_NAME?}
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://${DATABASE_USER?}:${DATABASE_PASSWORD?}@faros-db:${FAROS_DB_PORT?}/${HASURA_DB_NAME?}
   metabase:
     build:
       context: ./metabase
@@ -88,12 +89,30 @@ services:
       MB_DB_DBNAME: ${METABASE_DB_NAME?}
       MB_DB_HOST: faros-db
       MB_DB_PASS: ${DATABASE_PASSWORD?}
-      MB_DB_PORT: 5432
+      MB_DB_PORT: ${FAROS_DB_PORT?}
       MB_DB_TYPE: postgres
       MB_DB_USER: ${DATABASE_USER?}
       MB_PASSWORD_COMPLEXITY: weak
       MB_PASSWORD_LENGTH: 1
       MB_SEND_EMAIL_ON_FIRST_LOGIN_FROM_NEW_DEVICE: "false"
+  n8n:
+    image: n8nio/n8n:${N8N_VERSION?}
+    container_name: n8n
+    ports:
+      - ${N8N_PORT?}:5678
+    depends_on:
+      - faros-db
+      - faros-init
+    restart: unless-stopped
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: faros-db
+      DB_POSTGRESDB_PORT: ${FAROS_DB_PORT?}
+      DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME?}
+      DB_POSTGRESDB_SCHEMA: public
+      DB_POSTGRESDB_USER: ${DATABASE_USER?}
+      DB_POSTGRESDB_PASSWORD: ${DATABASE_PASSWORD?}
+
 volumes:
   workspace:
     name: ${WORKSPACE_DOCKER_MOUNT}

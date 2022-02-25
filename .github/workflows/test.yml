@@ -28,10 +28,8 @@ jobs:
       - name: Start services
         run: docker-compose up --quiet-pull -d
 
-      # TODO: do some actual testing
       - name: Run tests
-        run: sleep 60s
-        shell: bash
+        run: npm test -- --coverage
 
       - name: Show logs
         run: docker-compose logs --tail all

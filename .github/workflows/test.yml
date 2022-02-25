@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v2
 
       - name: Start all
         run: docker-compose up --quiet-pull -d

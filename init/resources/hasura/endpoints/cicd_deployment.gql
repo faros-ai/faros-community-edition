@@ -1,27 +1,34 @@
 mutation insert_cicd_deployment_with_start_end(
-$data_deploy_id: String!,
-$data_deploy_source: String!,
-$compute_Application: String!,
-$status: jsonb!,
-$env: jsonb!,
-$deploy_start_time: timestamptz!,
-$deploy_end_time: timestamptz!
+  $data_deploy_id: String!
+  $data_deploy_source: String!
+  $compute_Application: String!
+  $status: jsonb!
+  $env: jsonb!
+  $deploy_start_time: timestamptz!
+  $deploy_end_time: timestamptz!
 ) {
-  insert_cicd_Deployment_one(object: {
-		uid: $data_deploy_id,
-    source: $data_deploy_source,
-    application: $compute_Application,
-    status: $status,
-    env: $env,
-    startedAt: $deploy_start_time,
-    endedAt: $deploy_end_time
-  },
-  on_conflict: {
-    constraint: cicd_Deployment_pkey, 
-    update_columns: [application, status, env, startedAt, endedAt, refreshedAt]
-  }) 
-  {
-		id
+  insert_cicd_Deployment_one(
+    object: {
+      uid: $data_deploy_id
+      source: $data_deploy_source
+      application: $compute_Application
+      status: $status
+      env: $env
+      startedAt: $deploy_start_time
+      endedAt: $deploy_end_time
+    }
+    on_conflict: {
+      constraint: cicd_Deployment_pkey
+      update_columns: [
+        application
+        status
+        env
+        startedAt
+        endedAt
+        refreshedAt
+      ]
+    }
+  ) {
+    id
   }
 }
-

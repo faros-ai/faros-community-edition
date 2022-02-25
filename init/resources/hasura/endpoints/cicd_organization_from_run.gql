@@ -1,6 +1,11 @@
-mutation insert_cicd_Organization($data_run_organization: String!, $data_run_source: String) {
-  insert_cicd_Organization_one(object: {uid: $data_run_organization, source: $data_run_source}, on_conflict: {constraint: cicd_Organization_pkey, update_columns: []}) {
+mutation insert_cicd_Organization(
+  $data_run_organization: String!
+  $data_run_source: String
+) {
+  insert_cicd_Organization_one(
+    object: {uid: $data_run_organization, source: $data_run_source}
+    on_conflict: {constraint: cicd_Organization_pkey, update_columns: []}
+  ) {
     id
   }
 }
-

@@ -2,6 +2,7 @@
 
 [![GitHub Stars](https://img.shields.io/github/stars/faros-ai/faros-community-edition?style=social)](https://github.com/faros-ai/faros-community-edition/stargazers/)
 [![Community Slack](https://img.shields.io/badge/chat-Slack-%234a154b)](https://community.faros.ai/slack)
+[![Test](https://github.com/faros-ai/faros-community-edition/actions/workflows/test.yml/badge.svg)](https://github.com/faros-ai/faros-community-edition/actions/workflows/test.yml)
 
 Faros CE is an operational data platform that brings all engineering data in one place to give engineering teams a no-code/low-code BI, API and automation layer for their operational data, usable in minutes.
 

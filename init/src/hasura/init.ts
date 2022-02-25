@@ -277,16 +277,6 @@ class HasuraInit {
     };
   }
 
-  async dropQueryFromCollection(collectionName: string, queryName: string): Promise<void> {
-    this.api.post('/v1/metadata', {
-      type: 'drop_query_from_collection',
-      args: {
-        collection_name: collectionName,
-        query_name: queryName,
-      },
-    });
-  }
-
   async addQueryToCollection(collectionName: string, query: Query): Promise<void> {
     this.api.post('/v1/metadata', {
       type: 'add_query_to_collection',
@@ -326,24 +316,16 @@ class HasuraInit {
         }
       });
     } else {
-      let toDrop: string[] = [];
       let toAdd: Query[] = [];
 
       for (const query of queryCollectionFromResources.definition.queries) {
-        const queryToUpdate = find(toUpdate.definition.queries, (q) => q.name === query.name);
-        if (queryToUpdate) {
-          if (queryToUpdate.query !== query.query) {
-            toDrop.push(queryToUpdate.name);
-            toAdd.push(query);
-          }
-        } else {
+        if (!find(toUpdate.definition.queries, (q) => q.name === query.name)) {
           toAdd.push(query);
         }
       }
 
-      if (toDrop.length > 0 || toAdd.length > 0) {
-        this.logger.info('Updating query collection \'%s\'. %d queries updated, %d added.', queryCollectionFromResources.name, toDrop.length, toAdd.length-toDrop.length);
-        await Promise.all(toDrop.map(queryName => this.dropQueryFromCollection(toUpdate.name, queryName)));
+      if (toAdd.length > 0) {
+        this.logger.info('Updating query collection \'%s\'. %d queries added.', queryCollectionFromResources.name, toAdd.length);
         await Promise.all(toAdd.map(query => this.addQueryToCollection(toUpdate.name, query)));
       }
     }

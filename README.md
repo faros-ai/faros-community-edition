@@ -5,7 +5,7 @@
 
 Faros CE is an operational data platform that brings all engineering data in one place to give engineering teams a no-code/low-code BI, API and automation layer for their operational data, usable in minutes.
 
-![Metrics](img/metrics.png)
+![Metrics](img/metrics-shadow.png)
 
 ## Quickstart
 

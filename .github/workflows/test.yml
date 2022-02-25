@@ -27,7 +27,7 @@ jobs:
 
       # TODO: do some actual testing
       - name: Run tests
-        run: sleep 30s
+        run: sleep 60s
         shell: bash
 
       - name: Show logs

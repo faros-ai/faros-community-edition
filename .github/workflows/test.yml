@@ -30,6 +30,7 @@ jobs:
 
       - name: Run tests
         run: npm test -- --coverage
+        working-directory: init
 
       - name: Show logs
         run: docker-compose logs --tail all

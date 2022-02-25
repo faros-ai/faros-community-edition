@@ -22,7 +22,7 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
-      - name: Start all
+      - name: Start services
         run: docker-compose up --quiet-pull -d
 
       # TODO: do some actual testing
@@ -30,5 +30,11 @@ jobs:
         run: sleep 30s
         shell: bash
 
-      - name: Stop all
+      - name: Show logs
+        run: docker-compose logs --tail all
+
+      - name: Show services
+        run: docker-compose ps -a
+
+      - name: Stop services
         run: docker-compose down

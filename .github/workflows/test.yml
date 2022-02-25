@@ -25,7 +25,8 @@ jobs:
       - name: Start all
         run: docker-compose up --quiet-pull -d
 
-      - name: Tests # TODO: do some actual testing
+      # TODO: do some actual testing
+      - name: Run tests
         run: sleep 30s
         shell: bash
 

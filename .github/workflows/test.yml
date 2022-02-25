@@ -22,6 +22,15 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Build
+        run: npm ci --unsafe-perm
+        working-directory: init
+
       - name: Docker Compose version
         run: docker-compose version --short
 

@@ -1,0 +1,43 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Docker Compose version
+        run: docker-compose version --short
+
+      - name: Start services
+        run: docker-compose up --quiet-pull -d
+
+      # TODO: do some actual testing
+      - name: Run tests
+        run: sleep 60s
+        shell: bash
+
+      - name: Show logs
+        run: docker-compose logs --tail all
+
+      - name: Show services
+        run: docker-compose ps -a
+
+      - name: Stop services
+        run: docker-compose down

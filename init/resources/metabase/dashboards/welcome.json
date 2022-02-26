@@ -93,7 +93,7 @@
           "dataset_query": {},
           "archived": false
         },
-        "text": "# Welcome to Faros Community Edition\n\nOur documentation is [here](https://docs.faros.ai); take the 10 minute tutorial!\n\n![architecture](https://github.com/faros-ai/faros-community-edition/blob/main/img/architecture.png?raw=true)"
+        "text": "# Welcome to Faros Community Edition\n\nOur documentation is [here](https://community.faros.ai); take the 10 minute tutorial!\n\n![architecture](https://github.com/faros-ai/faros-community-edition/blob/main/img/architecture.png?raw=true)"
       }
     },
     {
@@ -112,7 +112,7 @@
           "dataset_query": {},
           "archived": false
         },
-        "text": "# Quick Links\n\n## Components\n* [Airbyte](http://localhost:8000)\n* [Hasura](http://localhost:8080)\n* [n8n](https://localhost:5678)\n\n## Dashboards\n* [PRs](http://localhost:3000/dashboard/{{ dashboard "PRs dashboard" }})\n* [Tasks](http://localhost:3000/dashboard/{{ dashboard "Tasks dashboard" }})\n* Builds (Coming Soon)\n* Incidents (Coming Soon)\n\n"
+        "text": "# Quick Links\n\n## Components\n* [Airbyte](http://localhost:8000)\n* [Hasura](http://localhost:8080)\n* [n8n](http://localhost:5678)\n\n## Dashboards\n* [PRs](http://localhost:3000/dashboard/{{ dashboard "PRs dashboard" }})\n* [Tasks](http://localhost:3000/dashboard/{{ dashboard "Tasks dashboard" }})\n* Builds (Coming Soon)\n* Incidents (Coming Soon)\n\n"
       }
     },
     {

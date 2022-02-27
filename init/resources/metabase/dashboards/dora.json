@@ -29,8 +29,7 @@
           "source-table": {{ card "LeadTime" }},
           "aggregation": [
             [
-              "avg",
-              [
+              "avg",              [
                 "field",
                 "lead_time",
                 {
@@ -234,7 +233,7 @@
             "title": "time in qa"
           },
           "avg_5": {
-            "title": "time in staging"
+            "title": "time in staging"          
           },
           "avg_6": {
             "title": "unaccounted time"
@@ -501,7 +500,7 @@
       "dataset_query": {
         "type": "native",
         "native": {
-          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution\nfrom \"ims_Incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and \\{{createdAt}}",
+          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution\nfrom \"ims_Incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and \{{createdAt}}",
           "template-tags": {
             "createdAt": {
               "id": "640ead5c-9060-8a86-9129-46678ed8a514",
@@ -562,7 +561,7 @@
       "dataset_query": {
         "type": "native",
         "native": {
-          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution, \"ims_IncidentApplicationImpact\".\"application\", (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')) as \"createdAt\"\nfrom \"ims_Incident\" left join \"ims_IncidentApplicationImpact\" on \"ims_Incident\".\"id\" = \"ims_IncidentApplicationImpact\".\"incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and \\{{createdAt}}\ngroup by (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')), \"ims_IncidentApplicationImpact\".\"application\"\norder by (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')) asc, \"ims_IncidentApplicationImpact\".\"application\" asc\n",
+          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution, \"ims_IncidentApplicationImpact\".\"application\", (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')) as \"createdAt\"\nfrom \"ims_Incident\" left join \"ims_IncidentApplicationImpact\" on \"ims_Incident\".\"id\" = \"ims_IncidentApplicationImpact\".\"incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and \{{createdAt}}\ngroup by (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')), \"ims_IncidentApplicationImpact\".\"application\"\norder by (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')) asc, \"ims_IncidentApplicationImpact\".\"application\" asc\n",
           "template-tags": {
             "createdAt": {
               "id": "640ead5c-9060-8a86-9129-46678ed8a514",
@@ -632,7 +631,7 @@
       "dataset_query": {
         "type": "native",
         "native": {
-          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution, \"ims_IncidentApplicationImpact\".\"application\", \"ims_Incident\".\"severityCategory\"\nfrom \"ims_Incident\" left join \"ims_IncidentApplicationImpact\" on \"ims_Incident\".\"id\" = \"ims_IncidentApplicationImpact\".\"incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and \\{{createdAt}}\ngroup by \"ims_Incident\".\"severityCategory\", \"ims_IncidentApplicationImpact\".\"application\"\norder by \"ims_IncidentApplicationImpact\".\"application\" asc, \"ims_Incident\".\"severityCategory\" asc\n",
+          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution, \"ims_IncidentApplicationImpact\".\"application\", \"ims_Incident\".\"severityCategory\"\nfrom \"ims_Incident\" left join \"ims_IncidentApplicationImpact\" on \"ims_Incident\".\"id\" = \"ims_IncidentApplicationImpact\".\"incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and \{{createdAt}}\ngroup by \"ims_Incident\".\"severityCategory\", \"ims_IncidentApplicationImpact\".\"application\"\norder by \"ims_IncidentApplicationImpact\".\"application\" asc, \"ims_Incident\".\"severityCategory\" asc\n",
           "template-tags": {
             "createdAt": {
               "id": "640ead5c-9060-8a86-9129-46678ed8a514",

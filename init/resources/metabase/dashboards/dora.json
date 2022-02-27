@@ -492,6 +492,207 @@
           "count"
         ]
       }
+    },
+    {
+      "name": "Mean Time to Resolution (MTTR)",
+      "description": null,
+      "display": "gauge",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution\nfrom \"ims_Incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and \\{{createdAt}}",
+          "template-tags": {
+            "createdAt": {
+              "id": "640ead5c-9060-8a86-9129-46678ed8a514",
+              "name": "createdAt",
+              "display-name": "Created At",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "ims_Incident.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative"
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0,
+            "max": 3600000,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 3600000,
+            "max": 86400000,
+            "color": "#F9CF48",
+            "label": "High"
+          },
+          {
+            "min": 86400000,
+            "max": 432000000,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 432000000,
+            "max": 864000000,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ],
+        "column_settings": {
+          "[\"name\",\"time_to_resolution\"]": {
+            "scale": 2.77e-7,
+            "suffix": " hours",
+            "decimals": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "MTTR by Application over Time",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution, \"ims_IncidentApplicationImpact\".\"application\", (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')) as \"createdAt\"\nfrom \"ims_Incident\" left join \"ims_IncidentApplicationImpact\" on \"ims_Incident\".\"id\" = \"ims_IncidentApplicationImpact\".\"incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and \\{{createdAt}}\ngroup by (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')), \"ims_IncidentApplicationImpact\".\"application\"\norder by (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')) asc, \"ims_IncidentApplicationImpact\".\"application\" asc\n",
+          "template-tags": {
+            "createdAt": {
+              "id": "640ead5c-9060-8a86-9129-46678ed8a514",
+              "name": "createdAt",
+              "display-name": "Created At",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "ims_Incident.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative"
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0,
+            "max": 3600000,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 3600000,
+            "max": 86400000,
+            "color": "#F9CF48",
+            "label": "High"
+          },
+          {
+            "min": 86400000,
+            "max": 432000000,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 432000000,
+            "max": 864000000,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ],
+        "graph.x_axis.title_text": "Week Of",
+        "graph.y_axis.title_text": "Mean Time to Resolution",
+        "graph.dimensions": [
+          "createdAt",
+          "application"
+        ],
+        "graph.metrics": [
+          "time_to_resolution"
+        ],
+        "column_settings": {
+          "[\"name\",\"time_to_resolution\"]": {
+            "scale": 2.77e-7,
+            "suffix": " hours",
+            "decimals": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "MTTR by Application by Severity",
+      "description": null,
+      "display": "bar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution, \"ims_IncidentApplicationImpact\".\"application\", \"ims_Incident\".\"severityCategory\"\nfrom \"ims_Incident\" left join \"ims_IncidentApplicationImpact\" on \"ims_Incident\".\"id\" = \"ims_IncidentApplicationImpact\".\"incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and \\{{createdAt}}\ngroup by \"ims_Incident\".\"severityCategory\", \"ims_IncidentApplicationImpact\".\"application\"\norder by \"ims_IncidentApplicationImpact\".\"application\" asc, \"ims_Incident\".\"severityCategory\" asc\n",
+          "template-tags": {
+            "createdAt": {
+              "id": "640ead5c-9060-8a86-9129-46678ed8a514",
+              "name": "createdAt",
+              "display-name": "Created At",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "ims_Incident.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative"
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0,
+            "max": 3600000,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 3600000,
+            "max": 86400000,
+            "color": "#F9CF48",
+            "label": "High"
+          },
+          {
+            "min": 86400000,
+            "max": 432000000,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 432000000,
+            "max": 864000000,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ],
+        "graph.x_axis.title_text": "Week Of",
+        "graph.y_axis.title_text": "Mean Time to Resolution",
+        "graph.dimensions": [
+          "application",
+          "severityCategory"
+        ],
+        "graph.metrics": [
+          "time_to_resolution"
+        ],
+        "column_settings": {
+          "[\"name\",\"time_to_resolution\"]": {
+            "scale": 2.77e-7,
+            "suffix": " hours",
+            "decimals": 1
+          }
+        }
+      }
     }
   ],
   "parameters": [
@@ -506,7 +707,7 @@
   ],
   "layout": [
     {
-      "row": 4,
+      "row": 6,
       "col": 0,
       "sizeX": 4,
       "sizeY": 4,
@@ -531,7 +732,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 4,
+      "row": 6,
       "col": 4,
       "sizeX": 8,
       "sizeY": 4,
@@ -556,7 +757,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 4,
+      "row": 6,
       "col": 12,
       "sizeX": 6,
       "sizeY": 4,
@@ -581,7 +782,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 0,
+      "row": 2,
       "col": 0,
       "sizeX": 4,
       "sizeY": 4,
@@ -606,7 +807,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 0,
+      "row": 2,
       "col": 4,
       "sizeX": 8,
       "sizeY": 4,
@@ -629,7 +830,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 0,
+      "row": 2,
       "col": 12,
       "sizeX": 6,
       "sizeY": 4,
@@ -650,7 +851,112 @@
         }
       ],
       "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 2,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "The widely used DORA metrics* are used to measure velocity and quality of software delivery. The summary below details overall performance with respect to each DORA metric (left), along with trends across applications (middle), and supporting detail (right), for context. These charts require data from deployments, commits, pull requests, and incidents in order to render completely. \n\n# Velocity Metrics"
+      }
+    },
+    {
+      "row": 10,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "# Quality Metrics"
+      }
+    },
+    {
+      "row": 11,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Mean Time to Resolution (MTTR)" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Mean Time to Resolution (MTTR)" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 11,
+      "col": 4,
+      "sizeX": 8,
+      "sizeY": 4,
+      "card_id": {{ card "MTTR by Application over Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "MTTR by Application over Time" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 11,
+      "col": 12,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "MTTR by Application by Severity" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "MTTR by Application by Severity" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
     }
   ],
   "path": "/Faros CE/DORA"
 }
+

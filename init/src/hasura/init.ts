@@ -19,8 +19,11 @@ import {VError} from 'verror';
 import {BASE_RESOURCES_DIR} from '../config';
 import {
   ArrayRelationship,
+  Endpoint,
   ForeignKey,
   ObjectRelationship,
+  Query,
+  QueryCollection,
   Source,
   TableRelationships,
 } from './types';
@@ -107,18 +110,34 @@ class HasuraInit {
     return union(difference(foreignKeys, conflictingKeys), fixedKeys);
   }
 
+  private async getMetadata(): Promise<any> {
+    return await this.api
+      .post('/v1/metadata', {
+        type: 'export_metadata',
+        version: 2,
+        args: {},
+      })
+      .then((response) => response.data.metadata);
+  }
+
   private async getDbSource(): Promise<Source> {
-    const response = await this.api.post('/v1/metadata', {
-      type: 'export_metadata',
-      version: 2,
-      args: {},
-    });
-    const sources: Source[] = response.data.metadata.sources;
+    const metadata = await this.getMetadata();
+    const sources: Source[] = metadata.sources;
     const defaultSource = find(sources, (source) => source.name === 'default');
     if (!defaultSource) {
       throw new VError('Faros database not connected to Hasura');
     }
     return defaultSource;
+  }
+
+  private async getQueryCollections(): Promise<ReadonlyArray<QueryCollection>> {
+    return await this.getMetadata().then(
+      (metadata) => metadata.query_collections
+    );
+  }
+
+  private async getEndpoints(): Promise<ReadonlyArray<Endpoint>> {
+    return await this.getMetadata().then((metadata) => metadata.rest_endpoints);
   }
 
   private async trackTable(table: string): Promise<void> {
@@ -236,6 +255,151 @@ class HasuraInit {
     return source;
   }
 
+  private async loadQueryCollectionFromResources(): Promise<QueryCollection> {
+    const directory = path.join(RESOURCES_DIR, 'endpoints');
+    const mutations: Query[] = [];
+
+    await Promise.all(
+      fs
+        .readdirSync(directory)
+        .filter((file) => file.endsWith('.gql'))
+        .map(async (file) => {
+          const fileContents = await fs.readFile(
+            path.join(directory, file),
+            'utf8'
+          );
+
+          mutations.push({
+            // Remove the ".gql" from the file name and use as query name.
+            name: file.substring(0, file.length - 4),
+            query: fileContents,
+          });
+        })
+    );
+
+    return {
+      name: 'allowed-queries',
+      definition: {
+        queries: mutations,
+      },
+    };
+  }
+
+  private async addQueryToCollection(
+    collectionName: string,
+    query: Query
+  ): Promise<void> {
+    await this.api.post('/v1/metadata', {
+      type: 'add_query_to_collection',
+      args: {
+        collection_name: collectionName,
+        query_name: query.name,
+        query: query.query,
+      },
+    });
+  }
+
+  private async addEndpoint(endpoint: Endpoint): Promise<void> {
+    await this.api.post('/v1/metadata', {
+      type: 'create_rest_endpoint',
+      args: endpoint,
+    });
+  }
+
+  private async updateQueryCollections(
+    queryCollectionFromResources: QueryCollection
+  ): Promise<void> {
+    const queryCollections = await this.getQueryCollections();
+    const toUpdate = find(
+      queryCollections,
+      (collection) => collection.name === queryCollectionFromResources.name
+    );
+
+    if (!toUpdate) {
+      // The query collection from resources doesn't exist in the metadata.
+      // Safely create a new query collection.
+      this.logger.info(
+        "Creating query collection '%s'. %d queries added",
+        queryCollectionFromResources.name,
+        queryCollectionFromResources.definition.queries.length
+      );
+      await this.api.post('/v1/metadata', {
+        type: 'create_query_collection',
+        args: queryCollectionFromResources,
+      });
+      await this.api.post('/v1/metadata', {
+        type: 'add_collection_to_allowlist',
+        args: {
+          collection: queryCollectionFromResources.name,
+          scope: {
+            global: true,
+          },
+        },
+      });
+    } else {
+      const toAdd: Query[] = [];
+
+      for (const query of queryCollectionFromResources.definition.queries) {
+        if (!find(toUpdate.definition.queries, (q) => q.name === query.name)) {
+          toAdd.push(query);
+        }
+      }
+
+      if (toAdd.length > 0) {
+        this.logger.info(
+          "Updating query collection '%s'. %d queries added.",
+          queryCollectionFromResources.name,
+          toAdd.length
+        );
+        await Promise.all(
+          toAdd.map((query) => this.addQueryToCollection(toUpdate.name, query))
+        );
+      }
+    }
+  }
+
+  private async updateEndpoints(
+    queryCollectionFromResources: QueryCollection
+  ): Promise<void> {
+    const endpoints = await this.getEndpoints();
+    const endpointsFromResources: Endpoint[] =
+      queryCollectionFromResources.definition.queries.map((q) => {
+        return {
+          name: q.name,
+          url: q.name,
+          comment: null,
+          methods: ['POST'],
+          definition: {
+            query: {
+              query_name: q.name,
+              collection_name: queryCollectionFromResources.name,
+            },
+          },
+        };
+      });
+
+    const toAdd: Endpoint[] = [];
+
+    for (const endpoint of endpointsFromResources) {
+      const endpointToUpdate = find(endpoints, (e) => e.name === endpoint.name);
+      if (!endpointToUpdate) {
+        toAdd.push(endpoint);
+      }
+    }
+
+    if (toAdd.length > 0) {
+      this.logger.info('Updating endpoints. %d added.', toAdd.length);
+      await Promise.all(toAdd.map((endpoint) => this.addEndpoint(endpoint)));
+    }
+  }
+
+  async createEndpoints(): Promise<void> {
+    const queryCollectionFromResources =
+      await this.loadQueryCollectionFromResources();
+    await this.updateQueryCollections(queryCollectionFromResources);
+    await this.updateEndpoints(queryCollectionFromResources);
+  }
+
   async trackAllTablesAndRelationships(): Promise<void> {
     const allTableNames = await this.listAllTables();
     const source = await this.getDbSource();
@@ -331,6 +495,7 @@ async function main(): Promise<void> {
   );
 
   await hasura.trackAllTablesAndRelationships();
+  await hasura.createEndpoints();
 
   logger.info('Hasura setup is complete');
 }

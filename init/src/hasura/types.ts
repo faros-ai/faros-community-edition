@@ -47,3 +47,28 @@ export interface TableRelationships {
   objectRels: ReadonlyArray<ObjectRelationship>;
   arrayRels: ReadonlyArray<ArrayRelationship>;
 }
+
+export interface Query {
+  name: string;
+  query: string;
+}
+
+export interface QueryCollection {
+  name: string;
+  definition: {
+    queries: ReadonlyArray<Query>;
+  };
+}
+
+export interface Endpoint {
+  name: string;
+  url: string;
+  comment: string | null;
+  methods: ReadonlyArray<string>;
+  definition: {
+    query: {
+      query_name: string;
+      collection_name: string;
+    };
+  };
+}

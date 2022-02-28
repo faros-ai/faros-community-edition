@@ -1,0 +1,33 @@
+mutation insert_cicd_Build(
+  $data_run_source: String!
+  $data_run_pipeline: String!
+  $data_run_organization: String!
+  $run_status: jsonb!
+  $data_run_id: String!
+) {
+  insert_cicd_Build_one(
+    object: {
+      uid: $data_run_id
+      cicd_Pipeline: {
+        data: {
+          uid: $data_run_pipeline
+          cicd_Organization: {
+            data: {uid: $data_run_organization, source: $data_run_source}
+            on_conflict: {
+              constraint: cicd_Organization_pkey
+              update_columns: refreshedAt
+            }
+          }
+        }
+        on_conflict: {
+          constraint: cicd_Pipeline_pkey
+          update_columns: refreshedAt
+        }
+      }
+      status: $run_status
+    }
+    on_conflict: {constraint: cicd_Build_pkey, update_columns: refreshedAt}
+  ) {
+    id
+  }
+}

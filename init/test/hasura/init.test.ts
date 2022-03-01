@@ -18,7 +18,7 @@ describe('init', () => {
   const hasura = new HasuraInit(
     axios,
     pino(logger),
-    path.join(__dirname, '..', 'resources')
+    path.join(__dirname, '..', 'resources', 'hasura')
   );
 
   function getMetadata(callIndex: number) {

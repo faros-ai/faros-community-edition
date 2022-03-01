@@ -71,7 +71,7 @@
       ".d.ts",
       ".js"
     ],
-    "testTimeout": 30000,
+    "testTimeout": 5000,
     "globals": {
       "ts-jest": {
         "tsconfig": "test/tsconfig.json"

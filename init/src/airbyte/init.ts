@@ -1,3 +1,4 @@
+import Analytics from 'analytics-node';
 import retry from 'async-retry';
 import axios, {AxiosInstance} from 'axios';
 import fs from 'fs-extra';
@@ -7,6 +8,7 @@ import os from 'os';
 import path from 'path';
 import pino from 'pino';
 import tar from 'tar';
+import util from 'util';
 import {v4 as uuidv4, v5 as uuidv5} from 'uuid';
 import {VError} from 'verror';
 
@@ -25,6 +27,11 @@ const WORKSPACE_TEMPLATE_DIR = path.join(
 );
 
 const UUID_NAMESPACE = 'bb229e18-eb5f-4309-a863-893cbec53758';
+
+interface SegmentUser {
+  readonly userId: string;
+  readonly email: string;
+}
 
 export class AirbyteInit {
   constructor(private readonly api: AxiosInstance) {}
@@ -49,14 +56,42 @@ export class AirbyteInit {
     return path.join(dir, 'airbyte_config', 'DESTINATION_CONNECTION.yaml');
   }
 
-  private static getSegmentUserId(): string {
-    if (process.env.HOSTNAME) {
-      return uuidv5(process.env.HOSTNAME, UUID_NAMESPACE);
+  static makeSegmentUser(): SegmentUser {
+    const envEmail = process.env.FAROS_EMAIL;
+    if (envEmail && envEmail !== undefined && envEmail !== '') {
+      return {
+        userId: uuidv5(envEmail, UUID_NAMESPACE),
+        email: envEmail,
+      };
     }
-    return uuidv4();
+    const email = 'anonymous@anonymous.me';
+    if (process.env.HOSTNAME) {
+      return {userId: uuidv5(process.env.HOSTNAME, UUID_NAMESPACE), email};
+    }
+    return {userId: uuidv4(), email};
   }
 
-  async setupWorkspace(forceSetup?: boolean): Promise<void> {
+  static sendIdentity(
+    segmentUser: SegmentUser,
+    host?: string | undefined
+  ): Promise<void> {
+    const analytics = new Analytics('YEu7VC65n9dIR85pQ1tgV2RHQHjo2bwn', {
+      // Segment host is used for testing purposes only
+      host,
+    });
+    const fn = (callback: ((err: Error) => void) | undefined): Analytics =>
+      analytics.identify(
+        {userId: segmentUser.userId, traits: {email: segmentUser.email}},
+        callback
+      );
+
+    return util.promisify(fn)();
+  }
+
+  async setupWorkspace(
+    segmentUser: SegmentUser,
+    forceSetup?: boolean
+  ): Promise<void> {
     const response = await this.api.post('/workspaces/list');
     const workspaces: any[] = response.data.workspaces ?? [];
     if (workspaces.length === 0) {
@@ -86,9 +121,7 @@ export class AirbyteInit {
     const destTemplate = await fs.readFile(destTemplatePath, 'utf-8');
     await fs.writeFile(
       destTemplatePath,
-      handlebars.compile(destTemplate)({
-        segment_user_id: AirbyteInit.getSegmentUserId(),
-      }),
+      handlebars.compile(destTemplate)({segment_user_id: segmentUser.userId}),
       'utf-8'
     );
     const workspaceZipPath = path.join(tmpDir, 'workspace.tar.gz');
@@ -186,8 +219,11 @@ async function main(): Promise<void> {
     })
   );
 
+  const segmentUser = AirbyteInit.makeSegmentUser();
+  await AirbyteInit.sendIdentity(segmentUser);
+
   await airbyte.waitUntilHealthy();
-  await airbyte.setupWorkspace(forceSetup === 'true');
+  await airbyte.setupWorkspace(segmentUser, forceSetup === 'true');
   await airbyte.setupFarosDestinationDefinition();
   logger.info('Airbyte setup is complete');
 }

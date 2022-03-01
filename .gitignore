@@ -107,3 +107,6 @@ lib/
 
 # Visual Studio Code
 .vscode/
+
+# Faros Email
+.faros-email

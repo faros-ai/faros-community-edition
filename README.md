@@ -44,7 +44,7 @@ For general help using Faros CE, please refer to the [official documentation](ht
 - **[Slack](https://community.faros.ai/slack)**: Live discussions with the Community and Faros team
 - **[GitHub Issues](https://github.com/faros-ai/faros-community-edition/issues)**: Bug reports, suggestions, contributions
 
-Follow us on [Twitter](https://twitter.com/Faros_AI) or [LinkedIn](https://www.linkedin.com/company/faros-ai/) to get the latest company news.
+Check out our [website](https://faros.ai). Follow us on [Twitter](https://twitter.com/Faros_AI) or [LinkedIn](https://www.linkedin.com/company/faros-ai/) to get the latest company news.
 
 ## 📜 License
 

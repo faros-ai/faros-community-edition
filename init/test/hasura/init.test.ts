@@ -17,7 +17,15 @@ import {
 
 describe('init', () => {
   const logger = pino({
-    name: 'hasura-init',
+    name: 'test',
+    level: process.env.LOG_LEVEL ?? 'info',
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        levelFirst: true
+      }
+    }
   });
 
   const host = 'http://test.test.com';
@@ -27,7 +35,7 @@ describe('init', () => {
       baseURL: host,
       headers: {'X-Hasura-Role': 'admin'},
     }),
-    pino(logger),
+    logger,
     path.join(__dirname, '..', 'resources', 'hasura')
   );
 

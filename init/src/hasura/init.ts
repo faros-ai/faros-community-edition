@@ -492,7 +492,7 @@ async function main(): Promise<void> {
       baseURL: args[0],
       headers: {'X-Hasura-Role': 'admin'},
     }),
-    pino(logger)
+    logger
   );
 
   await hasura.trackAllTablesAndRelationships();

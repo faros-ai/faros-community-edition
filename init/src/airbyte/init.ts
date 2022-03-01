@@ -78,14 +78,23 @@ export class AirbyteInit {
     const analytics = new Analytics('YEu7VC65n9dIR85pQ1tgV2RHQHjo2bwn', {
       // Segment host is used for testing purposes only
       host,
-    });
-    const fn = (callback: ((err: Error) => void) | undefined): Analytics =>
+    } as any);
+    const fn = (callback: ((err: Error) => void) | undefined): Analytics => {
       analytics.identify(
-        {userId: segmentUser.userId, traits: {email: segmentUser.email}},
+        {
+          userId: segmentUser.userId,
+          traits: {email: segmentUser.email},
+        },
         callback
       );
+      return analytics.flush(callback);
+    };
 
-    return util.promisify(fn)();
+    return util
+      .promisify(fn)()
+      .catch((err) =>
+        logger.error(`Failed to send identity event: ${err.message}`)
+      );
   }
 
   async setupWorkspace(

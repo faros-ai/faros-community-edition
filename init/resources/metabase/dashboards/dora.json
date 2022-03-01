@@ -956,6 +956,7 @@
       "visualization_settings": {}
     }
   ],
-  "path": "/Faros CE/DORA"
+  "path": "/Faros CE/DORA",
+  "priority": 3
 }
 

@@ -78,8 +78,8 @@ export class AirbyteInit {
     const analytics = new Analytics('YEu7VC65n9dIR85pQ1tgV2RHQHjo2bwn', {
       // Segment host is used for testing purposes only
       host,
-    } as any);
-    const fn = (callback: ((err: Error) => void) | undefined): Analytics => {
+    });
+    const fn = (callback: ((err: Error) => void) | undefined): void => {
       analytics.identify(
         {
           userId: segmentUser.userId,
@@ -87,7 +87,7 @@ export class AirbyteInit {
         },
         callback
       );
-      return analytics.flush(callback);
+      analytics.flush(callback);
     };
 
     return util

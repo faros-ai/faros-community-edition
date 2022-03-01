@@ -8,7 +8,7 @@ const USAGE =
   '<metabase url> <username> <password> <export <dashboardId> | import>';
 
 const logger = pino({
-  name: 'airbyte-init',
+  name: 'metabase-init',
   level: process.env.LOG_LEVEL || 'info',
 });
 

@@ -30,10 +30,11 @@ import {
 
 const RESOURCES_DIR = path.join(BASE_RESOURCES_DIR, 'hasura');
 
-class HasuraInit {
+export class HasuraInit {
   constructor(
     private readonly api: AxiosInstance,
-    private readonly logger: pino.Logger
+    private readonly logger: pino.Logger,
+    private readonly resourcesDir: string = RESOURCES_DIR
   ) {}
 
   private async listAllTables(): Promise<ReadonlyArray<string>> {
@@ -42,7 +43,7 @@ class HasuraInit {
       args: {
         source: 'default',
         sql: await fs.readFile(
-          path.join(RESOURCES_DIR, 'list-all-tables.sql'),
+          path.join(this.resourcesDir, 'list-all-tables.sql'),
           'utf8'
         ),
         cascade: false,
@@ -61,7 +62,7 @@ class HasuraInit {
       args: {
         source: 'default',
         sql: await fs.readFile(
-          path.join(RESOURCES_DIR, 'list-all-foreign-keys.sql'),
+          path.join(this.resourcesDir, 'list-all-foreign-keys.sql'),
           'utf8'
         ),
         cascade: false,
@@ -256,7 +257,7 @@ class HasuraInit {
   }
 
   private async loadQueryCollectionFromResources(): Promise<QueryCollection> {
-    const directory = path.join(RESOURCES_DIR, 'endpoints');
+    const directory = path.join(this.resourcesDir, 'endpoints');
     const mutations: Query[] = [];
 
     await Promise.all(
@@ -319,7 +320,7 @@ class HasuraInit {
       // The query collection from resources doesn't exist in the metadata.
       // Safely create a new query collection.
       this.logger.info(
-        "Creating query collection '%s'. %d queries added",
+        'Creating query collection \'%s\'. %d queries added',
         queryCollectionFromResources.name,
         queryCollectionFromResources.definition.queries.length
       );
@@ -347,7 +348,7 @@ class HasuraInit {
 
       if (toAdd.length > 0) {
         this.logger.info(
-          "Updating query collection '%s'. %d queries added.",
+          'Updating query collection \'%s\'. %d queries added.',
           queryCollectionFromResources.name,
           toAdd.length
         );

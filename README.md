@@ -1,7 +1,7 @@
 # ![](img/faros.ico) Faros Community Edition (CE)
 
 [![GitHub Stars](https://img.shields.io/github/stars/faros-ai/faros-community-edition?style=social)](https://github.com/faros-ai/faros-community-edition/stargazers/)
-[![Community Slack](https://img.shields.io/badge/chat-Slack-%234a154b)](https://community.faros.ai/slack)
+[![Community Slack](https://img.shields.io/badge/chat-Slack-%234a154b)](https://community.faros.ai/docs/slack)
 [![Test](https://github.com/faros-ai/faros-community-edition/actions/workflows/test.yml/badge.svg)](https://github.com/faros-ai/faros-community-edition/actions/workflows/test.yml)
 
 Faros CE is an operational data platform that brings all engineering data in one place to give engineering teams a no-code/low-code BI, API and automation layer for their operational data, usable in minutes.
@@ -41,7 +41,7 @@ Built **100%** with open-source components:
 
 For general help using Faros CE, please refer to the [official documentation](https://community.faros.ai). For additional help, you can use one of these channels to ask a question:
 
-- **[Slack](https://community.faros.ai/slack)**: Live discussions with the Community and Faros team
+- **[Slack](https://community.faros.ai/docs/slack)**: Live discussions with the Community and Faros team
 - **[GitHub Issues](https://github.com/faros-ai/faros-community-edition/issues)**: Bug reports, suggestions, contributions
 
 Check out our [website](https://faros.ai). Follow us on [Twitter](https://twitter.com/Faros_AI) or [LinkedIn](https://www.linkedin.com/company/faros-ai/) to get the latest company news.

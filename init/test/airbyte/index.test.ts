@@ -1,10 +1,10 @@
 import nock from 'nock';
 
-import {AirbyteInit} from '../../src/airbyte/init';
+import {AirbyteInit, FAROS_DEST_REPO} from '../../src/airbyte/init';
 
 describe('airbyte', () => {
   test('get latest Faros Destination version', async () => {
-    expect(await AirbyteInit.getLatestFarosDestinationVersion()).toBeTruthy();
+    expect(await AirbyteInit.getLatestImageTag(FAROS_DEST_REPO)).toBeTruthy();
   });
 
   test('send identity event with email', async () => {

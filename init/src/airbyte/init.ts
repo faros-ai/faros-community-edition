@@ -19,7 +19,7 @@ const logger = pino({
   level: process.env.LOG_LEVEL || 'info',
 });
 
-const FAROS_DEST_REPO = 'farosai/airbyte-faros-destination';
+export const FAROS_DEST_REPO = 'farosai/airbyte-faros-destination';
 const WORKSPACE_TEMPLATE_DIR = path.join(
   BASE_RESOURCES_DIR,
   'airbyte',

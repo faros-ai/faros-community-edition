@@ -269,5 +269,6 @@
       "visualization_settings": {}
     }
   ],
-  "path": "/Faros CE/PR"
+  "path": "/Faros CE/PR",
+  "priority": 2
 }

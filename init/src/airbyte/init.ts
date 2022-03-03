@@ -1,3 +1,4 @@
+import Analytics from 'analytics-node';
 import retry from 'async-retry';
 import axios, {AxiosInstance} from 'axios';
 import fs from 'fs-extra';
@@ -7,17 +8,19 @@ import os from 'os';
 import path from 'path';
 import pino from 'pino';
 import tar from 'tar';
+import util from 'util';
 import {v4 as uuidv4, v5 as uuidv5} from 'uuid';
 import {VError} from 'verror';
 
 import {BASE_RESOURCES_DIR} from '../config';
+import {DestinationDefinition, SourceDefinition} from './types';
 
 const logger = pino({
   name: 'airbyte-init',
   level: process.env.LOG_LEVEL || 'info',
 });
 
-const FAROS_DEST_REPO = 'farosai/airbyte-faros-destination';
+export const FAROS_DEST_REPO = 'farosai/airbyte-faros-destination';
 const WORKSPACE_TEMPLATE_DIR = path.join(
   BASE_RESOURCES_DIR,
   'airbyte',
@@ -25,6 +28,11 @@ const WORKSPACE_TEMPLATE_DIR = path.join(
 );
 
 const UUID_NAMESPACE = 'bb229e18-eb5f-4309-a863-893cbec53758';
+
+interface SegmentUser {
+  readonly userId: string;
+  readonly email: string;
+}
 
 export class AirbyteInit {
   constructor(private readonly api: AxiosInstance) {}
@@ -49,14 +57,51 @@ export class AirbyteInit {
     return path.join(dir, 'airbyte_config', 'DESTINATION_CONNECTION.yaml');
   }
 
-  private static getSegmentUserId(): string {
-    if (process.env.HOSTNAME) {
-      return uuidv5(process.env.HOSTNAME, UUID_NAMESPACE);
+  static makeSegmentUser(): SegmentUser {
+    const envEmail = process.env.FAROS_EMAIL;
+    if (envEmail && envEmail !== undefined && envEmail !== '') {
+      return {
+        userId: uuidv5(envEmail, UUID_NAMESPACE),
+        email: envEmail,
+      };
     }
-    return uuidv4();
+    const email = 'anonymous@anonymous.me';
+    if (process.env.HOSTNAME) {
+      return {userId: uuidv5(process.env.HOSTNAME, UUID_NAMESPACE), email};
+    }
+    return {userId: uuidv4(), email};
   }
 
-  async setupWorkspace(forceSetup?: boolean): Promise<void> {
+  static sendIdentity(
+    segmentUser: SegmentUser,
+    host?: string | undefined
+  ): Promise<void> {
+    const analytics = new Analytics('YEu7VC65n9dIR85pQ1tgV2RHQHjo2bwn', {
+      // Segment host is used for testing purposes only
+      host,
+    });
+    const fn = (callback: ((err: Error) => void) | undefined): void => {
+      analytics.identify(
+        {
+          userId: segmentUser.userId,
+          traits: {email: segmentUser.email},
+        },
+        callback
+      );
+      analytics.flush(callback);
+    };
+
+    return util
+      .promisify(fn)()
+      .catch((err) =>
+        logger.error(`Failed to send identity event: ${err.message}`)
+      );
+  }
+
+  async setupWorkspace(
+    segmentUser: SegmentUser,
+    forceSetup?: boolean
+  ): Promise<void> {
     const response = await this.api.post('/workspaces/list');
     const workspaces: any[] = response.data.workspaces ?? [];
     if (workspaces.length === 0) {
@@ -86,9 +131,7 @@ export class AirbyteInit {
     const destTemplate = await fs.readFile(destTemplatePath, 'utf-8');
     await fs.writeFile(
       destTemplatePath,
-      handlebars.compile(destTemplate)({
-        segment_user_id: AirbyteInit.getSegmentUserId(),
-      }),
+      handlebars.compile(destTemplate)({segment_user_id: segmentUser.userId}),
       'utf-8'
     );
     const workspaceZipPath = path.join(tmpDir, 'workspace.tar.gz');
@@ -112,12 +155,13 @@ export class AirbyteInit {
     }
   }
 
-  static async getLatestFarosDestinationVersion(
+  static async getLatestImageTag(
+    repository: string,
     page = 1,
     pageSize = 10
   ): Promise<string> {
     const response = await axios.get(
-      'https://hub.docker.com/v2/repositories/farosai/airbyte-faros-destination/tags',
+      `https://hub.docker.com/v2/repositories/${repository}/tags`,
       {params: {page, page_size: pageSize, ordering: 'last_updated'}}
     );
     const tags: {name: string}[] = response.data.results;
@@ -127,7 +171,8 @@ export class AirbyteInit {
     )?.name;
     if (!version) {
       if (response.data.next) {
-        return await AirbyteInit.getLatestFarosDestinationVersion(
+        return await AirbyteInit.getLatestImageTag(
+          repository,
           page + 1,
           pageSize
         );
@@ -140,11 +185,10 @@ export class AirbyteInit {
   }
 
   async setupFarosDestinationDefinition(): Promise<void> {
-    const version = await AirbyteInit.getLatestFarosDestinationVersion();
+    const version = await AirbyteInit.getLatestImageTag(FAROS_DEST_REPO);
     const listResponse = await this.api.post('/destination_definitions/list');
-    const destDefs = listResponse.data.destinationDefinitions;
     const farosDestDef = find(
-      destDefs,
+      listResponse.data.destinationDefinitions as DestinationDefinition[],
       (dd) => dd.dockerRepository === FAROS_DEST_REPO
     );
 
@@ -170,6 +214,34 @@ export class AirbyteInit {
       });
     }
   }
+
+  async updateFarosSourceVersions(): Promise<void> {
+    const listResponse = await this.api.post('/source_definitions/list');
+    const farosSourceDefs = (
+      listResponse.data.sourceDefinitions as SourceDefinition[]
+    ).filter((sd) => sd.dockerRepository.startsWith('farosai/'));
+    const promises: Promise<void>[] = [];
+    for (const sourceDef of farosSourceDefs) {
+      const version = await AirbyteInit.getLatestImageTag(
+        sourceDef.dockerRepository
+      );
+      if (sourceDef.dockerImageTag !== version) {
+        logger.info(
+          'Updating Faros %s source from %s to %s',
+          sourceDef.name,
+          sourceDef.dockerImageTag,
+          version
+        );
+        promises.push(
+          this.api.post('/source_definitions/update', {
+            sourceDefinitionId: sourceDef.sourceDefinitionId,
+            dockerImageTag: version,
+          })
+        );
+      }
+    }
+    await Promise.all(promises);
+  }
 }
 
 async function main(): Promise<void> {
@@ -186,9 +258,13 @@ async function main(): Promise<void> {
     })
   );
 
+  const segmentUser = AirbyteInit.makeSegmentUser();
+  await AirbyteInit.sendIdentity(segmentUser);
+
   await airbyte.waitUntilHealthy();
-  await airbyte.setupWorkspace(forceSetup === 'true');
+  await airbyte.setupWorkspace(segmentUser, forceSetup === 'true');
   await airbyte.setupFarosDestinationDefinition();
+  await airbyte.updateFarosSourceVersions();
   logger.info('Airbyte setup is complete');
 }
 

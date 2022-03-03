@@ -2067,7 +2067,7 @@
 - sourceDefinitionId: "4b3cd0a4-4994-4616-af28-9871e28a8368"
   name: "Statuspage"
   dockerRepository: "farosai/airbyte-statuspage-source"
-  dockerImageTag: "0.1.33"
+  dockerImageTag: "0.1.34"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/statuspage-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -2186,7 +2186,7 @@
 - sourceDefinitionId: "4c4613d8-ffcd-4db8-a8f8-d325052aec11"
   name: "Jenkins"
   dockerRepository: "farosai/airbyte-jenkins-source"
-  dockerImageTag: "0.1.33"
+  dockerImageTag: "0.1.34"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/jenkins-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -2203,7 +2203,7 @@
           type: "string"
           description: "Jenkins User"
         depth:
-          type: "number"
+          type: "integer"
           title: "Depth"
           description: "Jenkins JSON API does not support deep scan, it is required\
             \ to generate a suitable tree for the corresponding depth. Job in some\
@@ -3884,7 +3884,7 @@
 - sourceDefinitionId: "8b3ac13b-f1b1-4644-bec2-e7b6be6d64c4"
   name: "VictorOps"
   dockerRepository: "farosai/airbyte-victorops-source"
-  dockerImageTag: "0.1.33"
+  dockerImageTag: "0.1.34"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/victorops-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -3905,7 +3905,7 @@
           title: "VictorOps API key"
           airbyte_secret: true
         pageLimit:
-          type: "number"
+          type: "integer"
           title: "VictorOps Page Limit"
           default: 100
         currentPhase:
@@ -3913,7 +3913,7 @@
           title: "VictorOps Current Phase"
           default: "triggered,acknowledged,resolved"
         maxContentLength:
-          type: "number"
+          type: "integer"
           title: "VictorOps Content Length"
           default: 500000
           description: "VictorOps API response content length limit, try increasing\
@@ -4525,7 +4525,7 @@
 - sourceDefinitionId: "aee89078-5c00-429e-90bf-cec0174dbb76"
   name: "PagerDuty"
   dockerRepository: "farosai/airbyte-pagerduty-source"
-  dockerImageTag: "0.1.33"
+  dockerImageTag: "0.1.34"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/pagerduty-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -4541,14 +4541,14 @@
           title: "PagerDuty API key"
           airbyte_secret: true
         pageSize:
-          type: "number"
+          type: "integer"
           title: "Page Size"
           default: 25
           maximum: 25
           minimum: 1
           description: "page size to use when querying PagerDuty API"
         cutoffDays:
-          type: "number"
+          type: "integer"
           title: "Cutoff Days"
           default: 90
           minimum: 1
@@ -6752,7 +6752,7 @@
 - sourceDefinitionId: "d8d05baf-bbda-49b3-9489-542e77cbd820"
   name: "Harness"
   dockerRepository: "farosai/airbyte-harness-source"
-  dockerImageTag: "0.1.33"
+  dockerImageTag: "0.1.34"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/harness-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -6775,7 +6775,7 @@
           examples:
           - "https://my-harness-server.example.com"
         page_size:
-          type: "number"
+          type: "integer"
           title: "Harness Page Size"
           default: 100
           description: "number of pipelines (builds) to fetch per call"
@@ -6783,12 +6783,12 @@
           type: "string"
           title: "Harness account ID"
         cutoff_days:
-          type: "number"
+          type: "integer"
           title: "Harness Cutoff Days"
           default: 90
           description: "Only fetch deployments updated after cutoff"
         deployment_timeout:
-          type: "number"
+          type: "integer"
           title: "Harness Deployment Timeout"
           default: 24
           description: "Max number of hours to consider for a deployment to be running/queued\

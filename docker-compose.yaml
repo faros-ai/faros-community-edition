@@ -116,6 +116,8 @@ services:
       N8N_PERSONALIZATION_ENABLED: "false"
       N8N_DIAGNOSTICS_ENABLED: "false"
       N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
+    volumes:
+      - n8n:/home/node/
 
 volumes:
   workspace:
@@ -124,3 +126,5 @@ volumes:
     name: ${DATA_DOCKER_MOUNT}
   db:
     name: ${DB_DOCKER_MOUNT}
+  n8n:
+    name: ${N8N_DOCKER_MOUNT}

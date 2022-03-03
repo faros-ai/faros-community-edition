@@ -1,0 +1,36 @@
+mutation insert_ims_incident_application_impact(
+  $data_incident_id: String!
+  $data_incident_status: jsonb!
+  $data_incident_severity: jsonb!
+  $data_created_at: timestamptz!
+  $data_resolved_at: timestamptz!
+  $compute_Application: String!
+  $data_origin: String!
+) {
+  insert_ims_IncidentApplicationImpact_one(
+    object: {
+      application: $compute_Application
+      ims_Incident: {
+        data: {
+          uid: $data_incident_id
+          status: $data_incident_status
+          severity: $data_incident_severity
+          createdAt: $data_created_at
+          resolvedAt: $data_resolved_at
+          origin: $data_origin
+        }
+        on_conflict: {
+          constraint: ims_Incident_pkey
+          update_columns: refreshedAt
+        }
+      }
+      origin: $data_origin
+    }
+    on_conflict: {
+      constraint: ims_IncidentApplicationImpact_pkey
+      update_columns: refreshedAt
+    }
+  ) {
+    id
+  }
+}

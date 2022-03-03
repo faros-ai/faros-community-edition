@@ -5,11 +5,16 @@ mutation insert_cicd_ArtifactDeployment(
   $data_artifact_source: String!
   $data_deploy_id: String!
   $data_deploy_source: String!
+  $data_origin: String!
 ) {
   insert_cicd_ArtifactDeployment_one(
     object: {
       cicd_Deployment: {
-        data: {uid: $data_deploy_id, source: $data_deploy_source}
+        data: {
+          uid: $data_deploy_id
+          source: $data_deploy_source
+          origin: $data_origin
+        }
         on_conflict: {
           constraint: cicd_Deployment_pkey
           update_columns: refreshedAt
@@ -25,12 +30,14 @@ mutation insert_cicd_ArtifactDeployment(
                 data: {
                   uid: $data_artifact_organization
                   source: $data_artifact_source
+                  origin: $data_origin
                 }
                 on_conflict: {
                   constraint: cicd_Organization_pkey
                   update_columns: refreshedAt
                 }
               }
+              origin: $data_origin
             }
             on_conflict: {
               constraint: cicd_Repository_pkey
@@ -43,6 +50,7 @@ mutation insert_cicd_ArtifactDeployment(
           update_columns: refreshedAt
         }
       }
+      origin: $data_origin
     }
     on_conflict: {
       constraint: cicd_ArtifactDeployment_pkey

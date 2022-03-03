@@ -10,6 +10,7 @@ mutation insert_cicd_deployment_with_build(
   $data_run_source: String!
   $deploy_start_time: timestamptz!
   $deploy_end_time: timestamptz!
+  $data_origin: String!
 ) {
   insert_cicd_Deployment_one(
     object: {
@@ -20,18 +21,24 @@ mutation insert_cicd_deployment_with_build(
             data: {
               uid: $data_run_pipeline
               cicd_Organization: {
-                data: {uid: $data_run_organization, source: $data_run_source}
+                data: {
+                  uid: $data_run_organization
+                  source: $data_run_source
+                  origin: $data_origin
+                }
                 on_conflict: {
                   constraint: cicd_Organization_pkey
                   update_columns: refreshedAt
                 }
               }
+              origin: $data_origin
             }
             on_conflict: {
               constraint: cicd_Pipeline_pkey
               update_columns: refreshedAt
             }
           }
+          origin: $data_origin
         }
         on_conflict: {constraint: cicd_Build_pkey, update_columns: refreshedAt}
       }
@@ -42,6 +49,7 @@ mutation insert_cicd_deployment_with_build(
       env: $env
       startedAt: $deploy_start_time
       endedAt: $deploy_end_time
+      origin: $data_origin
     }
     on_conflict: {
       constraint: cicd_Deployment_pkey

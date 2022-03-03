@@ -1,5 +1,14 @@
 #!/bin/sh
 
+while (($#)); do
+  case "$1" in
+    --m1)
+        m1=1
+        shift ;;
+    *) echo "Unrecognized arg: $1"; exit 1;
+  esac
+done
+
 email_prompt() {
   read -p "Please provide us with your email address: " EMAIL
   while true; do
@@ -23,4 +32,10 @@ else
 fi
 
 export FAROS_EMAIL=$EMAIL
-docker-compose up --build --remove-orphans
+
+if !(($m1)); then
+    docker-compose up --build --remove-orphans
+else
+    # Use Airbyte in dev mode to be able to run in Apple M1
+    VERSION=dev docker-compose up
+fi

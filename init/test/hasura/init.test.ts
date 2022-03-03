@@ -23,9 +23,9 @@ describe('init', () => {
       target: 'pino-pretty',
       options: {
         colorize: true,
-        levelFirst: true
-      }
-    }
+        levelFirst: true,
+      },
+    },
   });
 
   const host = 'http://test.test.com';

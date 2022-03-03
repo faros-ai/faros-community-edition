@@ -154,12 +154,13 @@ export class AirbyteInit {
     }
   }
 
-  static async getLatestFarosDestinationVersion(
+  static async getLatestImageTag(
+    repository: string,
     page = 1,
     pageSize = 10
   ): Promise<string> {
     const response = await axios.get(
-      'https://hub.docker.com/v2/repositories/farosai/airbyte-faros-destination/tags',
+      `https://hub.docker.com/v2/repositories/${repository}/tags`,
       {params: {page, page_size: pageSize, ordering: 'last_updated'}}
     );
     const tags: {name: string}[] = response.data.results;
@@ -169,7 +170,8 @@ export class AirbyteInit {
     )?.name;
     if (!version) {
       if (response.data.next) {
-        return await AirbyteInit.getLatestFarosDestinationVersion(
+        return await AirbyteInit.getLatestImageTag(
+          repository,
           page + 1,
           pageSize
         );
@@ -182,7 +184,7 @@ export class AirbyteInit {
   }
 
   async setupFarosDestinationDefinition(): Promise<void> {
-    const version = await AirbyteInit.getLatestFarosDestinationVersion();
+    const version = await AirbyteInit.getLatestImageTag(FAROS_DEST_REPO);
     const listResponse = await this.api.post('/destination_definitions/list');
     const destDefs = listResponse.data.destinationDefinitions;
     const farosDestDef = find(
@@ -212,6 +214,34 @@ export class AirbyteInit {
       });
     }
   }
+
+  async updateFarosSourceVersions(): Promise<void> {
+    const listResponse = await this.api.post('/source_definitions/list');
+    const farosSourceDefs = (
+      listResponse.data.sourceDefinitions as any[]
+    ).filter((sd) => sd.dockerRepository.startsWith('farosai/'));
+    const promises: Promise<void>[] = [];
+    for (const sourceDef of farosSourceDefs) {
+      const version = await AirbyteInit.getLatestImageTag(
+        sourceDef.dockerRepository
+      );
+      if (sourceDef.dockerImageTag !== version) {
+        logger.info(
+          'Updating Faros %s source from %s to %s',
+          sourceDef.name,
+          sourceDef.dockerImageTag,
+          version
+        );
+        promises.push(
+          this.api.post('/source_definitions/update', {
+            sourceDefinitionId: sourceDef.sourceDefinitionId,
+            dockerImageTag: version,
+          })
+        );
+      }
+    }
+    await Promise.all(promises);
+  }
 }
 
 async function main(): Promise<void> {
@@ -234,6 +264,7 @@ async function main(): Promise<void> {
   await airbyte.waitUntilHealthy();
   await airbyte.setupWorkspace(segmentUser, forceSetup === 'true');
   await airbyte.setupFarosDestinationDefinition();
+  await airbyte.updateFarosSourceVersions();
   logger.info('Airbyte setup is complete');
 }
 

@@ -13,6 +13,7 @@ import {v4 as uuidv4, v5 as uuidv5} from 'uuid';
 import {VError} from 'verror';
 
 import {BASE_RESOURCES_DIR} from '../config';
+import {DestinationDefinition, SourceDefinition} from './types';
 
 const logger = pino({
   name: 'airbyte-init',
@@ -186,9 +187,8 @@ export class AirbyteInit {
   async setupFarosDestinationDefinition(): Promise<void> {
     const version = await AirbyteInit.getLatestImageTag(FAROS_DEST_REPO);
     const listResponse = await this.api.post('/destination_definitions/list');
-    const destDefs = listResponse.data.destinationDefinitions;
     const farosDestDef = find(
-      destDefs,
+      listResponse.data.destinationDefinitions as DestinationDefinition[],
       (dd) => dd.dockerRepository === FAROS_DEST_REPO
     );
 
@@ -218,7 +218,7 @@ export class AirbyteInit {
   async updateFarosSourceVersions(): Promise<void> {
     const listResponse = await this.api.post('/source_definitions/list');
     const farosSourceDefs = (
-      listResponse.data.sourceDefinitions as any[]
+      listResponse.data.sourceDefinitions as SourceDefinition[]
     ).filter((sd) => sd.dockerRepository.startsWith('farosai/'));
     const promises: Promise<void>[] = [];
     for (const sourceDef of farosSourceDefs) {

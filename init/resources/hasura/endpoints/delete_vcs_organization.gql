@@ -1,4 +1,4 @@
-mutation delete_vcs_organization($data_origin: String!) {
+mutation delete_vcs_organization($data_origin: String) {
   delete_vcs_Organization(where: { origin: { _eq: $data_origin } }) {
     affected_rows
   }

@@ -5,7 +5,7 @@ mutation insert_cicd_ArtifactDeployment(
   $data_artifact_source: String!
   $data_deploy_id: String!
   $data_deploy_source: String!
-  $data_origin: String!
+  $data_origin: String
 ) {
   insert_cicd_ArtifactDeployment_one(
     object: {

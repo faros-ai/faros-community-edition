@@ -6,7 +6,7 @@ mutation insert_cicd_Build(
   $data_run_organization: String!
   $run_status: jsonb!
   $data_run_id: String!
-  $data_origin: String!
+  $data_origin: String
 ) {
   insert_cicd_Build_one(
     object: {

@@ -153,89 +153,88 @@ export class Hasura {
 
   async deleteArtifactCommitAssociation(origin: string): Promise<void> {
     await this.api.post('delete_cicd_artifact_commit_association', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
 
   async deleteArtifactDeployment(origin: string): Promise<void> {
     await this.api.post('delete_cicd_artifact_deployment', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
 
   async deleteCICDOrganization(origin: string): Promise<void> {
     await this.api.post('delete_cicd_Organization', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
 
   async deleteCICDRepository(origin: string): Promise<void> {
     await this.api.post('delete_cicd_Repository', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
 
   async deleteVCSUser(origin: string): Promise<void> {
     await this.api.post('delete_vcs_user', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
 
   async deleteVCSOrganization(origin: string): Promise<void> {
     await this.api.post('delete_vcs_organization', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
   async deleteVCSRepository(origin: string): Promise<void> {
     await this.api.post('delete_vcs_repository', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
   async deleteCommit(origin: string): Promise<void> {
     await this.api.post('delete_vcs_commit', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
 
   async deletePullRequest(origin: string): Promise<void> {
     await this.api.post('delete_vcs_pull_request', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
 
   async deletePullRequestReview(origin: string): Promise<void> {
     await this.api.post('delete_vcs_pull_request_review', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
 
   async deleteComputeApplication(origin: string): Promise<void> {
     await this.api.post('delete_compute_application', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
   async deleteIncident(origin: string): Promise<void> {
     await this.api.post('delete_ims_incident', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
 
   async deleteDeployment(origin: string): Promise<void> {
     await this.api.post('delete_cicd_deployment', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
 
   async deleteArtifact(origin: string): Promise<void> {
     await this.api.post('delete_cicd_artifact', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
 
   async deleteIncidentApplicationImpact(origin: string): Promise<void> {
     await this.api.post('delete_ims_incident_application_impact', {
-      data_origin: origin
+      data_origin: origin,
     });
   }
-
 }

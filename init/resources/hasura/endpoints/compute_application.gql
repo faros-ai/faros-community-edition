@@ -2,7 +2,7 @@ mutation insert_compute_Application_one(
   $uid: String!
   $name: String!
   $platform: String!
-  $data_origin: String!
+  $data_origin: String
 ) {
   insert_compute_Application_one(
     object: {

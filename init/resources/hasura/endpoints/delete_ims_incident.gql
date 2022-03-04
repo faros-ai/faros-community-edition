@@ -1,4 +1,4 @@
-mutation delete_ims_incident($data_origin: String!) {
+mutation delete_ims_incident($data_origin: String) {
   delete_ims_Incident(where: { origin: { _eq: $data_origin } }) {
     affected_rows
   }

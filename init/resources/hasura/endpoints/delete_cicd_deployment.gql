@@ -1,4 +1,4 @@
-mutation delete_cicd_deployment($data_origin: String!) {
+mutation delete_cicd_deployment($data_origin: String) {
   delete_cicd_Deployment(where: { origin: { _eq: $data_origin } }) {
     affected_rows
   }

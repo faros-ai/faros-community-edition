@@ -8,7 +8,7 @@ mutation insert_vcs_pull_request(
   $data_pull_request_repository: String!
   $data_pull_request_organization: String!
   $data_pull_request_source: String!
-  $data_origin: String!
+  $data_origin: String
 ) {
   insert_vcs_PullRequest_one(
     object: {

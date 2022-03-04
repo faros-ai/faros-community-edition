@@ -2,7 +2,7 @@ mutation insert_cicd_Pipeline(
   $data_run_pipeline: String!
   $data_run_organization: String
   $data_run_source: String
-  $data_origin: String!
+  $data_origin: String
 ) {
   insert_cicd_Pipeline_one(
     object: {

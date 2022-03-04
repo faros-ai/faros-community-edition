@@ -6,7 +6,7 @@ mutation insert_vcs_pull_request_review(
   $data_review_repository: String!
   $data_review_organization: String!
   $data_review_source: String!
-  $data_origin: String!
+  $data_origin: String
 ) {
   insert_vcs_PullRequestReview_one(
     object: {

@@ -3,7 +3,7 @@ import VError from 'verror';
 
 import {MockData} from './mockdata';
 
-const USAGE = 'Usage: node init.js <upload> | <delete> <hasura url> ';
+const USAGE = 'Usage: node index.js <upload> | <delete> <hasura url> ';
 
 async function main(): Promise<void> {
   const logger = pino({name: 'faros-ce-mock-data'});
@@ -17,7 +17,7 @@ async function main(): Promise<void> {
 
   switch (operation) {
     case 'upload':
-      logger.info('Initiating mock data upload.');
+      logger.info('Uploading mock data has started.');
       await mockData.uploadData();
       logger.info('Mock data upload complete.');
       break;

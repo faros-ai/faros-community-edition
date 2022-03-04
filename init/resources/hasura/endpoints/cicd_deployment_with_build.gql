@@ -10,7 +10,7 @@ mutation insert_cicd_deployment_with_build(
   $data_run_source: String!
   $deploy_start_time: timestamptz!
   $deploy_end_time: timestamptz!
-  $data_origin: String!
+  $data_origin: String
 ) {
   insert_cicd_Deployment_one(
     object: {

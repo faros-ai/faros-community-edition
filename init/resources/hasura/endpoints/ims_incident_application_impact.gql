@@ -5,7 +5,7 @@ mutation insert_ims_incident_application_impact(
   $data_created_at: timestamptz!
   $data_resolved_at: timestamptz!
   $compute_Application: String!
-  $data_origin: String!
+  $data_origin: String
 ) {
   insert_ims_IncidentApplicationImpact_one(
     object: {

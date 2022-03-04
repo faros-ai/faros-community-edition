@@ -78,6 +78,8 @@ services:
   metabase:
     build:
       context: ./metabase
+      args:
+        - METABASE_IMAGE=${METABASE_IMAGE}
     container_name: metabase
     ports:
       - ${METABASE_PORT?}:3000

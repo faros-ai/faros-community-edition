@@ -7,14 +7,25 @@ const SOURCE = 'FarosCE-MockData';
 const REPO = 'Example Repo';
 const ORG = 'Example Org';
 
+const TASK_PRIORITIES = ['High', 'Low', 'Medium'];
+const TASK_TYPES = ['Bug', 'Story', 'Task'];
+const TASK_STATUSES = ['Todo', 'InProgress', 'Done'];
+const TASK_CHANGE_CATEGORIES = [
+  {category: 'InProgress', detail: 'Coding', minBeforeStage: 72},
+  {category: 'InProgress', detail: 'Review', minBeforeStage: 48},
+  {category: 'InProgress', detail: 'QA', minBeforeStage: 24},
+  {category: 'Done', detail: 'Done', minBeforeStage: 12},
+];
+
 export class MockData {
   private hasura: Hasura;
   constructor(hasuraBaseUrl: string) {
     this.hasura = new Hasura(hasuraBaseUrl);
   }
 
-  private static randomInt(max: number): number {
-    return Math.floor(Math.random() * (max - 1) + 1);
+  private static randomInt(max: number, min?: number): number {
+    const minimum = min ?? 1;
+    return Math.floor(Math.random() * (max - minimum) + minimum);
   }
 
   /**
@@ -50,8 +61,9 @@ export class MockData {
         .startOf('week')
         .minus({days: 1});
 
-      const weeklyDeploys = 13;
-      for (let i = 0; i < weeklyDeploys; i++) {
+      // At least 5 Prs per week up to max of 14
+      const weeklyPRs = 5 + MockData.randomInt(9);
+      for (let i = 0; i < weeklyPRs; i++) {
         const commitSha = `commit-${num}`;
 
         const prCreateTime = weekStart.plus({hours: MockData.randomInt(56)});
@@ -72,6 +84,7 @@ export class MockData {
         await this.writeDeployments(app.id, num, artifactId, mergedAt);
         num++;
       }
+      await this.writeTasks(week, weekStart);
     }
   }
 
@@ -86,6 +99,7 @@ export class MockData {
       this.hasura.deleteArtifactDeployment(ORIGIN),
       this.hasura.deleteIncidentApplicationImpact(ORIGIN),
       this.hasura.deletePullRequestReview(ORIGIN),
+      this.hasura.deleteTask(ORIGIN),
     ]);
 
     await Promise.all([
@@ -121,7 +135,7 @@ export class MockData {
     const prId = `pr-${num}`;
     await this.hasura.postPullRequest(
       prId,
-      `author-${MockData.randomInt(3)}`,
+      `author-${MockData.randomInt(4, 1)}`,
       {category: 'Merged', detail: 'Merged'},
       commitSha,
       prCreateTime,
@@ -230,6 +244,68 @@ export class MockData {
         incidentTime,
         incidentTime.plus({minutes: MockData.randomInt(12 * 60)}),
         appId,
+        ORIGIN
+      );
+    }
+  }
+
+  /**
+   * Creates a random number of tasks for each week, with a minimum of 6
+   * and a max of 11. Task status, priority and points are all random.
+   *
+   * Each task will have at least one status changelog entry for `Todo` status.
+   * In-progress tasks get a random number of status changelog entries minus
+   * the `Done` state.
+   * Done tasks have all status change log entries
+   */
+  private async writeTasks(weekNum: number, week: DateTime): Promise<void> {
+    const numTasks = 6 + MockData.randomInt(6);
+    for (let i = 1; i <= numTasks; i++) {
+      const taskId = `task-${weekNum}-${i}`;
+      const createdAt = week.plus({
+        minutes: MockData.randomInt(60 * 24 * 3),
+      });
+      const type = TASK_TYPES[MockData.randomInt(3, 0)];
+      const priority = TASK_PRIORITIES[MockData.randomInt(3, 0)];
+      const status = {category: TASK_STATUSES[MockData.randomInt(3, 0)]};
+      const points = MockData.randomInt(10);
+      const statusChangelog = [
+        {
+          status: {category: 'Todo', detail: 'Todo'},
+          changedAt: createdAt.toMillis(),
+        },
+      ];
+      let updatedAt = createdAt;
+
+      // Pick number status changes based on status. In progress has random
+      let statusChanges = 0;
+      if (status.category === 'Done') {
+        statusChanges = 4;
+      } else if (status.category === 'InProgress') {
+        statusChanges = MockData.randomInt(4, 0);
+      }
+
+      let changedAt = createdAt;
+      TASK_CHANGE_CATEGORIES.slice(0, statusChanges).forEach((t) => {
+        changedAt = changedAt.plus({
+          hours: MockData.randomInt(t.minBeforeStage, 0),
+        });
+        statusChangelog.push({
+          status: {category: t.category, detail: t.detail},
+          changedAt: changedAt.toMillis()});
+        updatedAt = changedAt;
+      });
+
+      await this.hasura.postTask(
+        taskId,
+        createdAt,
+        updatedAt,
+        type,
+        priority,
+        points,
+        status,
+        statusChangelog,
+        SOURCE,
         ORIGIN
       );
     }

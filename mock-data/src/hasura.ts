@@ -151,6 +151,35 @@ export class Hasura {
     });
   }
 
+  async postTask(
+    taskId: string,
+    createdAt: DateTime,
+    updatedAt: DateTime,
+    type: string,
+    priority: string,
+    points: number,
+    status: {category: string},
+    statusChangelog: {
+      status: {category: string; detail: string};
+      changedAt: number;
+    }[],
+    source: string,
+    origin: string
+  ): Promise<void> {
+    await this.api.post('tms_task', {
+      data_task_id: taskId,
+      data_task_created_at: createdAt,
+      data_task_updated_at: updatedAt,
+      data_task_type: type,
+      data_task_status: status,
+      data_task_points: points,
+      data_task_priority: priority,
+      data_task_status_changelog: statusChangelog,
+      data_task_source: source,
+      data_origin: origin,
+    });
+  }
+
   async deleteArtifactCommitAssociation(origin: string): Promise<void> {
     await this.api.post('delete_cicd_artifact_commit_association', {
       data_origin: origin,
@@ -228,6 +257,12 @@ export class Hasura {
 
   async deleteArtifact(origin: string): Promise<void> {
     await this.api.post('delete_cicd_artifact', {
+      data_origin: origin,
+    });
+  }
+
+  async deleteTask(origin: string): Promise<void> {
+    await this.api.post('delete_tms_task', {
       data_origin: origin,
     });
   }

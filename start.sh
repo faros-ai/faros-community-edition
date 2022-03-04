@@ -28,6 +28,6 @@ if [[ `uname -m 2> /dev/null` == 'arm64' ]]; then
     # Use Airbyte images built for Apple M1
     AIRBYTE_IMAGE_PREFIX="farosai/airbyte-" docker-compose up --build --remove-orphans
 else
-    AIRBYTE_IMAGE_PREFIX="airbyte/" docker-compose up --build --remove-orphans
+    docker-compose up --build --remove-orphans
 fi
 

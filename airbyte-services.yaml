@@ -10,7 +10,7 @@ services:
   # hook in case we need to add init behavior
   # every root service (no depends_on) should depend on init
   init:
-    image: airbyte/init:${VERSION}
+    image: ${AIRBYTE_IMAGE_PREFIX}init:${VERSION}
     logging: *default-logging
     container_name: init
     command: /bin/sh -c "./scripts/create_mount_directories.sh /local_parent ${HACK_LOCAL_ROOT_PARENT} ${LOCAL_ROOT}"
@@ -20,7 +20,7 @@ services:
     volumes:
       - ${HACK_LOCAL_ROOT_PARENT}:/local_parent
   bootloader:
-    image: airbyte/bootloader:${VERSION}
+    image: ${AIRBYTE_IMAGE_PREFIX}bootloader:${VERSION}
     logging: *default-logging
     container_name: airbyte-bootloader
     environment:
@@ -34,7 +34,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL}
       - RUN_DATABASE_MIGRATION_ON_STARTUP=${RUN_DATABASE_MIGRATION_ON_STARTUP}
   db:
-    image: airbyte/db:${VERSION}
+    image: ${AIRBYTE_IMAGE_PREFIX}db:${VERSION}
     logging: *default-logging
     container_name: airbyte-db
     restart: unless-stopped
@@ -50,7 +50,7 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
   scheduler:
-    image: airbyte/scheduler:${VERSION}
+    image: ${AIRBYTE_IMAGE_PREFIX}scheduler:${VERSION}
     logging: *default-logging
     container_name: airbyte-scheduler
     restart: unless-stopped
@@ -89,7 +89,7 @@ services:
       - workspace:${WORKSPACE_ROOT}
       - ${LOCAL_ROOT}:${LOCAL_ROOT}
   worker:
-    image: airbyte/worker:${VERSION}
+    image: ${AIRBYTE_IMAGE_PREFIX}worker:${VERSION}
     logging: *default-logging
     container_name: airbyte-worker
     restart: unless-stopped
@@ -127,7 +127,7 @@ services:
       - workspace:${WORKSPACE_ROOT}
       - ${LOCAL_ROOT}:${LOCAL_ROOT}
   server:
-    image: airbyte/server:${VERSION}
+    image: ${AIRBYTE_IMAGE_PREFIX}server:${VERSION}
     logging: *default-logging
     container_name: airbyte-server
     restart: unless-stopped
@@ -162,7 +162,7 @@ services:
       - data:${CONFIG_ROOT}
       - ${LOCAL_ROOT}:${LOCAL_ROOT}
   webapp:
-    image: airbyte/webapp:${VERSION}
+    image: ${AIRBYTE_IMAGE_PREFIX}webapp:${VERSION}
     logging: *default-logging
     container_name: airbyte-webapp
     restart: unless-stopped
@@ -179,7 +179,7 @@ services:
       - PAPERCUPS_STORYTIME=${PAPERCUPS_STORYTIME:-}
       - TRACKING_STRATEGY=${TRACKING_STRATEGY}
   airbyte-temporal:
-    image: airbyte/temporal:${VERSION}
+    image: ${AIRBYTE_IMAGE_PREFIX}temporal:${VERSION}
     logging: *default-logging
     container_name: airbyte-temporal
     restart: unless-stopped

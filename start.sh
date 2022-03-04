@@ -23,4 +23,11 @@ else
 fi
 
 export FAROS_EMAIL=$EMAIL
-docker-compose up --build --remove-orphans
+
+if [[ `uname -m 2> /dev/null` == 'arm64' ]]; then
+    # Use Airbyte images built for Apple M1
+    AIRBYTE_IMAGE_PREFIX="farosai/airbyte-" docker-compose up --build --remove-orphans
+else
+    docker-compose up --build --remove-orphans
+fi
+

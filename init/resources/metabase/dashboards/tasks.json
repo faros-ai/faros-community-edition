@@ -324,6 +324,7 @@
       "visualization_settings": {}
     }
   ],
-  "path": "/Faros CE/Tasks"
+  "path": "/Faros CE/Tasks",
+  "priority": "4"
 }
 

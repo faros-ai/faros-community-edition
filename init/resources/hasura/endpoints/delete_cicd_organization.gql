@@ -1,0 +1,5 @@
+mutation delete_cicd_Organization($data_origin: String) {
+  delete_cicd_Organization(where: { origin: { _eq: $data_origin } }) {
+    affected_rows
+  }
+}

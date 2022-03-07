@@ -1,0 +1,88 @@
+mutation insert_vcs_pull_request(
+  $data_pull_request_id: String!
+  $data_pull_request_author: String!
+  $data_pull_request_state: jsonb!
+  $data_merge_commit_sha: String!
+  $data_pull_request_create_time: timestamptz!
+  $data_pull_request_merge_time: timestamptz!
+  $data_pull_request_repository: String!
+  $data_pull_request_organization: String!
+  $data_pull_request_source: String!
+  $data_origin: String
+) {
+  insert_vcs_PullRequest_one(
+    object: {
+      uid: $data_pull_request_id
+      state: $data_pull_request_state
+      createdAt: $data_pull_request_create_time
+      mergedAt: $data_pull_request_merge_time
+      vcs_User: {
+        data: {
+          uid: $data_pull_request_author
+          source: $data_pull_request_source
+          origin: $data_origin
+        }
+        on_conflict: { constraint: vcs_User_pkey, update_columns: refreshedAt }
+      }
+      vcs_Repository: {
+        data: {
+          uid: $data_pull_request_repository
+          vcs_Organization: {
+            data: {
+              uid: $data_pull_request_organization
+              source: $data_pull_request_source
+              origin: $data_origin
+            }
+            on_conflict: {
+              constraint: vcs_Organization_pkey
+              update_columns: refreshedAt
+            }
+          }
+          origin: $data_origin
+        }
+        on_conflict: {
+          constraint: vcs_Repository_pkey
+          update_columns: refreshedAt
+        }
+      }
+      vcs_Commit: {
+        data: {
+          uid: $data_merge_commit_sha
+          vcs_Repository: {
+            data: {
+              uid: $data_pull_request_repository
+              vcs_Organization: {
+                data: {
+                  uid: $data_pull_request_organization
+                  source: $data_pull_request_source
+                  origin: $data_origin
+                }
+                on_conflict: {
+                  constraint: vcs_Organization_pkey
+                  update_columns: refreshedAt
+                }
+              }
+              origin: $data_origin
+            }
+            on_conflict: {
+              constraint: vcs_Repository_pkey
+              update_columns: refreshedAt
+            }
+          }
+          origin: $data_origin
+        }
+        on_conflict: {
+          constraint: vcs_Commit_pkey
+          update_columns: refreshedAt
+        }
+      }
+      origin: $data_origin
+    }
+    on_conflict: {
+      constraint: vcs_PullRequest_pkey
+      update_columns: refreshedAt
+    }
+  ) {
+    id
+  }
+}

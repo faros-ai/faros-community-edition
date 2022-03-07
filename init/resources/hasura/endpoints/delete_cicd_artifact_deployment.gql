@@ -1,0 +1,5 @@
+mutation delete_cicd_artifact_deployment($data_origin: String) {
+  delete_cicd_ArtifactDeployment(where: { origin: { _eq: $data_origin } }) {
+    affected_rows
+  }
+}

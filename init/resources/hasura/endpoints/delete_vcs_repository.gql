@@ -1,0 +1,5 @@
+mutation delete_vcs_repository($data_origin: String) {
+  delete_vcs_Repository(where: { origin: { _eq: $data_origin } }) {
+    affected_rows
+  }
+}

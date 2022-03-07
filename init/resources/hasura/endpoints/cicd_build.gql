@@ -4,6 +4,7 @@ mutation insert_cicd_Build(
   $data_run_organization: String!
   $run_status: jsonb!
   $data_run_id: String!
+  $data_origin: String
 ) {
   insert_cicd_Build_one(
     object: {
@@ -12,12 +13,17 @@ mutation insert_cicd_Build(
         data: {
           uid: $data_run_pipeline
           cicd_Organization: {
-            data: {uid: $data_run_organization, source: $data_run_source}
+            data: {
+              uid: $data_run_organization
+              source: $data_run_source
+              origin: $data_origin
+            }
             on_conflict: {
               constraint: cicd_Organization_pkey
               update_columns: refreshedAt
             }
           }
+          origin: $data_origin
         }
         on_conflict: {
           constraint: cicd_Pipeline_pkey
@@ -25,6 +31,7 @@ mutation insert_cicd_Build(
         }
       }
       status: $run_status
+      origin: $data_origin
     }
     on_conflict: {constraint: cicd_Build_pkey, update_columns: refreshedAt}
   ) {

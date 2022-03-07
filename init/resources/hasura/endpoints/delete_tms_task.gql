@@ -1,0 +1,5 @@
+mutation delete_tms_task($data_origin: String) {
+  delete_tms_Task(where: { origin: { _eq: $data_origin } }) {
+    affected_rows
+  }
+}

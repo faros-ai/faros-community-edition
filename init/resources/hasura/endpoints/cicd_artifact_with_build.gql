@@ -7,6 +7,7 @@ mutation insert_cicd_Artifact_WithBuildKey(
   $data_artifact_organization: String!
   $data_run_id: String!
   $data_artifact_source: String!
+  $data_origin: String
 ) {
   insert_cicd_Artifact_one(
     object: {
@@ -18,12 +19,14 @@ mutation insert_cicd_Artifact_WithBuildKey(
             data: {
               uid: $data_artifact_organization
               source: $data_artifact_source
+              origin: $data_origin
             }
             on_conflict: {
               constraint: cicd_Organization_pkey
               update_columns: refreshedAt
             }
           }
+          origin: $data_origin
         }
         on_conflict: {
           constraint: cicd_Repository_pkey
@@ -37,12 +40,17 @@ mutation insert_cicd_Artifact_WithBuildKey(
             data: {
               uid: $data_run_pipeline
               cicd_Organization: {
-                data: {uid: $data_run_organization, source: $data_run_source}
+                data: {
+                  uid: $data_run_organization
+                  source: $data_run_source
+                  origin: $data_origin
+                }
                 on_conflict: {
                   constraint: cicd_Organization_pkey
                   update_columns: refreshedAt
                 }
               }
+              origin: $data_origin
             }
             on_conflict: {
               constraint: cicd_Pipeline_pkey
@@ -52,6 +60,7 @@ mutation insert_cicd_Artifact_WithBuildKey(
         }
         on_conflict: {constraint: cicd_Build_pkey, update_columns: refreshedAt}
       }
+      origin: $data_origin
     }
     on_conflict: {constraint: cicd_Artifact_pkey, update_columns: refreshedAt}
   ) {

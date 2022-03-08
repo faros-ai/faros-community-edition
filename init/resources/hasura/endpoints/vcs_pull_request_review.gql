@@ -1,0 +1,50 @@
+mutation insert_vcs_pull_request_review(
+  $data_review_id: String!
+  $data_pull_request_id: String!
+  $data_review_state: jsonb!
+  $data_review_submitted_at: timestamptz!
+  $data_review_repository: String!
+  $data_review_organization: String!
+  $data_review_source: String!
+  $data_origin: String
+) {
+  insert_vcs_PullRequestReview_one(
+    object: {
+      uid: $data_review_id
+      state: $data_review_state
+      submittedAt: $data_review_submitted_at
+      vcs_PullRequest: {
+        data: {
+          uid: $data_pull_request_id
+          vcs_Repository: {
+            data: {
+              uid: $data_review_repository
+              vcs_Organization: {
+                data: {
+                  uid: $data_review_organization
+                  source: $data_review_source
+                  origin: $data_origin
+                }
+                on_conflict: {
+                  constraint: vcs_Organization_pkey
+                  update_columns: refreshedAt
+                }
+              }
+              origin: $data_origin
+            }
+            on_conflict: {
+              constraint: vcs_Repository_pkey
+              update_columns: refreshedAt
+            }
+          }
+          origin: $data_origin
+        }
+        on_conflict: {constraint: vcs_PullRequest_pkey, update_columns: refreshedAt}
+      }
+      origin: $data_origin
+    }
+    on_conflict: {constraint: vcs_PullRequestReview_pkey update_columns: refreshedAt}
+  ) {
+    id
+  }
+}

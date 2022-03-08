@@ -1,0 +1,30 @@
+mutation insert_tms_task(
+  $data_task_id: String!
+  $data_task_created_at: timestamptz!
+  $data_task_type: jsonb!
+  $data_task_status: jsonb!
+  $data_task_points: Float!
+  $data_task_priority: String!
+  $data_task_status_changelog: jsonb!
+  $data_task_updated_at: timestamptz!
+  $data_task_source: String!
+  $data_origin: String
+) {
+  insert_tms_Task_one(
+    object: {
+      uid: $data_task_id
+      createdAt: $data_task_created_at
+      type: $data_task_type
+      points: $data_task_points
+      priority: $data_task_priority
+      status: $data_task_status
+      statusChangelog: $data_task_status_changelog
+      updatedAt: $data_task_updated_at
+      origin: $data_origin
+      source: $data_task_source
+    }
+    on_conflict: { constraint: tms_Task_pkey, update_columns: refreshedAt }
+  ) {
+    id
+  }
+}

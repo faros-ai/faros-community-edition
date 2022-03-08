@@ -1,0 +1,5 @@
+mutation delete_compute_application($data_origin: String) {
+  delete_compute_Application(where: { origin: { _eq: $data_origin } }) {
+    affected_rows
+  }
+}

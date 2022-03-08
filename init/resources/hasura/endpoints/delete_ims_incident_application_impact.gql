@@ -1,0 +1,7 @@
+mutation delete_ims_incident_application_impact($data_origin: String) {
+  delete_ims_IncidentApplicationImpact(
+    where: { origin: { _eq: $data_origin } }
+  ) {
+    affected_rows
+  }
+}

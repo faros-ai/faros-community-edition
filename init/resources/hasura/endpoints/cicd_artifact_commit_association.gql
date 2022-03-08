@@ -7,6 +7,7 @@ mutation insert_cicd_artifact_commit_association(
   $data_commit_sha: String!
   $data_commit_source: String!
   $data_artifact_source: String!
+  $data_origin: String
 ) {
   insert_cicd_ArtifactCommitAssociation_one(
     object: {
@@ -20,18 +21,21 @@ mutation insert_cicd_artifact_commit_association(
                 data: {
                   uid: $data_artifact_organization
                   source: $data_artifact_source
+                  origin: $data_origin
                 }
                 on_conflict: {
                   constraint: cicd_Organization_pkey
                   update_columns: refreshedAt
                 }
               }
+              origin: $data_origin
             }
             on_conflict: {
               constraint: cicd_Repository_pkey
               update_columns: refreshedAt
             }
           }
+          origin: $data_origin
         }
         on_conflict: {
           constraint: cicd_Artifact_pkey
@@ -48,12 +52,14 @@ mutation insert_cicd_artifact_commit_association(
                 data: {
                   uid: $data_commit_organization
                   source: $data_commit_source
+                  origin: $data_origin
                 }
                 on_conflict: {
                   constraint: vcs_Organization_pkey
                   update_columns: refreshedAt
                 }
               }
+              origin: $data_origin
             }
             on_conflict: {
               constraint: vcs_Repository_pkey
@@ -63,6 +69,7 @@ mutation insert_cicd_artifact_commit_association(
         }
         on_conflict: {constraint: vcs_Commit_pkey, update_columns: refreshedAt}
       }
+      origin: $data_origin
     }
     on_conflict: {
       constraint: cicd_ArtifactCommitAssociation_pkey

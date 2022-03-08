@@ -1,0 +1,5 @@
+mutation delete_vcs_pull_request($data_origin: String) {
+  delete_vcs_PullRequest(where: { origin: { _eq: $data_origin } }) {
+    affected_rows
+  }
+}

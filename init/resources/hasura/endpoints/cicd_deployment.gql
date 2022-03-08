@@ -6,6 +6,7 @@ mutation insert_cicd_deployment_with_start_end(
   $env: jsonb!
   $deploy_start_time: timestamptz!
   $deploy_end_time: timestamptz!
+  $data_origin: String
 ) {
   insert_cicd_Deployment_one(
     object: {
@@ -16,6 +17,7 @@ mutation insert_cicd_deployment_with_start_end(
       env: $env
       startedAt: $deploy_start_time
       endedAt: $deploy_end_time
+      origin: $data_origin
     }
     on_conflict: {
       constraint: cicd_Deployment_pkey

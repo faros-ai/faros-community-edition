@@ -1,0 +1,5 @@
+mutation delete_vcs_commit($data_origin: String) {
+  delete_vcs_Commit(where: { origin: { _eq: $data_origin } }) {
+    affected_rows
+  }
+}

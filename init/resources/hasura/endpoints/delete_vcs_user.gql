@@ -1,0 +1,5 @@
+mutation delete_vcs_user($data_origin: String) {
+	delete_vcs_User(where: { origin: { _eq: $data_origin } }) {
+		affected_rows
+	}
+}

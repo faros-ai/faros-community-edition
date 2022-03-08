@@ -55,6 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: test
+    if: github.ref == 'refs/heads/main' # Skip PRs
 
     steps:
       - name: Check out

@@ -36,7 +36,7 @@ services:
       - ${FAROS_DB_PORT?}:5432
     restart: unless-stopped
   faros-init:
-    image: farosai/faros-ce-init:0.0.1
+    image: farosai/faros-ce-init:latest
     depends_on:
       - airbyte-webapp
       - faros-db

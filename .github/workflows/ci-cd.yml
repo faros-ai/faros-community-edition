@@ -1,0 +1,90 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Build
+        run: npm ci --unsafe-perm
+        working-directory: init
+
+      - name: Docker Compose version
+        run: docker-compose version --short
+
+      - name: Start services
+        run: docker-compose up --quiet-pull -d
+
+      - name: Run tests
+        run: npm test -- --coverage
+        working-directory: init
+
+      - name: Show logs
+        run: docker-compose logs --tail all
+
+      - name: Show services
+        run: docker-compose ps -a
+
+      - name: Stop services
+        run: docker-compose down
+
+  publish-docker:
+    name: Publish Docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: test
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Docker login
+        uses: docker/login-action@v1.14.1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Generate image tags
+        id: gen-tags
+        env:
+          INIT_REPO: farosai/faros-ce-init
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          echo "INIT_LATEST_TAG=$INIT_REPO:latest" >> "$GITHUB_ENV"
+          echo "INIT_SHA_TAG=$INIT_REPO:$COMMIT_SHA" >> "$GITHUB_ENV"
+
+      - name: Build image
+        id: build-image
+        env:
+          DOCKER_BUILDKIT: 1
+        run: |
+          docker build . \
+            -t "$INIT_LATEST_TAG" \
+            -t "$INIT_SHA_TAG"
+
+      - name: Push image
+        run: |
+          docker push "$CLIO_LATEST_TAG"
+          docker push "$CLIO_SHA_TAG"

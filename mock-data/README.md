@@ -15,12 +15,14 @@ $ npm i # Install all dependencies, only needed once.
 
 ### :bullettrain_side: Uploading mock data
 ```sh
-$ node lib/index.js upload <hasura-url>
+$ ./bin/mock-data upload
 ```
 
 Access the Welcome dashboard in [Metabase](http://localhost:3000/dashboard/1) on port 3000 to start exploring the mock data.
 
 ### :x: Deleting mock data
 ```sh
-$ node lib/index.js delete <hasura-url>
+$ ./bin/mock-data delete
 ```
+> :clipboard: Note: You can also optionally specify the Hasura service url using the `-u` flag. **If this flag is not
+specified, the script will upload to the the default service url http://localhost:8080**

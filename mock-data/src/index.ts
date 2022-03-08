@@ -1,39 +1,40 @@
+import {Command} from 'commander';
+import path from 'path';
 import {pino} from 'pino';
-import VError from 'verror';
 
 import {MockData} from './mockdata';
 
-const USAGE = 'Usage: node index.js <upload> | <delete> <hasura url> ';
+const logger = pino({name: 'faros-ce-mock-data'});
 
-async function main(): Promise<void> {
-  const logger = pino({name: 'faros-ce-mock-data'});
-  const args = process.argv.slice(2);
-  if (args.length < 2) {
-    throw new VError(USAGE);
-  }
+function createCommand(
+  name: string,
+  fn: (mockData: MockData) => Promise<void>
+): Command {
+  return new Command(name)
+    .option('-u, --url <url>', 'Hasura Service URL', 'http://localhost:8080')
+    .action(async (opts) => {
+      const mockData = new MockData(opts.url);
+      await fn(mockData);
+    });
+}
 
-  const [operation, url] = args;
-  const mockData = new MockData(url);
-
-  switch (operation) {
-    case 'upload':
-      logger.info('Uploading mock data has started.');
+export const program = new Command()
+  .name('mock-data')
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  .version(require(path.join(__dirname, '..', 'package.json')).version)
+  .addCommand(
+    createCommand('upload', async (mockData: MockData) => {
+      logger.info('Started uploading mock data.');
       await mockData.uploadData();
       logger.info('Mock data upload complete.');
-      break;
-    case 'delete':
+    })
+    .description('upload mock data')
+  )
+  .addCommand(
+    createCommand('delete', async (mockData: MockData) => {
+      logger.info('Deleting mock data.');
       await mockData.deleteData();
       logger.info('Deleting mock data complete.');
-      break;
-    default:
-      logger.error(USAGE);
-      process.exit(1);
-  }
-}
-
-if (require.main === module) {
-  main().catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
-}
+    })
+    .description('delete mock data')
+  );

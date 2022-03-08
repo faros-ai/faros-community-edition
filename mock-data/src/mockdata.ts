@@ -292,7 +292,8 @@ export class MockData {
         });
         statusChangelog.push({
           status: {category: t.category, detail: t.detail},
-          changedAt: changedAt.toMillis()});
+          changedAt: changedAt.toMillis(),
+        });
         updatedAt = changedAt;
       });
 

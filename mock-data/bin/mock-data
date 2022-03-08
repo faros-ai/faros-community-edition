@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+const {program} = require('../lib');
+const pino = require('pino');
+
+program.parseAsync(process.argv).catch((err) => {
+  pino().fatal({err});
+  process.exit(1);
+});

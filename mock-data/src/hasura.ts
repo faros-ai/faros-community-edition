@@ -193,13 +193,13 @@ export class Hasura {
   }
 
   async deleteCICDOrganization(origin: string): Promise<void> {
-    await this.api.post('delete_cicd_Organization', {
+    await this.api.post('delete_cicd_organization', {
       data_origin: origin,
     });
   }
 
   async deleteCICDRepository(origin: string): Promise<void> {
-    await this.api.post('delete_cicd_Repository', {
+    await this.api.post('delete_cicd_repository', {
       data_origin: origin,
     });
   }

@@ -30,7 +30,7 @@ Built **100%** with open-source components:
 - **[Airbyte](https://airbyte.com)**: Data integration platform for importing data from a [variety of sources](https://github.com/faros-ai/airbyte-connectors) (even [more sources](https://github.com/airbytehq/airbyte/tree/master/airbyte-integrations/connectors))
 - **[Hasura](https://hasura.io)**: GraphQL engine that makes your data accessible over a real-time GraphQL API
 - **[Metabase](https://metabase.com)**: Business Intelligence (BI) tool for generating metrics and rendering charts and dashboards from your data
-- **[DBT](https://www.getdbt.com)**: Data transformations to convert raw data into usable metrics
+- **[dbt](https://www.getdbt.com)**: Data transformations to convert raw data into usable metrics
 - **[n8n](https://n8n.io/)**: Extendable workflow automation of top of your data
 - **[PostgreSQL](https://www.postgresql.org)**: Stores all the your data in canonical representation
 - **[Docker](https://www.docker.com)**: Container runtime to run the services

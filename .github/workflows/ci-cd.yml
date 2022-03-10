@@ -25,7 +25,7 @@ jobs:
       - name: Check for style & bugs
         uses: ludeeus/action-shellcheck@1.1.0
         env:
-          SHELLCHECK_OPTS: -s bash -e SC2162
+          SHELLCHECK_OPTS: -s bash -e SC2162 -e SC2153
 
       - name: Set up Node
         uses: actions/setup-node@v2

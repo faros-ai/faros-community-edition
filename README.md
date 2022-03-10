@@ -1,10 +1,10 @@
-# ![](img/faros.ico) Faros Community Edition (CE)
+# ![](img/faros.ico) Faros Community Edition
 
 [![GitHub Stars](https://img.shields.io/github/stars/faros-ai/faros-community-edition?style=social)](https://github.com/faros-ai/faros-community-edition/stargazers/)
 [![Community Slack](https://img.shields.io/badge/chat-Slack-%234a154b)](https://community.faros.ai/docs/slack)
 [![CI/CD](https://github.com/faros-ai/faros-community-edition/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/faros-ai/faros-community-edition/actions/workflows/ci-cd.yml)
 
-Faros CE is an operational data platform that brings all engineering data in one place to give engineering teams a no-code/low-code BI, API and automation layer for their operational data, usable in minutes.
+Faros Community Edition (CE) is an operational data platform that brings all engineering data in one place to give engineering teams a no-code/low-code BI, API and automation layer for their operational data, usable in minutes.
 
 ![Metrics](img/metrics.png)
 

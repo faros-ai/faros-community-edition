@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 email_prompt() {
   read -p "Please provide us with your email address: " EMAIL
@@ -17,7 +17,7 @@ email_prompt() {
 }
 
 EMAIL_FILE=".faros-email"
-if [[ -f $EMAIL_FILE ]];then
+if [[ -f "$EMAIL_FILE" ]]; then
     EMAIL=$(cat $EMAIL_FILE)
 else
     printf "Hello 👋 Welcome to Faros Community Edition! 🤗\n\n"

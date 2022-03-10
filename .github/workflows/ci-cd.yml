@@ -25,7 +25,7 @@ jobs:
       - name: Check for style & bugs
         uses: ludeeus/action-shellcheck@1.1.0
         with:
-          ignore: wait-for.sh
+          ignore: wait-for
         env:
           SHELLCHECK_OPTS: -s bash -e SC2162 -e SC2153
 

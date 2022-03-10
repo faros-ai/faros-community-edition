@@ -138,6 +138,67 @@
         oauthFlowInitParameters: []
         oauthFlowOutputParameters:
         - - "access_token"
+- sourceDefinitionId: "05f9f7d4-d900-4ebd-89fc-abcce64e342b"
+  name: "Agile Accelerator"
+  dockerRepository: "farosai/airbyte-agileaccelerator-source"
+  dockerImageTag: "0.1.50"
+  documentationUrl: "https://docs.faros.ai"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "AgileAccelerator Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "server_url"
+      - "client_id"
+      - "client_secret"
+      - "username"
+      - "password"
+      - "api_token"
+      properties:
+        password:
+          type: "string"
+          title: "Password"
+          airbyte_secret: true
+        username:
+          type: "string"
+          title: "Username"
+        api_token:
+          type: "string"
+          title: "API Token"
+          description: "To get token use URL: $SERVER_URL/lightning/settings/personal/ResetApiToken/home"
+          airbyte_secret: true
+        client_id:
+          type: "string"
+          title: "Client ID"
+          description: "1. From Setup, enter App Manager in the Quick Find box, and\
+            \ then select App Manager. 2. Click the dropdown menu for the connected\
+            \ app that you created, and select View. 3. If the values for the Consumer\
+            \ Key and Consumer Secret fields are hidden, click Click to reveal. 4.\
+            \ Copy the Consumer Key and Consumer Secret values and save them for later\
+            \ use in this quick start."
+        page_size:
+          type: "integer"
+          title: "Page Size"
+        server_url:
+          type: "string"
+          title: "Server URL"
+          example:
+          - "https://test.my.salesforce.com"
+        api_version:
+          type: "string"
+          title: "API Version"
+          default: "v53.0"
+        client_secret:
+          type: "string"
+          title: "Client Secret"
+          description: "Same as client_id"
+          airbyte_secret: true
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
 - sourceDefinitionId: "0b5c867e-1b12-4d02-ab74-97b2184ff6d7"
   name: "Dixa"
   dockerRepository: "airbyte/source-dixa"
@@ -377,6 +438,42 @@
             \ ID following the link <a href=\"https://airtable.com/api\">Airtable\
             \ API</a>, log in to your account, select the base you need and find Base\
             \ ID in the docs."
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
+- sourceDefinitionId: "172cc5e1-9443-4f1b-a386-5a7813e05f45"
+  name: "Datadog"
+  dockerRepository: "farosai/airbyte-datadog-source"
+  dockerImageTag: "0.1.50"
+  documentationUrl: "https://docs.faros.ai"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "Datadog Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "api_key"
+      - "application_key"
+      properties:
+        api_key:
+          type: "string"
+          order: 0
+          title: "Datadog API Key"
+          airbyte_secret: true
+        page_size:
+          type: "integer"
+          order: 2
+          title: "Page Size"
+          default: 100
+          description: "used when retrieving paginated data from Datadog"
+        application_key:
+          type: "string"
+          order: 1
+          title: "Datadog Application Key"
+          description: "requires incident_read authorization scope"
+          airbyte_secret: true
       additionalProperties: false
     supportsNormalization: false
     supportsDBT: false
@@ -2067,7 +2164,7 @@
 - sourceDefinitionId: "4b3cd0a4-4994-4616-af28-9871e28a8368"
   name: "Statuspage"
   dockerRepository: "farosai/airbyte-statuspage-source"
-  dockerImageTag: "0.1.34"
+  dockerImageTag: "0.1.50"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/statuspage-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -2186,7 +2283,7 @@
 - sourceDefinitionId: "4c4613d8-ffcd-4db8-a8f8-d325052aec11"
   name: "Jenkins"
   dockerRepository: "farosai/airbyte-jenkins-source"
-  dockerImageTag: "0.1.34"
+  dockerImageTag: "0.1.50"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/jenkins-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -2468,6 +2565,72 @@
           examples:
           - "ditto, luxray, snorlax"
           description: "Pokemon requested from the API."
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
+- sourceDefinitionId: "63aa5e31-9490-4730-b2d4-14e42a4eb899"
+  name: "Phabricator"
+  dockerRepository: "farosai/airbyte-phabricator-source"
+  dockerImageTag: "0.1.50"
+  documentationUrl: "https://docs.faros.ai"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "Phabricator Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "server_url"
+      - "token"
+      - "start_date"
+      properties:
+        limit:
+          type: "integer"
+          title: "Limit"
+          default: 100
+          maximum: 100
+          minimum: 1
+          description: "Limit of results on a single page fetched from Phabricator"
+        token:
+          type: "string"
+          title: "Conduit Token"
+          airbyte_secret: true
+        projects:
+          type: "array"
+          items:
+            type: "string"
+          title: "Projects"
+          examples:
+          - "my_project_1"
+          - "my_project_2"
+          description: "List of Phabricator projects slugs, e.g. `my_project_1,my_project_2`.\
+            \ Slugs are the same as project hashtags. If none provided would sync\
+            \ all projects."
+        server_url:
+          type: "string"
+          title: "Phabricator Conduit API URL"
+          examples:
+          - "https://my-phabricator-server.example.com"
+        start_date:
+          type: "string"
+          title: "Start Date"
+          pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+          examples:
+          - "2010-03-27T14:03:51-0800"
+          description: "The date from which you'd like to replicate data for Phabricator\
+            \ in the ISO 8601 format, i.e YYYY-MM-DDTmm:HH:ssZ. All data generated\
+            \ after this date will be replicated."
+        repositories:
+          type: "array"
+          items:
+            type: "string"
+          title: "Repositories"
+          examples:
+          - "repo-1"
+          - "repo-2"
+          description: "List of Phabricator repositories, e.g. `repo-1,repo-2`. If\
+            \ none provided would sync all repositories."
       additionalProperties: false
     supportsNormalization: false
     supportsDBT: false
@@ -3884,7 +4047,7 @@
 - sourceDefinitionId: "8b3ac13b-f1b1-4644-bec2-e7b6be6d64c4"
   name: "VictorOps"
   dockerRepository: "farosai/airbyte-victorops-source"
-  dockerImageTag: "0.1.34"
+  dockerImageTag: "0.1.50"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/victorops-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -4522,10 +4685,45 @@
     supportsNormalization: false
     supportsDBT: false
     supported_destination_sync_modes: []
+- sourceDefinitionId: "aed60257-db80-4121-b212-4520807fd94c"
+  name: "Backlog"
+  dockerRepository: "farosai/airbyte-backlog-source"
+  dockerImageTag: "0.1.50"
+  documentationUrl: "https://docs.faros.ai"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "Backlog Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "apiKey"
+      - "space"
+      properties:
+        space:
+          type: "string"
+          title: "Space ID"
+          examples:
+          - "devcube"
+        apiKey:
+          type: "string"
+          title: "API Key"
+          airbyte_secret: true
+        project_id:
+          type:
+          - "number"
+          - "null"
+          title: "Project ID"
+          description: "Only pull issues from this project. If not set, all issues\
+            \ from all projects will be pulled."
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
 - sourceDefinitionId: "aee89078-5c00-429e-90bf-cec0174dbb76"
   name: "PagerDuty"
   dockerRepository: "farosai/airbyte-pagerduty-source"
-  dockerImageTag: "0.1.34"
+  dockerImageTag: "0.1.50"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/pagerduty-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -5258,6 +5456,51 @@
     supportsNormalization: false
     supportsDBT: false
     supported_destination_sync_modes: []
+- sourceDefinitionId: "b3f853ee-b848-4651-98cb-52f6c6023bf6"
+  name: "Shortcut"
+  dockerRepository: "farosai/airbyte-shortcut-source"
+  dockerImageTag: "0.1.50"
+  documentationUrl: "https://docs.faros.ai"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "shortcut Spec"
+      $schema: "http://json-schema.org/draft-04/schema#"
+      required:
+      - "base_url"
+      - "version"
+      - "token"
+      properties:
+        token:
+          type: "string"
+          title: "API Token"
+          description: "In order to generate a Workspace specific API token, navigate\
+            \ to Settings > Your Account > API Tokens."
+          airbyte_secret: true
+        version:
+          type: "string"
+          title: "API Version"
+          default: "v3"
+          examples:
+          - "v3"
+        base_url:
+          type: "string"
+          title: "Base API URL"
+          default: "https://api.app.shortcut.com"
+          examples:
+          - "https://api.app.shortcut.com"
+        project_public_id:
+          type:
+          - "integer"
+          - "null"
+          title: "Project Public ID"
+          description: "Only pull stories from the specified project. If not set,\
+            \ all stories from all projects will be pulled."
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
 - sourceDefinitionId: "b5ea17b1-f170-46dc-bc31-cc744ca984c1"
   name: "Microsoft SQL Server (MSSQL)"
   dockerRepository: "airbyte/source-mssql"
@@ -5794,6 +6037,28 @@
           title: "User Auth Key"
           description: "OneSignal User Auth Key, see the <a href=\"https://documentation.onesignal.com/docs/accounts-and-keys#user-auth-key\"\
             >docs</a> for more information on how to obtain this key."
+          airbyte_secret: true
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
+- sourceDefinitionId: "bcea28f0-e643-4269-bf84-8fb27f48b71e"
+  name: "Customer.io"
+  dockerRepository: "farosai/airbyte-customer-io-source"
+  dockerImageTag: "0.1.50"
+  documentationUrl: "https://docs.faros.ai"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "Customer.io Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "app_api_key"
+      properties:
+        app_api_key:
+          type: "string"
+          title: "Customer.io App API Key"
           airbyte_secret: true
       additionalProperties: false
     supportsNormalization: false
@@ -6752,7 +7017,7 @@
 - sourceDefinitionId: "d8d05baf-bbda-49b3-9489-542e77cbd820"
   name: "Harness"
   dockerRepository: "farosai/airbyte-harness-source"
-  dockerImageTag: "0.1.34"
+  dockerImageTag: "0.1.50"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/harness-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -7203,6 +7468,41 @@
               - "credentials"
               - "client_secret"
           additionalProperties: false
+- sourceDefinitionId: "dcb04367-398c-4af9-831c-aef0ce4f8f32"
+  name: "Squadcast"
+  dockerRepository: "farosai/airbyte-squadcast-source"
+  dockerImageTag: "0.1.50"
+  documentationUrl: "https://docs.faros.ai"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "SquadCast Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "token"
+      properties:
+        token:
+          type: "string"
+          title: "SquadCast Token"
+          description: "Get API Refresh Token on https://app.squadcast.com/user/USER_ID\
+            \ where USER_ID is user's ID"
+          airbyte_secret: true
+        event_deduped:
+          type: "boolean"
+          title: "SquadCast Events Deduped"
+          description: "If set to true, it will return only the deduped events. If\
+            \ set to false, it will return only the non-deduped event. Otherwise it\
+            \ will return all the events"
+        event_incident_id:
+          type: "string"
+          title: "SquadCast Events Incident ID"
+          description: "If set it will pull all events from only this Incident. If\
+            \ no it pull all events from all incidents"
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
 - sourceDefinitionId: "decd338e-5647-4c0b-adf4-da0e75f5a750"
   name: "Postgres"
   dockerRepository: "airbyte/source-postgres"
@@ -7790,6 +8090,38 @@
           type: "string"
           title: "AWSEnvironment"
           description: "An enumeration."
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
+- sourceDefinitionId: "e57c9890-e3ea-4319-be8b-6cbb4d8b40d8"
+  name: "Okta (Faros)"
+  dockerRepository: "farosai/airbyte-okta-source"
+  dockerImageTag: "0.1.50"
+  documentationUrl: "https://docs.faros.ai"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "Okta Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "token"
+      - "domain_name"
+      properties:
+        token:
+          type: "string"
+          title: "Okta Token"
+          airbyte_secret: true
+        version:
+          type: "string"
+          title: "version"
+          default: "v1"
+        domain_name:
+          type: "string"
+          title: "Domain name (org name part of your Okta URL)"
+          examples:
+          - "dev-12345678"
+      additionalProperties: false
     supportsNormalization: false
     supportsDBT: false
     supported_destination_sync_modes: []
@@ -8492,12 +8824,67 @@
     supportsNormalization: false
     supportsDBT: false
     supported_destination_sync_modes: []
+- sourceDefinitionId: "ee472a41-b99a-40b3-a671-2a31c3c9c203"
+  name: "Google Calendar"
+  dockerRepository: "farosai/airbyte-googlecalendar-source"
+  dockerImageTag: "0.1.50"
+  documentationUrl: "https://docs.faros.ai"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "Google Calendar Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "client_email"
+      - "private_key"
+      properties:
+        calendar_id:
+          type: "string"
+          title: "Calendar Id"
+          default: "primary"
+          description: "Open your [Google Calendar](https://calendar.google.com/calendar)\
+            \ app page using your Google account. Navigate to your subscribed/available\
+            \ Google calendars list (usually bottom left side). To get to your calendar\
+            \ settings, hover over the calendar you wish to work on and click the\
+            \ three vertical dots that appear to the right – this will bring up a\
+            \ dropdown menu, click Settings and sharing. A new page will open. Find\
+            \ the Calendar ID at the bottom under the Integrate Calendar section"
+        private_key:
+          type: "string"
+          title: "Private Key"
+          airbyte_secret: true
+        client_email:
+          type: "string"
+          title: "Client Email"
+          examples:
+          - "https://my-google-calendar-server.example.com"
+        events_max_results:
+          max: 2500
+          type: "integer"
+          title: "Events Max Results"
+          default: 2500
+          description: "Maximum number of events returned on one result page. The\
+            \ number of events in the resulting page may be less than this value,\
+            \ or none at all, even if there are more events matching the query. Incomplete\
+            \ pages can be detected by a non-empty nextPageToken field in the response"
+        calendars_max_results:
+          max: 250
+          type: "integer"
+          title: "Calendars Max Results"
+          default: 250
+          description: "Maximum number of entries returned on one result page"
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
 - sourceDefinitionId: "ef69ef6e-aa7f-4af1-a01d-ef775033524e"
   name: "GitHub"
   dockerRepository: "airbyte/source-github"
   dockerImageTag: "0.2.19"
   documentationUrl: "https://docs.airbyte.io/integrations/sources/github"
   icon: "github.svg"
+  sourceType: "api"
   spec:
     documentationUrl: "https://docs.airbyte.io/integrations/sources/github"
     connectionSpecification:

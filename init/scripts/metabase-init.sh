@@ -40,13 +40,13 @@ mb_db_payload=$(jq -n \
 }')
 
 # Set up Metabase
-if [[ "$(curl -o /dev/null -s -w "%{http_code}\n" $mb_url/health)" != "200" ]]
+if [[ "$(curl -o /dev/null -s -w "%{http_code}\n" "$mb_url"/health)" != "200" ]]
 then
   echo "Metabase instance must be running: $mb_url/health did not return 200"
   exit 1
 fi
 
-setup_token=$(curl -s $mb_url/api/session/properties | jq -r '."setup-token"')
+setup_token=$(curl -s "$mb_url"/api/session/properties | jq -r '."setup-token"')
 if [[ "$setup_token" == "null" ]]; then
   session_id=$(curl -s \
     -X POST \

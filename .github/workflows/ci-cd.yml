@@ -22,6 +22,11 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
+    - name: Check for style & bugs
+      uses: ludeeus/action-shellcheck@1.1.0
+      env:
+        SHELLCHECK_OPTS: -s bash -e SC2162
+
       - name: Set up Node
         uses: actions/setup-node@v2
         with:

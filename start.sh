@@ -23,12 +23,12 @@ else
     printf "Hello 👋 Welcome to Faros Community Edition! 🤗\n\n"
     printf "Want to stay up to date with the latest community news? (we won't spam you)\n"
     email_prompt
-    echo $EMAIL > $EMAIL_FILE
+    echo "$EMAIL" > $EMAIL_FILE
 fi
 
 export FAROS_EMAIL=$EMAIL
 
-if [[ `uname -m 2> /dev/null` == 'arm64' ]]; then
+if [[ $(uname -m 2> /dev/null) == 'arm64' ]]; then
     # Use Airbyte and Metabase images built for Apple M1
     AIRBYTE_IMAGE_PREFIX="farosai/airbyte-" METABASE_IMAGE="farosai/metabase-m1" docker-compose up --build --remove-orphans
 else

@@ -141,7 +141,7 @@
 - sourceDefinitionId: "05f9f7d4-d900-4ebd-89fc-abcce64e342b"
   name: "Agile Accelerator"
   dockerRepository: "farosai/airbyte-agileaccelerator-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://docs.faros.ai"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -445,7 +445,7 @@
 - sourceDefinitionId: "172cc5e1-9443-4f1b-a386-5a7813e05f45"
   name: "Datadog"
   dockerRepository: "farosai/airbyte-datadog-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://docs.faros.ai"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -2164,7 +2164,7 @@
 - sourceDefinitionId: "4b3cd0a4-4994-4616-af28-9871e28a8368"
   name: "Statuspage"
   dockerRepository: "farosai/airbyte-statuspage-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/statuspage-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -2283,7 +2283,7 @@
 - sourceDefinitionId: "4c4613d8-ffcd-4db8-a8f8-d325052aec11"
   name: "Jenkins"
   dockerRepository: "farosai/airbyte-jenkins-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/jenkins-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -2326,6 +2326,66 @@
           title: "Last 100 Builds Only"
           default: false
           description: "Fetch only 100 last builds from Jenkins server"
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
+- sourceDefinitionId: "51d2be20-0bdc-4532-b5a2-98a2ef91b23e"
+  name: "Bitbucket"
+  dockerRepository: "farosai/airbyte-bitbucket-source"
+  dockerImageTag: "0.1.52"
+  documentationUrl: "https://docs.faros.ai"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "Bitbucket Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "workspace"
+      - "repositories"
+      properties:
+        token:
+          type: "string"
+          title: "Access Token"
+          description: "Personal Access Token for Bitbucket API authentication. See\
+            \ https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html\
+            \ for information on how to generate this token."
+          airbyte_secret: true
+        pagelen:
+          type: "integer"
+          title: "Page Size"
+          default: 100
+          description: "Page size to use when requesting records from Bitbucket API"
+        password:
+          type: "string"
+          description: "Bitbucket password"
+          airbyte_secret: true
+        username:
+          type: "string"
+          description: "Bitbucket username. Either username/password or Access Token\
+            \ must be provided."
+        serverUrl:
+          type: "string"
+          title: "API URL"
+          default: "https://api.bitbucket.org/2.0"
+          examples:
+          - "https://api.bitbucket.org/2.0"
+          description: "The API URL for fetching data from Bitbucket"
+        workspace:
+          type: "string"
+          title: "Workspace"
+          examples:
+          - "blaze-lib"
+          description: "Name of your Bitbucket workspace"
+        repositories:
+          type: "array"
+          items:
+            type: "string"
+          title: "Repositories"
+          examples:
+          - "blaze"
+          description: "List of repositories in your Bitbucket workspace"
       additionalProperties: false
     supportsNormalization: false
     supportsDBT: false
@@ -2572,7 +2632,7 @@
 - sourceDefinitionId: "63aa5e31-9490-4730-b2d4-14e42a4eb899"
   name: "Phabricator"
   dockerRepository: "farosai/airbyte-phabricator-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://docs.faros.ai"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -4047,7 +4107,7 @@
 - sourceDefinitionId: "8b3ac13b-f1b1-4644-bec2-e7b6be6d64c4"
   name: "VictorOps"
   dockerRepository: "farosai/airbyte-victorops-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/victorops-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -4688,7 +4748,7 @@
 - sourceDefinitionId: "aed60257-db80-4121-b212-4520807fd94c"
   name: "Backlog"
   dockerRepository: "farosai/airbyte-backlog-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://docs.faros.ai"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -4711,7 +4771,7 @@
           airbyte_secret: true
         project_id:
           type:
-          - "number"
+          - "integer"
           - "null"
           title: "Project ID"
           description: "Only pull issues from this project. If not set, all issues\
@@ -4723,7 +4783,7 @@
 - sourceDefinitionId: "aee89078-5c00-429e-90bf-cec0174dbb76"
   name: "PagerDuty"
   dockerRepository: "farosai/airbyte-pagerduty-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/pagerduty-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -5459,7 +5519,7 @@
 - sourceDefinitionId: "b3f853ee-b848-4651-98cb-52f6c6023bf6"
   name: "Shortcut"
   dockerRepository: "farosai/airbyte-shortcut-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://docs.faros.ai"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -6045,7 +6105,7 @@
 - sourceDefinitionId: "bcea28f0-e643-4269-bf84-8fb27f48b71e"
   name: "Customer.io"
   dockerRepository: "farosai/airbyte-customer-io-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://docs.faros.ai"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -7017,7 +7077,7 @@
 - sourceDefinitionId: "d8d05baf-bbda-49b3-9489-542e77cbd820"
   name: "Harness"
   dockerRepository: "farosai/airbyte-harness-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/harness-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -7471,7 +7531,7 @@
 - sourceDefinitionId: "dcb04367-398c-4af9-831c-aef0ce4f8f32"
   name: "Squadcast"
   dockerRepository: "farosai/airbyte-squadcast-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://docs.faros.ai"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -8096,7 +8156,7 @@
 - sourceDefinitionId: "e57c9890-e3ea-4319-be8b-6cbb4d8b40d8"
   name: "Okta (Faros)"
   dockerRepository: "farosai/airbyte-okta-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://docs.faros.ai"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -8827,7 +8887,7 @@
 - sourceDefinitionId: "ee472a41-b99a-40b3-a671-2a31c3c9c203"
   name: "Google Calendar"
   dockerRepository: "farosai/airbyte-googlecalendar-source"
-  dockerImageTag: "0.1.50"
+  dockerImageTag: "0.1.52"
   documentationUrl: "https://docs.faros.ai"
   spec:
     documentationUrl: "https://docs.faros.ai"

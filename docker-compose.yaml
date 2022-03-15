@@ -1,34 +1,42 @@
 version: "3.7"
 services:
   airbyte-init:
+    profiles: ["airbyte"]
     extends:
       file: airbyte-services.yaml
       service: init
   airbyte-bootloader:
+    profiles: ["airbyte"]
     extends:
       file: airbyte-services.yaml
       service: bootloader
   airbyte-scheduler:
+    profiles: ["airbyte"]
     extends:
       file: airbyte-services.yaml
       service: scheduler
   airbyte-worker:
+    profiles: ["airbyte"]
     extends:
       file: airbyte-services.yaml
       service: worker
   airbyte-server:
+    profiles: ["airbyte"]
     extends:
       file: airbyte-services.yaml
       service: server
   airbyte-webapp:
+    profiles: ["airbyte"]
     extends:
       file: airbyte-services.yaml
       service: webapp
   airbyte-temporal:
+    profiles: ["airbyte"]
     extends:
       file: airbyte-services.yaml
       service: airbyte-temporal
   faros-db:
+    profiles: ["airbyte", "default"]
     extends:
       file: airbyte-services.yaml
       service: db
@@ -36,14 +44,14 @@ services:
       - ${FAROS_DB_PORT?}:5432
     restart: unless-stopped
   faros-init:
+    profiles: ["default"]
     image: farosai/faros-ce-init:latest
     depends_on:
-      - airbyte-webapp
       - faros-db
     restart: on-failure
     environment:
       AIRBYTE_FORCE_SETUP: ${FAROS_AIRBYTE_FORCE_SETUP:-false}
-      AIRBYTE_URL: http://airbyte-webapp:80
+      AIRBYTE_URL: ${AIRBYTE_URL}
       FAROS_DB_HOST: faros-db
       FAROS_DB_NAME: ${FAROS_DB_NAME?}
       FAROS_DB_PASSWORD: ${DATABASE_PASSWORD?}
@@ -59,6 +67,7 @@ services:
       METABASE_URL: http://metabase:3000
       METABASE_USER: ${METABASE_USER?}
   hasura:
+    profiles: ["default"]
     image: hasura/graphql-engine:${HASURA_VERSION?}
     container_name: hasura
     ports:
@@ -75,6 +84,7 @@ services:
       HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
       HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://${DATABASE_USER?}:${DATABASE_PASSWORD?}@faros-db:5432/${HASURA_DB_NAME?}
   metabase:
+    profiles: ["default"]
     build:
       context: ./metabase
       args:
@@ -98,6 +108,7 @@ services:
       MB_PASSWORD_LENGTH: 1
       MB_SEND_EMAIL_ON_FIRST_LOGIN_FROM_NEW_DEVICE: "false"
   n8n:
+    profiles: ["default"]
     image: n8nio/n8n:${N8N_VERSION?}
     container_name: n8n
     ports:

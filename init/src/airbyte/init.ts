@@ -72,7 +72,7 @@ export class AirbyteInit {
     return {userId: uuidv4(), email};
   }
 
-  static sendIdentity(
+  static sendIdentityAndStartEvent(
     segmentUser: SegmentUser,
     host?: string | undefined
   ): Promise<void> {
@@ -81,20 +81,28 @@ export class AirbyteInit {
       host,
     });
     const fn = (callback: ((err: Error) => void) | undefined): void => {
-      analytics.identify(
-        {
-          userId: segmentUser.userId,
-          traits: {email: segmentUser.email},
-        },
-        callback
-      );
-      analytics.flush(callback);
+      analytics
+        .identify(
+          {
+            userId: segmentUser.userId,
+            traits: {email: segmentUser.email},
+          },
+          callback
+        )
+        .track(
+          {
+            userId: segmentUser.userId,
+            event: 'Start',
+          },
+          callback
+        )
+        .flush(callback);
     };
 
     return util
       .promisify(fn)()
       .catch((err) =>
-        logger.error(`Failed to send identity event: ${err.message}`)
+        logger.error(`Failed to send identity and start event: ${err.message}`)
       );
   }
 
@@ -259,7 +267,7 @@ async function main(): Promise<void> {
   );
 
   const segmentUser = AirbyteInit.makeSegmentUser();
-  await AirbyteInit.sendIdentity(segmentUser);
+  await AirbyteInit.sendIdentityAndStartEvent(segmentUser);
 
   await airbyte.waitUntilHealthy();
   await airbyte.setupWorkspace(segmentUser, forceSetup === 'true');

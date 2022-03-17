@@ -21,6 +21,7 @@ async function main(): Promise<void> {
   const [url, username, password, operation, dashboardId] = args;
   const dashboards = await Dashboards.fromConfig({
     metabase: {url, username, password},
+    // TODO: Pass databaseName as argument
     databaseName: 'faros',
     logger,
   });

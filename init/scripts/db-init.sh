@@ -4,25 +4,16 @@ faros_db_name=${FAROS_DB_NAME}
 faros_db_host=${FAROS_DB_HOST}
 faros_db_port=${FAROS_DB_PORT}
 faros_db_user=${FAROS_DB_USER}
-faros_db_pass=${FAROS_DB_PASS}
+faros_db_pass=${FAROS_DB_PASSWORD}
+
+cfg_db_host=${CFG_DB_HOST}
+cfg_db_port=${CFG_DB_PORT}
+cfg_db_user=${CFG_DB_USER}
+cfg_db_pass=${CFG_DB_PASSWORD}
 
 hasura_db_name=${HASURA_DB_NAME}
-hasura_db_host=${HASURA_DB_HOST}
-hasura_db_port=${HASURA_DB_PORT}
-hasura_db_user=${HASURA_DB_USER}
-hasura_db_pass=${HASURA_DB_PASS}
-
 metabase_db_name=${METABASE_DB_NAME}
-metabase_db_host=${METABASE_DB_HOST}
-metabase_db_port=${METABASE_DB_PORT}
-metabase_db_user=${METABASE_DB_USER}
-metabase_db_pass=${METABASE_DB_PASS}
-
 n8n_db_name=${N8N_DB_NAME}
-n8n_db_host=${N8N_DB_HOST}
-n8n_db_port=${N8N_DB_PORT}
-n8n_db_user=${N8N_DB_USER}
-n8n_db_pass=${N8N_DB_PASS}
 
 create_database() {
   db_name=$1
@@ -51,6 +42,6 @@ flyway \
   -password="$faros_db_pass" \
   migrate
 
-create_database "$hasura_db_name" "$hasura_db_host" "$hasura_db_port" "$hasura_db_user" "$hasura_db_pass"
-create_database "$metabase_db_name" "$metabase_db_host" "$metabase_db_port" "$metabase_db_user" "$metabase_db_pass"
-create_database "$n8n_db_name" "$n8n_db_host" "$n8n_db_port" "$n8n_db_user" "$n8n_db_pass"
+create_database "$hasura_db_name" "$cfg_db_host" "$cfg_db_port" "$cfg_db_user" "$cfg_db_pass"
+create_database "$metabase_db_name" "$cfg_db_host" "$cfg_db_port" "$cfg_db_user" "$cfg_db_pass"
+create_database "$n8n_db_name" "$cfg_db_host" "$cfg_db_port" "$cfg_db_user" "$cfg_db_pass"

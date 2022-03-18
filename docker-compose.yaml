@@ -62,24 +62,14 @@ services:
       FAROS_DB_HOST: ${FAROS_DB_HOST?}
       FAROS_DB_PORT: ${FAROS_DB_PORT?}
       FAROS_DB_USER: ${FAROS_DB_USER?}
-      FAROS_DB_PASS: ${FAROS_DB_PASS?}
-      # TODO: Remove when changes to init scripts have made it to farosai/faros-ce-init:latest
-      FAROS_DB_PASSWORD: ${FAROS_DB_PASS?}
+      FAROS_DB_PASSWORD: ${FAROS_DB_PASSWORD?}
+      CFG_DB_HOST: ${CFG_DB_HOST?}
+      CFG_DB_PORT: ${CFG_DB_PORT?}
+      CFG_DB_USER: ${CFG_DB_USER?}
+      CFG_DB_PASSWORD: ${CFG_DB_PASSWORD?}
       HASURA_DB_NAME: ${HASURA_DB_NAME?}
-      HASURA_DB_HOST: ${HASURA_DB_HOST?}
-      HASURA_DB_PORT: ${HASURA_DB_PORT?}
-      HASURA_DB_USER: ${HASURA_DB_USER?}
-      HASURA_DB_PASS: ${HASURA_DB_PASS?}
       METABASE_DB_NAME: ${METABASE_DB_NAME?}
-      METABASE_DB_HOST: ${METABASE_DB_HOST?}
-      METABASE_DB_PORT: ${METABASE_DB_PORT?}
-      METABASE_DB_USER: ${METABASE_DB_USER?}
-      METABASE_DB_PASS: ${METABASE_DB_PASS?}
       N8N_DB_NAME: ${N8N_DB_NAME?}
-      N8N_DB_HOST: ${N8N_DB_HOST?}
-      N8N_DB_PORT: ${N8N_DB_PORT?}
-      N8N_DB_USER: ${N8N_DB_USER?}
-      N8N_DB_PASS: ${N8N_DB_PASS?}
   hasura:
     profiles: ["default"]
     image: hasura/graphql-engine:${HASURA_VERSION?}
@@ -90,12 +80,12 @@ services:
       - faros-init
     restart: unless-stopped
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://${FAROS_DB_USER?}:${FAROS_DB_PASS?}@${FAROS_DB_HOST?}:${FAROS_DB_PORT?}/${FAROS_DB_NAME?}
+      HASURA_GRAPHQL_DATABASE_URL: postgres://${FAROS_DB_USER?}:${FAROS_DB_PASSWORD?}@${FAROS_DB_HOST?}:${FAROS_DB_PORT?}/${FAROS_DB_NAME?}
       HASURA_GRAPHQL_DEV_MODE: "false"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
-      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://${HASURA_DB_USER?}:${HASURA_DB_PASS?}@${HASURA_DB_HOST?}:${HASURA_DB_PORT?}/${HASURA_DB_NAME?}
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://${CFG_DB_USER?}:${CFG_DB_PASSWORD?}@${CFG_DB_HOST?}:${CFG_DB_PORT?}/${HASURA_DB_NAME?}
   metabase:
     profiles: ["default"]
     build:
@@ -111,11 +101,11 @@ services:
     environment:
       MB_ANON_TRACKING_ENABLED: "false"
       MB_DB_DBNAME: ${METABASE_DB_NAME?}
-      MB_DB_HOST: ${METABASE_DB_HOST?}
-      MB_DB_PASS: ${METABASE_DB_PASS?}
-      MB_DB_PORT: ${METABASE_DB_PORT?}
+      MB_DB_HOST: ${CFG_DB_HOST?}
+      MB_DB_PASS: ${CFG_DB_PASSWORD?}
+      MB_DB_PORT: ${CFG_DB_PORT?}
       MB_DB_TYPE: postgres
-      MB_DB_USER: ${METABASE_DB_USER?}
+      MB_DB_USER: ${CFG_DB_USER?}
       MB_PASSWORD_COMPLEXITY: weak
       MB_PASSWORD_LENGTH: 1
       MB_SEND_EMAIL_ON_FIRST_LOGIN_FROM_NEW_DEVICE: "false"
@@ -130,12 +120,12 @@ services:
     restart: unless-stopped
     environment:
       DB_TYPE: postgresdb
-      DB_POSTGRESDB_HOST: ${N8N_DB_HOST?}
-      DB_POSTGRESDB_PORT: ${N8N_DB_PORT?}
+      DB_POSTGRESDB_HOST: ${CFG_DB_HOST?}
+      DB_POSTGRESDB_PORT: ${CFG_DB_PORT?}
       DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME?}
       DB_POSTGRESDB_SCHEMA: public
-      DB_POSTGRESDB_USER: ${N8N_DB_USER?}
-      DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASS?}
+      DB_POSTGRESDB_USER: ${CFG_DB_USER?}
+      DB_POSTGRESDB_PASSWORD: ${CFG_DB_PASSWORD?}
       N8N_PERSONALIZATION_ENABLED: "false"
       N8N_DIAGNOSTICS_ENABLED: "false"
       N8N_VERSION_NOTIFICATIONS_ENABLED: "false"

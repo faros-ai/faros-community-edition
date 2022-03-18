@@ -6,10 +6,10 @@ faros_db_port=${FAROS_DB_PORT}
 faros_db_user=${FAROS_DB_USER}
 faros_db_pass=${FAROS_DB_PASSWORD}
 
-cfg_db_host=${CFG_DB_HOST}
-cfg_db_port=${CFG_DB_PORT}
-cfg_db_user=${CFG_DB_USER}
-cfg_db_pass=${CFG_DB_PASSWORD}
+cfg_db_host=${FAROS_CONFIG_DB_HOST}
+cfg_db_port=${FAROS_CONFIG_DB_PORT}
+cfg_db_user=${FAROS_CONFIG_DB_USER}
+cfg_db_pass=${FAROS_CONFIG_DB_PASSWORD}
 
 hasura_db_name=${HASURA_DB_NAME}
 metabase_db_name=${METABASE_DB_NAME}

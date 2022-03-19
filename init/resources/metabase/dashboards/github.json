@@ -1143,7 +1143,7 @@
     {
       "field": {{ field "tms_TaskBoard.name" }},
       "type": "type/Category"
-    },
+    }
   ],
   "path": "/Faros CE/GitHub",
   "priority": 5

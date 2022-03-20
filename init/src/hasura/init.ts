@@ -1,4 +1,5 @@
 import axios, {AxiosInstance} from 'axios';
+import {program} from 'commander';
 import fs from 'fs-extra';
 import {
   compact,
@@ -477,23 +478,27 @@ export class HasuraInit {
 }
 
 async function main(): Promise<void> {
-  const args = process.argv.slice(2);
-  if (args.length < 1) {
-    throw new VError('Usage: node init.js <hasura url> [hasura admin secret]');
-  }
+  program
+    .requiredOption('--hasura-url <string>')
+    .option('--admin-secret <string>');
+
+  program.parse();
+  const options = program.opts();
 
   const logger = pino({
     name: 'hasura-init',
     level: process.env.LOG_LEVEL || 'info',
   });
 
-  const adminSecret = args.length < 2 ? undefined : args[1];
+  logger.info('Opts=%o', options);
   const hasura = new HasuraInit(
     axios.create({
-      baseURL: args[0],
+      baseURL: options.hasuraUrl,
       headers: {
         'X-Hasura-Role': 'admin',
-        ...(adminSecret && {'X-Hasura-Admin-Secret': adminSecret}),
+        ...(options.adminSecret && {
+          'X-Hasura-Admin-Secret': options.adminSecret,
+        }),
       },
     }),
     logger

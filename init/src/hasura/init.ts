@@ -479,7 +479,7 @@ export class HasuraInit {
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   if (args.length < 1) {
-    throw new VError('Usage: node init.js <hasura url>');
+    throw new VError('Usage: node init.js <hasura url> [hasura admin secret]');
   }
 
   const logger = pino({
@@ -487,10 +487,14 @@ async function main(): Promise<void> {
     level: process.env.LOG_LEVEL || 'info',
   });
 
+  const adminSecret = args.length < 2 ? undefined : args[1];
   const hasura = new HasuraInit(
     axios.create({
       baseURL: args[0],
-      headers: {'X-Hasura-Role': 'admin'},
+      headers: {
+        'X-Hasura-Role': 'admin',
+        ...(adminSecret && {'X-Hasura-Admin-Secret': adminSecret}),
+      },
     }),
     logger
   );

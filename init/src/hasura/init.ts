@@ -490,7 +490,6 @@ async function main(): Promise<void> {
     level: process.env.LOG_LEVEL || 'info',
   });
 
-  logger.info('Opts=%o', options);
   const hasura = new HasuraInit(
     axios.create({
       baseURL: options.hasuraUrl,

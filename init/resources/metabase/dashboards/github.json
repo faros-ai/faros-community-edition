@@ -1,0 +1,1151 @@
+{
+  "name": "GitHub Dashboard",
+  "cards": [
+    {
+      "name": "PRs Opened",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "stateDetail",
+        "table.cell_column": "count"
+      }
+    },
+    {
+      "name": "PRs Closed",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "vcs_PullRequest.stateDetail" }},
+                null
+              ],
+              "closed"
+            ],
+            [
+              "is-null",
+              [
+                "field",
+                {{ field "vcs_PullRequest.mergedAt" }},
+                null
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "stateDetail",
+        "table.cell_column": "count"
+      }
+    },
+    {
+      "name": "PRs Merged",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "filter": [
+            "not-null",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "stateDetail",
+        "table.cell_column": "count"
+      }
+    },
+    {
+      "name": "PRs Opened by Week",
+      "description": null,
+      "display": "line",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "createdAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "PRs Merged by Week",
+      "description": null,
+      "display": "line",
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "filter": [
+            "not-null",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "mergedAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Issues Created by Week",
+      "description": null,
+      "display": "line",
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.createdAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            }
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "createdAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Issues Closed by Week",
+      "description": null,
+      "display": "line",
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.updatedAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.statusDetail" }},
+              null
+            ],
+            "closed"
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            }
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "updatedAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Issues Created",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            }
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "Issues Closed",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            }
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.statusDetail" }},
+              null
+            ],
+            "closed"
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "PR Cycle Time",
+      "description": null,
+      "display": "gauge",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT EXTRACT(epoch FROM (\nSELECT \n    justify_interval(\n      avg(\n        \"vcs_PullRequest\".\"mergedAt\" - \"vcs_PullRequest\".\"createdAt\"\n      )\n    ) as cycle_time \n  FROM \n    \"vcs_PullRequest\" \n  JOIN \"vcs_Repository\" ON \"vcs_PullRequest\".\"repository\" = \"vcs_Repository\".\"id\"\n  WHERE \n    \"vcs_PullRequest\".\"mergedAt\" IS NOT NULL AND <<mergedAt>> AND <<repositoryName>>\n) / 3600 / 24)",
+          "template-tags": {
+            "mergedAt": {
+              "id": "6d632c6b-fb36-9c68-fe23-f392a44e8616",
+              "name": "mergedAt",
+              "display-name": "MergedAt",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "vcs_PullRequest.mergedAt" }},
+                null
+              ],
+              "widget-type": "date/relative"
+            },
+            "repositoryName": {
+              "id": "1015faef-9dfa-6ca0-af07-bb3698da351d",
+              "name": "repositoryName",
+              "display-name": "RepositoryName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "vcs_Repository.name" }},
+                null
+              ],
+              "widget-type": "category"
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 3,
+            "max": 10,
+            "color": "#ED6E6E",
+            "label": ""
+          },
+          {
+            "min": 1,
+            "max": 3,
+            "color": "#F9CF48",
+            "label": ""
+          },
+          {
+            "min": 0,
+            "max": 1,
+            "color": "#84BB4C",
+            "label": ""
+          }
+        ],
+        "column_settings": {
+          "[\"name\",\"date_part\"]": {
+            "suffix": " days"
+          }
+        }
+      }
+    },
+    {
+      "name": "Top 5 Contributors",
+      "description": null,
+      "display": "row",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_User.name" }},
+              {
+                "source-field": {{ field "vcs_PullRequest.author" }}
+              }
+            ]
+          ],
+          "limit": 5,
+          "order-by": [
+            [
+              "desc",
+              [
+                "aggregation",
+                0
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "name"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Reviews Distribution",
+      "description": null,
+      "display": "pie",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-query": {
+            "source-table": {{ table "vcs_PullRequest" }},
+            "joins": [
+              {
+                "fields": "all",
+                "source-table": {{ table "vcs_PullRequestReview" }},
+                "condition": [
+                  "=",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.id" }},
+                    null
+                  ],
+                  [
+                    "field",
+                    {{ field "vcs_PullRequestReview.pullRequest" }},
+                    {
+                      "join-alias": "Vcs PullRequestReview"
+                    }
+                  ]
+                ],
+                "alias": "Vcs PullRequestReview"
+              }
+            ],
+            "expressions": {
+              "review": [
+                "case",
+                [
+                  [
+                    [
+                      "is-null",
+                      [
+                        "field",
+                        {{ field "vcs_PullRequestReview.id" }},
+                        {
+                          "join-alias": "Vcs PullRequestReview"
+                        }
+                      ]
+                    ],
+                    0
+                  ]
+                ],
+                {
+                  "default": 1
+                }
+              ]
+            },
+            "aggregation": [
+              [
+                "aggregation-options",
+                [
+                  "sum",
+                  [
+                    "expression",
+                    "review"
+                  ]
+                ],
+                {
+                  "name": "Review Count",
+                  "display-name": "Review Count"
+                }
+              ]
+            ],
+            "breakout": [
+              [
+                "field",
+                {{ field "vcs_PullRequest.uid" }},
+                null
+              ],
+              [
+                "field",
+                {{ field "vcs_PullRequest.mergedAt" }},
+                {
+                  "temporal-unit": "day"
+                }
+              ],
+              [
+                "field",
+                {{ field "vcs_Repository.name" }},
+                {
+                  "source-field": {{ field "vcs_PullRequest.repository" }}
+                }
+              ]
+            ]
+          },
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              "Review Count",
+              {
+                "base-type": "type/Float"
+              }
+            ]
+          ],
+          "filter": [
+            "time-interval",
+            [
+              "field",
+              "mergedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ],
+            -30,
+            "day"
+          ]
+        }
+      },
+      "visualization_settings": {
+        "pie.show_legend": true
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Relative Date",
+      "slug": "relative_date",
+      "id": "ea1a6ce3",
+      "type": "date/relative",
+      "sectionId": "date",
+      "default": "past30days"
+    },
+    {
+      "name": "Repository",
+      "slug": "repository",
+      "id": "2b129558",
+      "type": "category"
+    }
+  ],
+  "layout": [
+    {
+      "row": 3,
+      "col": 12,
+      "sizeX": 3,
+      "sizeY": 3,
+      "card_id": {{ card "PRs Opened" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "PRs Opened" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2b129558",
+          "card_id": {{ card "PRs Opened" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "source-field": {{ field "vcs_PullRequest.repository" }}
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 3,
+      "col": 15,
+      "sizeX": 3,
+      "sizeY": 3,
+      "card_id": {{ card "PRs Closed" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "PRs Closed" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.updatedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2b129558",
+          "card_id": {{ card "PRs Closed" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "source-field": {{ field "vcs_PullRequest.repository" }}
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 12,
+      "sizeX": 6,
+      "sizeY": 3,
+      "card_id": {{ card "PRs Merged" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "PRs Merged" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2b129558",
+          "card_id": {{ card "PRs Merged" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "source-field": {{ field "vcs_PullRequest.repository" }}
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "sizeX": 12,
+      "sizeY": 5,
+      "card_id": {{ card "PRs Opened by Week" }},
+      "series": [
+        {
+          "id": {{ card "PRs Merged by Week" }}
+        },
+        {
+          "id": {{ card "Issues Created by Week" }}
+        },
+        {
+          "id": {{ card "Issues Closed by Week" }}
+        }
+      ],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "PRs Opened by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "PRs Merged by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Issues Created by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.createdAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Issues Closed by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.updatedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2b129558",
+          "card_id": {{ card "Issues Closed by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2b129558",
+          "card_id": {{ card "Issues Created by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2b129558",
+          "card_id": {{ card "PRs Merged by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "source-field": {{ field "vcs_PullRequest.repository" }}
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2b129558",
+          "card_id": {{ card "PRs Opened by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "source-field": {{ field "vcs_PullRequest.repository" }}
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 6,
+      "col": 12,
+      "sizeX": 3,
+      "sizeY": 3,
+      "card_id": {{ card "Issues Created" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Issues Created" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.createdAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2b129558",
+          "card_id": {{ card "Issues Created" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 6,
+      "col": 15,
+      "sizeX": 3,
+      "sizeY": 3,
+      "card_id": {{ card "Issues Closed" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Issues Closed" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.updatedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2b129558",
+          "card_id": {{ card "Issues Closed" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "PR Cycle Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "PR Cycle Time" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "mergedAt"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2b129558",
+          "card_id": {{ card "PR Cycle Time" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "repositoryName"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 8,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Top 5 Contributors" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Top 5 Contributors" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2b129558",
+          "card_id": {{ card "Top 5 Contributors" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "source-field": {{ field "vcs_PullRequest.repository" }}
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Reviews Distribution" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Reviews Distribution" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "mergedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2b129558",
+          "card_id": {{ card "Reviews Distribution" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "name",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    }
+  ],
+  "fields": [
+    {
+      "field": {{ field "vcs_Repository.name" }},
+      "type": "type/Category"
+    },
+    {
+      "field": {{ field "tms_TaskBoard.name" }},
+      "type": "type/Category"
+    }
+  ],
+  "path": "/Faros CE/GitHub",
+  "priority": 5
+}
+

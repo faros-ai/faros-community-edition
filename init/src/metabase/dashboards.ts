@@ -455,7 +455,7 @@ export class Dashboards {
       JSON.stringify(
         JSON.parse(handlebars.compile(template)({})),
         (key, value) => {
-          return (key === 'query' && isString(value))
+          return key === 'query' && isString(value)
             ? value.replace(/<</g, '{{').replace(/>>/g, '}}')
             : value;
         }

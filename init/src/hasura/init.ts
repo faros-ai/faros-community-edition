@@ -242,9 +242,9 @@ export class HasuraInit {
       configuration: {
         connection_info: {
           use_prepared_statements: true,
-          database_url: databaseUrl ? databaseUrl : {
-            from_env: 'HASURA_GRAPHQL_DATABASE_URL',
-          },
+          database_url: databaseUrl || {
+                from_env: 'HASURA_GRAPHQL_DATABASE_URL',
+              },
           isolation_level: 'read-committed',
           pool_settings: {
             connection_lifetime: 600,
@@ -414,7 +414,13 @@ export class HasuraInit {
     if (trackedTables.length === 0) {
       await this.loadMetadata({
         version: 3,
-        sources: [HasuraInit.createSourceMetadata(allTableNames, foreignKeys, databaseUrl)],
+        sources: [
+          HasuraInit.createSourceMetadata(
+            allTableNames,
+            foreignKeys,
+            databaseUrl
+          ),
+        ],
       });
       this.logger.info('Loaded source metadata into Hasura');
       return;

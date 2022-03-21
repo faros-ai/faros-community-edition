@@ -471,7 +471,7 @@
       "dataset_query": {
         "type": "native",
         "native": {
-          "query": "SELECT EXTRACT(epoch FROM (\nSELECT \n    justify_interval(\n      avg(\n        \"vcs_PullRequest\".\"mergedAt\" - \"vcs_PullRequest\".\"createdAt\"\n      )\n    ) as cycle_time \n  FROM \n    \"vcs_PullRequest\" \n  JOIN \"vcs_Repository\" ON \"vcs_PullRequest\".\"repository\" = \"vcs_Repository\".\"id\"\n  WHERE \n    \"vcs_PullRequest\".\"mergedAt\" IS NOT NULL AND \\{{mergedAt}} AND \\{{repositoryName}}\n) / 3600 / 24)",
+          "query": "SELECT EXTRACT(epoch FROM (\nSELECT \n    justify_interval(\n      avg(\n        \"vcs_PullRequest\".\"mergedAt\" - \"vcs_PullRequest\".\"createdAt\"\n      )\n    ) as cycle_time \n  FROM \n    \"vcs_PullRequest\" \n  JOIN \"vcs_Repository\" ON \"vcs_PullRequest\".\"repository\" = \"vcs_Repository\".\"id\"\n  WHERE \n    \"vcs_PullRequest\".\"mergedAt\" IS NOT NULL AND <<mergedAt>> AND <<repositoryName>>\n) / 3600 / 24)",
           "template-tags": {
             "mergedAt": {
               "id": "6d632c6b-fb36-9c68-fe23-f392a44e8616",

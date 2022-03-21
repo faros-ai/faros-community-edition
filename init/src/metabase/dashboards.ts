@@ -261,7 +261,7 @@ export class Dashboards {
           }
         } else if (isString(val)) {
           if (key === 'query') {
-            cfg[key] = val.replace(/{{/g, '\\{{');
+            cfg[key] = val.replace(/{{/g, '<<').replace(/}}/g, '>>');
           } else if (key === 'source-table') {
             const cardId = Dashboards.parentCardId(val);
             if (!cardId) {
@@ -452,7 +452,14 @@ export class Dashboards {
       return 'null';
     });
     return JSON.parse(
-      JSON.stringify(JSON.parse(handlebars.compile(template)({})))
+      JSON.stringify(
+        JSON.parse(handlebars.compile(template)({})),
+        (key, value) => {
+          return (key === 'query' && isString(value))
+            ? value.replace(/<</g, '{{').replace(/>>/g, '}}')
+            : value;
+        }
+      )
     );
   }
 

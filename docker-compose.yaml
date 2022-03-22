@@ -36,36 +36,40 @@ services:
       file: airbyte-services.yaml
       service: airbyte-temporal
   faros-db:
-    profiles: ["airbyte", "default"]
+    # This service is required to deploy Airbyte (hence the "airbyte" profile).
+    # It can also be used to host the databases of other services (by including the "faros-db" profile).
+    profiles: ["airbyte", "faros-db"]
     extends:
       file: airbyte-services.yaml
       service: db
     ports:
-      - ${FAROS_DB_PORT?}:5432
+      - ${DATABASE_PORT?}:5432
     restart: unless-stopped
   faros-init:
     profiles: ["default"]
     image: farosai/faros-ce-init:latest
-    depends_on:
-      - faros-db
     restart: on-failure
     environment:
       AIRBYTE_FORCE_SETUP: ${FAROS_AIRBYTE_FORCE_SETUP:-false}
       AIRBYTE_URL: ${AIRBYTE_URL}
-      FAROS_DB_HOST: faros-db
-      FAROS_DB_NAME: ${FAROS_DB_NAME?}
-      FAROS_DB_PASSWORD: ${DATABASE_PASSWORD?}
-      FAROS_DB_PORT: 5432
-      FAROS_DB_USER: ${DATABASE_USER?}
       FAROS_EMAIL: ${FAROS_EMAIL}
-      HASURA_DB_NAME: ${HASURA_DB_NAME?}
-      N8N_DB_NAME: ${N8N_DB_NAME?}
       HASURA_URL: http://hasura:8080
       LOG_LEVEL: ${FAROS_INIT_LOG_LEVEL:-info}
-      METABASE_DB_NAME: ${METABASE_DB_NAME?}
       METABASE_PASSWORD: ${METABASE_PASSWORD?}
       METABASE_URL: http://metabase:3000
       METABASE_USER: ${METABASE_USER?}
+      FAROS_DB_NAME: ${FAROS_DB_NAME?}
+      FAROS_DB_HOST: ${FAROS_DB_HOST?}
+      FAROS_DB_PORT: ${FAROS_DB_PORT?}
+      FAROS_DB_USER: ${FAROS_DB_USER?}
+      FAROS_DB_PASSWORD: ${FAROS_DB_PASSWORD?}
+      FAROS_CONFIG_DB_HOST: ${FAROS_CONFIG_DB_HOST?}
+      FAROS_CONFIG_DB_PORT: ${FAROS_CONFIG_DB_PORT?}
+      FAROS_CONFIG_DB_USER: ${FAROS_CONFIG_DB_USER?}
+      FAROS_CONFIG_DB_PASSWORD: ${FAROS_CONFIG_DB_PASSWORD?}
+      HASURA_DB_NAME: ${HASURA_DB_NAME?}
+      METABASE_DB_NAME: ${METABASE_DB_NAME?}
+      N8N_DB_NAME: ${N8N_DB_NAME?}
   hasura:
     profiles: ["default"]
     image: hasura/graphql-engine:${HASURA_VERSION?}
@@ -73,16 +77,15 @@ services:
     ports:
       - ${HASURA_PORT?}:8080
     depends_on:
-      - faros-db
       - faros-init
     restart: unless-stopped
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://${DATABASE_USER?}:${DATABASE_PASSWORD?}@faros-db:5432/${FAROS_DB_NAME?}
+      HASURA_GRAPHQL_DATABASE_URL: postgres://${FAROS_DB_USER?}:${FAROS_DB_PASSWORD?}@${FAROS_DB_HOST?}:${FAROS_DB_PORT?}/${FAROS_DB_NAME?}
       HASURA_GRAPHQL_DEV_MODE: "false"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
-      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://${DATABASE_USER?}:${DATABASE_PASSWORD?}@faros-db:5432/${HASURA_DB_NAME?}
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://${FAROS_CONFIG_DB_USER?}:${FAROS_CONFIG_DB_PASSWORD?}@${FAROS_CONFIG_DB_HOST?}:${FAROS_CONFIG_DB_PORT?}/${HASURA_DB_NAME?}
   metabase:
     profiles: ["default"]
     build:
@@ -93,17 +96,16 @@ services:
     ports:
       - ${METABASE_PORT?}:3000
     depends_on:
-      - faros-db
       - faros-init
     restart: unless-stopped
     environment:
       MB_ANON_TRACKING_ENABLED: "false"
       MB_DB_DBNAME: ${METABASE_DB_NAME?}
-      MB_DB_HOST: faros-db
-      MB_DB_PASS: ${DATABASE_PASSWORD?}
-      MB_DB_PORT: 5432
+      MB_DB_HOST: ${FAROS_CONFIG_DB_HOST?}
+      MB_DB_PASS: ${FAROS_CONFIG_DB_PASSWORD?}
+      MB_DB_PORT: ${FAROS_CONFIG_DB_PORT?}
       MB_DB_TYPE: postgres
-      MB_DB_USER: ${DATABASE_USER?}
+      MB_DB_USER: ${FAROS_CONFIG_DB_USER?}
       MB_PASSWORD_COMPLEXITY: weak
       MB_PASSWORD_LENGTH: 1
       MB_SEND_EMAIL_ON_FIRST_LOGIN_FROM_NEW_DEVICE: "false"
@@ -114,17 +116,16 @@ services:
     ports:
       - ${N8N_PORT?}:5678
     depends_on:
-      - faros-db
       - faros-init
     restart: unless-stopped
     environment:
       DB_TYPE: postgresdb
-      DB_POSTGRESDB_HOST: faros-db
-      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_HOST: ${FAROS_CONFIG_DB_HOST?}
+      DB_POSTGRESDB_PORT: ${FAROS_CONFIG_DB_PORT?}
       DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME?}
       DB_POSTGRESDB_SCHEMA: public
-      DB_POSTGRESDB_USER: ${DATABASE_USER?}
-      DB_POSTGRESDB_PASSWORD: ${DATABASE_PASSWORD?}
+      DB_POSTGRESDB_USER: ${FAROS_CONFIG_DB_USER?}
+      DB_POSTGRESDB_PASSWORD: ${FAROS_CONFIG_DB_PASSWORD?}
       N8N_PERSONALIZATION_ENABLED: "false"
       N8N_DIAGNOSTICS_ENABLED: "false"
       N8N_VERSION_NOTIFICATIONS_ENABLED: "false"

@@ -1,6 +1,7 @@
 import Analytics from 'analytics-node';
 import retry from 'async-retry';
 import axios, {AxiosInstance} from 'axios';
+import {program} from 'commander';
 import fs from 'fs-extra';
 import handlebars from 'handlebars';
 import {find} from 'lodash';
@@ -253,16 +254,13 @@ export class AirbyteInit {
 }
 
 async function main(): Promise<void> {
-  const args = process.argv.slice(2);
-  if (args.length < 1) {
-    throw new VError(
-      'Usage: node init.js <airbyte url> [true|false force re-setup]'
-    );
-  }
-  const [airbyteUrl, forceSetup] = args;
+  program.requiredOption('--airbyte-url <string>').option('--force-setup');
+  program.parse();
+  const options = program.opts();
+
   const airbyte = new AirbyteInit(
     axios.create({
-      baseURL: `${airbyteUrl}/api/v1`,
+      baseURL: `${options.airbyteUrl}/api/v1`,
     })
   );
 
@@ -270,7 +268,7 @@ async function main(): Promise<void> {
   await AirbyteInit.sendIdentityAndStartEvent(segmentUser);
 
   await airbyte.waitUntilHealthy();
-  await airbyte.setupWorkspace(segmentUser, forceSetup === 'true');
+  await airbyte.setupWorkspace(segmentUser, options.forceSetup);
   await airbyte.setupFarosDestinationDefinition();
   await airbyte.updateFarosSourceVersions();
   logger.info('Airbyte setup is complete');

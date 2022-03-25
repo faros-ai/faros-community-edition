@@ -1,7 +1,7 @@
 import Analytics from 'analytics-node';
 import retry from 'async-retry';
 import axios, {AxiosInstance} from 'axios';
-import {program} from 'commander';
+import {InvalidArgumentError, program} from 'commander';
 import fs from 'fs-extra';
 import handlebars from 'handlebars';
 import {find} from 'lodash';
@@ -225,14 +225,14 @@ export class AirbyteInit {
     }
   }
 
-  async updateFarosSourceVersions(cloudDeployment?: boolean): Promise<void> {
+  async updateFarosSourceVersions(concurrency?: number): Promise<void> {
     const listResponse = await this.api.post('/source_definitions/list');
     const farosSourceDefs = (
       listResponse.data.sourceDefinitions as SourceDefinition[]
     ).filter((sd) => sd.dockerRepository.startsWith('farosai/'));
 
     const promises: Promise<void>[] = [];
-    const limit = pLimit(cloudDeployment ? 1 : Number.POSITIVE_INFINITY);
+    const limit = pLimit(concurrency || Number.POSITIVE_INFINITY);
 
     for (const sourceDef of farosSourceDefs) {
       const version = await AirbyteInit.getLatestImageTag(
@@ -263,9 +263,17 @@ async function main(): Promise<void> {
   program
     .requiredOption('--airbyte-url <string>')
     .option('--force-setup')
-    .option('--cloud-deployment');
+    .option(
+      '--airbyte-api-calls-concurrency <num>',
+      'the max number of concurrent Airbyte api calls',
+      parseInt
+    );
   program.parse();
   const options = program.opts();
+
+  if (options.airbyteApiCallsConcurrency !== undefined && options.airbyteApiCallsConcurrency <= 0) {
+    throw new InvalidArgumentError('airbyte-api-calls-concurrency must be a positive integer');
+  }
 
   const airbyte = new AirbyteInit(
     axios.create({
@@ -279,7 +287,7 @@ async function main(): Promise<void> {
   await airbyte.waitUntilHealthy();
   await airbyte.setupWorkspace(segmentUser, options.forceSetup);
   await airbyte.setupFarosDestinationDefinition();
-  await airbyte.updateFarosSourceVersions(options.cloudDeployment);
+  await airbyte.updateFarosSourceVersions(options.airbyteApiCallsConcurrency);
   logger.info('Airbyte setup is complete');
 }
 

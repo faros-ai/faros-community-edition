@@ -6,6 +6,7 @@ import fs from 'fs-extra';
 import handlebars from 'handlebars';
 import {find} from 'lodash';
 import os from 'os';
+import pLimit from 'p-limit';
 import path from 'path';
 import pino from 'pino';
 import tar from 'tar';
@@ -224,12 +225,15 @@ export class AirbyteInit {
     }
   }
 
-  async updateFarosSourceVersions(): Promise<void> {
+  async updateFarosSourceVersions(cloudDeployment?: boolean): Promise<void> {
     const listResponse = await this.api.post('/source_definitions/list');
     const farosSourceDefs = (
       listResponse.data.sourceDefinitions as SourceDefinition[]
     ).filter((sd) => sd.dockerRepository.startsWith('farosai/'));
+
     const promises: Promise<void>[] = [];
+    const limit = pLimit(cloudDeployment ? 1 : Number.POSITIVE_INFINITY);
+
     for (const sourceDef of farosSourceDefs) {
       const version = await AirbyteInit.getLatestImageTag(
         sourceDef.dockerRepository
@@ -242,10 +246,12 @@ export class AirbyteInit {
           version
         );
         promises.push(
-          this.api.post('/source_definitions/update', {
-            sourceDefinitionId: sourceDef.sourceDefinitionId,
-            dockerImageTag: version,
-          })
+          limit(() =>
+            this.api.post('/source_definitions/update', {
+              sourceDefinitionId: sourceDef.sourceDefinitionId,
+              dockerImageTag: version,
+            })
+          )
         );
       }
     }
@@ -254,7 +260,10 @@ export class AirbyteInit {
 }
 
 async function main(): Promise<void> {
-  program.requiredOption('--airbyte-url <string>').option('--force-setup');
+  program
+    .requiredOption('--airbyte-url <string>')
+    .option('--force-setup')
+    .option('--cloud-deployment');
   program.parse();
   const options = program.opts();
 
@@ -270,7 +279,7 @@ async function main(): Promise<void> {
   await airbyte.waitUntilHealthy();
   await airbyte.setupWorkspace(segmentUser, options.forceSetup);
   await airbyte.setupFarosDestinationDefinition();
-  await airbyte.updateFarosSourceVersions();
+  await airbyte.updateFarosSourceVersions(options.cloudDeployment);
   logger.info('Airbyte setup is complete');
 }
 

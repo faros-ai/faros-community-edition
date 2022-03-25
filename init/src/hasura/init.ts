@@ -422,6 +422,22 @@ export class HasuraInit {
           ),
         ],
       });
+
+      if (allTableNames.length === 0 && databaseUrl) {
+        const tableNamesFromDbUrl = await this.listAllTables();
+        const foreignKeysFromDbUrl = await this.listAllForeignKeys();
+        await this.loadMetadata({
+          version: 3,
+          sources: [
+            HasuraInit.createSourceMetadata(
+              tableNamesFromDbUrl,
+              foreignKeysFromDbUrl,
+              databaseUrl
+            ),
+          ],
+        });
+      }
+
       this.logger.info('Loaded source metadata into Hasura');
       return;
     }

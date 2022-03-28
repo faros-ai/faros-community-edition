@@ -1,11 +1,7 @@
+import {InvalidArgumentError, Option, program} from 'commander';
 import pino from 'pino';
-import {VError} from 'verror';
 
 import {Dashboards} from './dashboards';
-
-const USAGE =
-  'Usage: node init.js ' +
-  '<metabase url> <username> <password> <export <dashboardId> | import>';
 
 const logger = pino({
   name: 'metabase-init',
@@ -13,32 +9,36 @@ const logger = pino({
 });
 
 async function main(): Promise<void> {
-  const args = process.argv.slice(2);
-  if (args.length < 4) {
-    console.error(USAGE);
-    process.exit(1);
+  program
+    .requiredOption('--metabase-url <string>')
+    .requiredOption('--username <string>')
+    .requiredOption('--password <string>')
+    .requiredOption('--database <string>')
+    .addOption(new Option('--export <dashboardId>').conflicts('import'))
+    .addOption(new Option('--import').conflicts('export'));
+
+  program.parse();
+  const options = program.opts();
+
+  if (!options.export && !options.import) {
+    throw new InvalidArgumentError('Must use with import or export');
   }
-  const [url, username, password, operation, dashboardId] = args;
+
   const dashboards = await Dashboards.fromConfig({
-    metabase: {url, username, password},
-    // TODO: Pass databaseName as argument
-    databaseName: 'faros',
+    metabase: {
+      url: options.metabaseUrl,
+      username: options.username,
+      password: options.password,
+    },
+    databaseName: options.database,
     logger,
   });
-  switch (operation) {
-    case 'export':
-      if (!dashboardId) {
-        throw new VError('Must specify dashboard id to export');
-      }
-      console.log(await dashboards.export(parseInt(dashboardId, 10)));
-      break;
-    case 'import':
-      await dashboards.import();
-      logger.info('Metabase import is complete');
-      break;
-    default:
-      console.error(USAGE);
-      process.exit(1);
+
+  if (options.export) {
+    console.log(await dashboards.export(parseInt(options.export, 10)));
+  } else {
+    await dashboards.import();
+    logger.info('Metabase import is complete');
   }
 }
 

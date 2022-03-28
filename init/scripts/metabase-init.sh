@@ -115,7 +115,7 @@ else
   fi
 
   echo "Importing dashboards"
-  node ../lib/metabase/init.js "$mb_url" "$mb_user" "$mb_password" import
+  node ../lib/metabase/init.js --metabase-url "$mb_url" --username "$mb_user" --password "$mb_password" --database "$db_name" --import
 fi
 
 echo "Attached Faros database to Metabase"

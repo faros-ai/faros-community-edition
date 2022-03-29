@@ -18,19 +18,19 @@ if [ "${airbyte_force_setup}" = "true" ]; then
     airbyte_optional_args="--force-setup"
 fi
 
-if ! [ -z "${airbyte_api_calls_concurrency}" ]; then
+if [ -n "${airbyte_api_calls_concurrency}" ]; then
     airbyte_optional_args="${airbyte_optional_args} --airbyte-api-calls-concurrency ${airbyte_api_calls_concurrency}"
 fi
 
-./wait-for/wait-for.sh "$airbyte_url"/api/v1/health -t 60 -- node ../lib/airbyte/init --airbyte-url "$airbyte_url" ${airbyte_optional_args}
+./wait-for/wait-for.sh "$airbyte_url"/api/v1/health -t 60 -- node ../lib/airbyte/init --airbyte-url "$airbyte_url" "${airbyte_optional_args}"
 
 hasura_optional_args=""
 
-if ! [ -z "${hasura_database_url}" ]; then
+if [ -n "${hasura_database_url}" ]; then
     hasura_optional_args="--database-url ${hasura_database_url}"
 fi
 
-./wait-for/wait-for.sh "$hasura_url"/healthz -t 60 -- node ../lib/hasura/init --hasura-url "$hasura_url" --admin-secret "$hasura_admin_secret" ${hasura_optional_args}
+./wait-for/wait-for.sh "$hasura_url"/healthz -t 60 -- node ../lib/hasura/init --hasura-url "$hasura_url" --admin-secret "$hasura_admin_secret" "${hasura_optional_args}"
 ./wait-for/wait-for.sh "$metabase_url"/api/health -t 60 -- ./metabase-init.sh
 
 node ../lib/banner

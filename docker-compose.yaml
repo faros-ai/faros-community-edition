@@ -46,17 +46,18 @@ services:
       - ${DATABASE_PORT?}:5432
     restart: unless-stopped
   faros-init:
-    profiles: ["default"]
+    profiles: ["default", "faros-init"]
     image: farosai/faros-ce-init:latest
     restart: on-failure
     environment:
+      AIRBYTE_API_CALLS_CONCURRENCY: ${AIRBYTE_API_CALLS_CONCURRENCY:-}
       AIRBYTE_FORCE_SETUP: ${FAROS_AIRBYTE_FORCE_SETUP:-false}
-      AIRBYTE_URL: ${AIRBYTE_URL}
+      AIRBYTE_URL: ${AIRBYTE_URL?}
       FAROS_EMAIL: ${FAROS_EMAIL}
-      HASURA_URL: http://hasura:8080
+      HASURA_URL: ${HASURA_URL?}
       LOG_LEVEL: ${FAROS_INIT_LOG_LEVEL:-info}
       METABASE_PASSWORD: ${METABASE_PASSWORD?}
-      METABASE_URL: http://metabase:3000
+      METABASE_URL: ${METABASE_URL?}
       METABASE_USER: ${METABASE_USER?}
       FAROS_DB_NAME: ${FAROS_DB_NAME?}
       FAROS_DB_HOST: ${FAROS_DB_HOST?}
@@ -67,7 +68,9 @@ services:
       FAROS_CONFIG_DB_PORT: ${FAROS_CONFIG_DB_PORT?}
       FAROS_CONFIG_DB_USER: ${FAROS_CONFIG_DB_USER?}
       FAROS_CONFIG_DB_PASSWORD: ${FAROS_CONFIG_DB_PASSWORD?}
+      HASURA_DATABASE_URL: ${HASURA_DATABASE_URL:-}
       HASURA_DB_NAME: ${HASURA_DB_NAME?}
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET?}
       METABASE_DB_NAME: ${METABASE_DB_NAME?}
       N8N_DB_NAME: ${N8N_DB_NAME?}
   hasura:
@@ -80,6 +83,7 @@ services:
       - faros-init
     restart: unless-stopped
     environment:
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET?}
       HASURA_GRAPHQL_DATABASE_URL: postgres://${FAROS_DB_USER?}:${FAROS_DB_PASSWORD?}@${FAROS_DB_HOST?}:${FAROS_DB_PORT?}/${FAROS_DB_NAME?}
       HASURA_GRAPHQL_DEV_MODE: "false"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup

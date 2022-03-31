@@ -22,7 +22,7 @@ if [ -n "${airbyte_api_calls_concurrency}" ]; then
     airbyte_optional_args=("${airbyte_optional_args[@]}" --airbyte-api-calls-concurrency "${airbyte_api_calls_concurrency}")
 fi
 
-./wait-for/wait-for.sh "$airbyte_url"/api/v1/health -t 60 -- node ../lib/airbyte/init --airbyte-url "$airbyte_url" "${airbyte_optional_args[@]}"
+./wait-for/wait-for.sh "$airbyte_url"/api/v1/health -t 60 -- node ../lib/airbyte/init --airbyte-url "$airbyte_url" "${airbyte_optional_args[@]}" --hasura-admin-secret "$hasura_admin_secret"
 
 hasura_optional_args=()
 

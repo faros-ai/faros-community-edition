@@ -9,6 +9,7 @@
     edition_configs:
       edition: "community"
       hasura_url: "http://localhost:8080"
+      hasura_admin_secret: "admin"
       segment_user_id: "{{ segment_user_id }}"
     invalid_record_strategy: "SKIP"
     source_specific_configs:

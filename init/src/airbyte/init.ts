@@ -110,6 +110,7 @@ export class AirbyteInit {
 
   async setupWorkspace(
     segmentUser: SegmentUser,
+    hasuraAdminSecret: string,
     forceSetup?: boolean
   ): Promise<void> {
     const response = await this.api.post('/workspaces/list');
@@ -141,7 +142,10 @@ export class AirbyteInit {
     const destTemplate = await fs.readFile(destTemplatePath, 'utf-8');
     await fs.writeFile(
       destTemplatePath,
-      handlebars.compile(destTemplate)({segment_user_id: segmentUser.userId}),
+      handlebars.compile(destTemplate)({
+        hasura_admin_secret: hasuraAdminSecret,
+        segment_user_id: segmentUser.userId,
+      }),
       'utf-8'
     );
     const workspaceZipPath = path.join(tmpDir, 'workspace.tar.gz');
@@ -262,6 +266,7 @@ export class AirbyteInit {
 async function main(): Promise<void> {
   program
     .requiredOption('--airbyte-url <string>')
+    .requiredOption('--hasura-admin-secret <string>')
     .option('--force-setup')
     .option(
       '--airbyte-api-calls-concurrency <num>',
@@ -287,7 +292,11 @@ async function main(): Promise<void> {
   await AirbyteInit.sendIdentityAndStartEvent(segmentUser);
 
   await airbyte.waitUntilHealthy();
-  await airbyte.setupWorkspace(segmentUser, options.forceSetup);
+  await airbyte.setupWorkspace(
+    segmentUser,
+    options.hasuraAdminSecret,
+    options.forceSetup
+  );
   await airbyte.setupFarosDestinationDefinition();
   await airbyte.updateFarosSourceVersions(options.airbyteApiCallsConcurrency);
   logger.info('Airbyte setup is complete');

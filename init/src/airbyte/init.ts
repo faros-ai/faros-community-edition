@@ -271,10 +271,7 @@ async function main(): Promise<void> {
   program.parse();
   const options = program.opts();
 
-  if (
-    options.airbyteApiCallsConcurrency !== undefined &&
-    options.airbyteApiCallsConcurrency <= 0
-  ) {
+  if (options?.airbyteApiCallsConcurrency <= 0) {
     throw new InvalidArgumentError(
       'airbyte-api-calls-concurrency must be a positive integer'
     );

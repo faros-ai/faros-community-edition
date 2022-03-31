@@ -243,8 +243,8 @@ export class HasuraInit {
         connection_info: {
           use_prepared_statements: true,
           database_url: databaseUrl || {
-                from_env: 'HASURA_GRAPHQL_DATABASE_URL',
-              },
+            from_env: 'HASURA_GRAPHQL_DATABASE_URL',
+          },
           isolation_level: 'read-committed',
           pool_settings: {
             connection_lifetime: 600,
@@ -423,6 +423,10 @@ export class HasuraInit {
         ],
       });
 
+      // Attempt to find table names and foreign keys again if none were found
+      // in the first pass.
+      // See https://github.com/faros-ai/faros-community-edition/pull/81 for
+      // more details.
       if (allTableNames.length === 0 && databaseUrl) {
         const tableNamesFromDbUrl = await this.listAllTables();
         const foreignKeysFromDbUrl = await this.listAllForeignKeys();

@@ -28,12 +28,13 @@ fi
 
 export FAROS_EMAIL=$EMAIL
 
+# Ensure we're using the latest faros-init image
+docker-compose pull faros-init
+
 if [[ $(uname -m 2> /dev/null) == 'arm64' ]]; then
     # Use Airbyte and Metabase images built for Apple M1
     AIRBYTE_IMAGE_PREFIX="farosai/airbyte-" METABASE_IMAGE="farosai/metabase-m1" docker-compose up --build --remove-orphans
 else
-    # Ensure we're using the latest faros-init image
-    docker-compose pull faros-init
     docker-compose up --build --remove-orphans
 fi
 

@@ -111,6 +111,7 @@ export class AirbyteInit {
   async setupWorkspace(
     segmentUser: SegmentUser,
     hasuraAdminSecret: string,
+    airbyteDestinationHasuraUrl: string,
     forceSetup?: boolean
   ): Promise<void> {
     const response = await this.api.post('/workspaces/list');
@@ -144,6 +145,7 @@ export class AirbyteInit {
       destTemplatePath,
       handlebars.compile(destTemplate)({
         hasura_admin_secret: hasuraAdminSecret,
+        hasura_url: airbyteDestinationHasuraUrl,
         segment_user_id: segmentUser.userId,
       }),
       'utf-8'
@@ -266,6 +268,7 @@ export class AirbyteInit {
 async function main(): Promise<void> {
   program
     .requiredOption('--airbyte-url <string>')
+    .requiredOption('--airbyte-destination-hasura-url <string>')
     .requiredOption('--hasura-admin-secret <string>')
     .option('--force-setup')
     .option(
@@ -295,6 +298,7 @@ async function main(): Promise<void> {
   await airbyte.setupWorkspace(
     segmentUser,
     options.hasuraAdminSecret,
+    options.airbyteDestinationHasuraUrl,
     options.forceSetup
   );
   await airbyte.setupFarosDestinationDefinition();

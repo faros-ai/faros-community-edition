@@ -8,7 +8,7 @@
     jsonata_mode: "FALLBACK"
     edition_configs:
       edition: "community"
-      hasura_url: "http://localhost:8080"
+      hasura_url: "{{ hasura_url }}"
       hasura_admin_secret: "{{ hasura_admin_secret }}"
       segment_user_id: "{{ segment_user_id }}"
     invalid_record_strategy: "SKIP"

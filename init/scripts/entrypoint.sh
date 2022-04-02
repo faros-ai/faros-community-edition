@@ -3,6 +3,7 @@
 airbyte_url=$AIRBYTE_URL
 airbyte_force_setup=$AIRBYTE_FORCE_SETUP
 airbyte_api_calls_concurrency=$AIRBYTE_API_CALLS_CONCURRENCY
+airbyte_destination_hasura_url=$AIRBYTE_DESTINATION_HASURA_URL
 hasura_admin_secret=$HASURA_GRAPHQL_ADMIN_SECRET
 hasura_database_url=$HASURA_GRAPHQL_DATABASE_URL
 hasura_url=$HASURA_URL
@@ -22,7 +23,7 @@ if [ -n "${airbyte_api_calls_concurrency}" ]; then
     airbyte_optional_args=("${airbyte_optional_args[@]}" --airbyte-api-calls-concurrency "${airbyte_api_calls_concurrency}")
 fi
 
-./wait-for/wait-for.sh "$airbyte_url"/api/v1/health -t 60 -- node ../lib/airbyte/init --airbyte-url "$airbyte_url" --hasura-admin-secret "$hasura_admin_secret" "${airbyte_optional_args[@]}"
+./wait-for/wait-for.sh "$airbyte_url"/api/v1/health -t 60 -- node ../lib/airbyte/init --airbyte-url "$airbyte_url" --airbyte-destination-hasura-url "$airbyte_destination_hasura_url" --hasura-admin-secret "$hasura_admin_secret" "${airbyte_optional_args[@]}"
 
 hasura_optional_args=()
 

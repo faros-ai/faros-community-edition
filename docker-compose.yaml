@@ -76,9 +76,9 @@ services:
       N8N_DB_NAME: ${N8N_DB_NAME?}
     healthcheck:
       test: ["CMD", "psql", "-d", "postgres://${FAROS_CONFIG_DB_USER?}:${FAROS_CONFIG_DB_PASSWORD?}@${FAROS_CONFIG_DB_HOST?}:${FAROS_CONFIG_DB_PORT?}/${N8N_DB_NAME?}", "-c", "SELECT 1"]
-      interval: 10s
+      interval: 15s
       timeout: 5s
-      start_period: 1m
+      start_period: 30s
       retries: 5
   hasura:
     profiles: ["default"]

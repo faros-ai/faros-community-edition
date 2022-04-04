@@ -4,11 +4,12 @@
 [[ -z "$METABASE_USER" ]] && echo "METABASE_USER not set" && exit 1
 [[ -z "$METABASE_PASSWORD" ]] && echo "METABASE_PASSWORD not set" && exit 1
 
-db_host=$FAROS_DB_HOST
+db_host=$METABASE_FAROS_DB_HOST
 db_port=$FAROS_DB_PORT
 db_name=$FAROS_DB_NAME
 db_user=$FAROS_DB_USER
 db_password=$FAROS_DB_PASSWORD
+use_ssl=$METABASE_USE_SSL
 
 mb_url=$METABASE_URL
 mb_user=$METABASE_USER
@@ -20,6 +21,7 @@ mb_db_payload=$(jq -n \
 --arg db_name "$db_name" \
 --arg db_user "$db_user" \
 --arg db_password "$db_password" \
+--argjson use_ssl "$use_ssl" \
 '{
   "engine": "postgres",
   "name": "Faros Data",
@@ -29,7 +31,7 @@ mb_db_payload=$(jq -n \
     "dbname": $db_name,
     "user": $db_user,
     "password": $db_password,
-    "ssl": false,
+    "ssl": $use_ssl,
     "additional-options": null,
     "tunnel-enabled": false,
     "let-user-control-scheduling": false

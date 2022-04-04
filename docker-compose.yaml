@@ -76,6 +76,12 @@ services:
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET?}
       METABASE_DB_NAME: ${METABASE_DB_NAME?}
       N8N_DB_NAME: ${N8N_DB_NAME?}
+    healthcheck:
+      test: ["CMD", "psql", "-d", "postgres://${FAROS_CONFIG_DB_USER?}:${FAROS_CONFIG_DB_PASSWORD?}@${FAROS_CONFIG_DB_HOST?}:${FAROS_CONFIG_DB_PORT?}/${N8N_DB_NAME?}", "-c", "SELECT 1"]
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
   hasura:
     profiles: ["default"]
     image: hasura/graphql-engine:${HASURA_VERSION?}
@@ -83,7 +89,8 @@ services:
     ports:
       - ${HASURA_PORT?}:8080
     depends_on:
-      - faros-init
+      faros-init:
+          condition: service_healthy
     restart: unless-stopped
     environment:
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET?}
@@ -103,7 +110,8 @@ services:
     ports:
       - ${METABASE_PORT?}:3000
     depends_on:
-      - faros-init
+      faros-init:
+          condition: service_healthy
     restart: unless-stopped
     environment:
       MB_ANON_TRACKING_ENABLED: "false"
@@ -123,7 +131,8 @@ services:
     ports:
       - ${N8N_PORT?}:5678
     depends_on:
-      - faros-init
+      faros-init:
+          condition: service_healthy
     restart: unless-stopped
     environment:
       DB_TYPE: postgresdb

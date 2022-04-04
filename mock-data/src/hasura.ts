@@ -1,10 +1,20 @@
 import axios, {AxiosInstance} from 'axios';
 import {DateTime} from 'luxon';
 
+const hasuraAdminSecret: string = process.env.HASURA_GRAPHQL_ADMIN_SECRET as string;
 export class Hasura {
   private readonly api: AxiosInstance;
   constructor(private readonly baseURL: string) {
     this.api = axios.create({baseURL: `${baseURL}/api/rest/`});
+    this.api = axios.create(
+      { 
+        baseURL: `${baseURL}/api/rest/`,
+        headers: {
+          "Content-Type": "application/json",
+          "x-hasura-admin-secret": hasuraAdminSecret,
+        }
+      }
+    );
   }
 
   async postApplication(

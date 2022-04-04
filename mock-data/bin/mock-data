@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+const envPath = require('path').join(__dirname, '../../', '.env');
+require('dotenv').config({ path: envPath });
 const {program} = require('../lib');
 const pino = require('pino');
 

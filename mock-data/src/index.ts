@@ -12,8 +12,9 @@ function createCommand(
 ): Command {
   return new Command(name)
     .option('-u, --url <url>', 'Hasura Service URL', 'http://localhost:8080')
+    .option('--admin-secret <string>', 'Hasura Service Admin Password')
     .action(async (opts) => {
-      const mockData = new MockData(opts.url);
+      const mockData = new MockData(opts.url, opts.adminSecret);
       await fn(mockData);
     });
 }

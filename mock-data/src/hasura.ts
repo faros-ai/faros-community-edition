@@ -3,7 +3,7 @@ import {DateTime} from 'luxon';
 
 export class Hasura {
   private readonly api: AxiosInstance;
-  constructor(private readonly baseURL: string, adminSecret: string) {
+  constructor(private readonly baseURL: string, adminSecret?: string) {
     this.api = axios.create(
       { 
         baseURL: `${baseURL}/api/rest/`,

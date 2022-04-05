@@ -19,7 +19,7 @@ const TASK_CHANGE_CATEGORIES = [
 
 export class MockData {
   private hasura: Hasura;
-  constructor(hasuraBaseUrl: string, adminSecret: string) {
+  constructor(hasuraBaseUrl: string, adminSecret?: string) {
     this.hasura = new Hasura(hasuraBaseUrl, adminSecret);
   }
 

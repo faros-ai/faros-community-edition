@@ -4,7 +4,7 @@
 [![Community Slack](https://img.shields.io/badge/chat-Slack-%234a154b)](https://community.faros.ai/docs/slack)
 [![CI/CD](https://github.com/faros-ai/faros-community-edition/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/faros-ai/faros-community-edition/actions/workflows/ci-cd.yml)
 
-Faros Community Edition (CE) is an operational data platform that brings all engineering data in one place to give engineering teams a no-code/low-code BI, API and automation layer for their operational data, usable in minutes.
+Faros Community Edition (CE) is an open-source engineering operations platform that connects the dots between all your operational data sources for a single-pane view across the software development life cycle.
 
 ![Metrics](img/metrics.png)
 

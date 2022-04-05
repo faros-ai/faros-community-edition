@@ -3,8 +3,16 @@ import {DateTime} from 'luxon';
 
 export class Hasura {
   private readonly api: AxiosInstance;
-  constructor(private readonly baseURL: string) {
-    this.api = axios.create({baseURL: `${baseURL}/api/rest/`});
+  constructor(private readonly baseURL: string, adminSecret?: string) {
+    this.api = axios.create(
+      { 
+        baseURL: `${baseURL}/api/rest/`,
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminSecret && {"X-Hasura-Admin-Secret": adminSecret}),
+        }
+      }
+    );
   }
 
   async postApplication(

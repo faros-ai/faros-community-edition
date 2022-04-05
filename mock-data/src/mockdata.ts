@@ -19,8 +19,8 @@ const TASK_CHANGE_CATEGORIES = [
 
 export class MockData {
   private hasura: Hasura;
-  constructor(hasuraBaseUrl: string) {
-    this.hasura = new Hasura(hasuraBaseUrl);
+  constructor(hasuraBaseUrl: string, adminSecret?: string) {
+    this.hasura = new Hasura(hasuraBaseUrl, adminSecret);
   }
 
   private static randomInt(max: number, min?: number): number {

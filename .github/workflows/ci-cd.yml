@@ -68,9 +68,10 @@ jobs:
       - name: Check writes
         run: |
           docker pull farosai/airbyte-faros-destination
-          cat ypc/streams.in \
+          cat ${{ github.workspace }}/ypc/streams.in
+          cat ${{ github.workspace }}/ypc/streams.in \
           | docker run --network host \
-          --mount type=bind,source=./ypc,target=/ypc \
+          --mount type=bind,source=${{ github.workspace }}/ypc,target=/ypc \
           farosai/airbyte-faros-destination write \
           --catalog /ypc/catalog.json \
           --config /ypc/test-config.json

@@ -50,7 +50,7 @@ jobs:
 
       - name: Check connection to the destination
         env:
-          DESTINATION_ID: ca307eaf-5bee-4b26-84d4-3a084e6ebbcd
+          DESTINATION_ID: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
         run: |
           curl -X POST "http://localhost:8000/api/v1/destinations/check_connection" \
           -H "Accept: application/json" \

@@ -65,6 +65,15 @@ jobs:
           -d '{"destinationId":"'"$DESTINATION_ID"'"}' \
           | jq -e '.status == "succeeded"'
 
+      - name: Check writes
+        run: |
+          cat ypc/streams.log \
+          | docker run --network host \
+          --mount type=bind,source="$(pwd)"/ypc,target=/ypc \
+          farosai/airbyte-faros-destination write \
+          --catalog /ypc/catalog.json \
+          --config /ypc/test-config.json
+
       - name: Stop services
         run: docker-compose down
 

@@ -1,0 +1,34 @@
+{
+  "dry_run": false,
+  "jsonata_mode": "FALLBACK",
+  "edition_configs": {
+    "edition": "community",
+    "hasura_url": "http://localhost:8080",
+    "segment_user_id": "9d070bdc-34dc-5649-94c0-aa30d3801678",
+    "hasura_admin_secret": "admin"
+  },
+  "invalid_record_strategy": "SKIP",
+  "source_specific_configs": {
+    "jira": {
+      "exclude_fields": [],
+      "use_board_ownership": false
+    },
+    "bitbucket": {
+      "application_mapping": "{}"
+    },
+    "pagerduty": {
+      "application_mapping": "{}"
+    },
+    "squadcast": {
+      "application_mapping": "{}"
+    },
+    "victorops": {
+      "application_field": "service",
+      "application_mapping": "{}"
+    },
+    "statuspage": {
+      "application_mapping": "{}"
+    },
+    "agileaccelerator": {}
+  }
+}

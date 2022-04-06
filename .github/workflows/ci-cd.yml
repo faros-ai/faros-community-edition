@@ -55,8 +55,7 @@ jobs:
           curl -s -X POST "http://localhost:8000/api/v1/destinations/check_connection" \
           -H "Accept: application/json" \
           -H "Content-Type: application/json" \
-          -d '{"destinationId":"'"$DESTINATION_ID"'"}' \
-          | jq -e '.status == "succeeded"'
+          -d '{"destinationId":"'"$DESTINATION_ID"'"}'
 
       - name: Show logs
         run: docker-compose logs --tail all

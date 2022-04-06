@@ -62,7 +62,6 @@ jobs:
           -H "Accept: application/json" \
           -H "Content-Type: application/json" \
           -d '{"destinationId":"'"$DESTINATION_ID"'"}' \
-          | jq -e '.status == "succeeded"'
 
       - name: Stop services
         run: docker-compose down

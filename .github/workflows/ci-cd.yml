@@ -69,7 +69,7 @@ jobs:
           curl -X POST "http://localhost:8000/api/v1/destinations/get" \                
           -H "Accept: application/json" \
           -H "Content-Type: application/json" \
-          -d '{"destinationId":"ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"}' \
+          -d '{"destinationId":"'"$DESTINATION_ID"'"}' \
           | jq '.connectionConfiguration' | jq '.edition_configs.hasura_admin_secret = "admin"' > ${{ github.workspace }}/ypc/test-config.json
           cat ${{ github.workspace }}/ypc/test-config.json
 

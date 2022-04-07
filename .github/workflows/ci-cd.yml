@@ -82,12 +82,13 @@ jobs:
       - name: Write records
         run: |
           docker pull farosai/airbyte-faros-destination
+          cat $RESOURCES_DIR/streams.in
           cat $RESOURCES_DIR/streams.in \
           | docker run -i --network host \
-          --mount type=bind,source=$RESOURCES_DIR,target=/resources/faros-destination \
+          --mount type=bind,source=$RESOURCES_DIR,target=/gha-test \
           farosai/airbyte-faros-destination write \
-          --catalog /resources/faros-destination/catalog.json \
-          --config /resources/faros-destination/config.json
+          --catalog /gha-test/catalog.json \
+          --config /gha-test/config.json
 
       - name: Verify writes in Hasura
         run: |

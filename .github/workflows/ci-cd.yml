@@ -17,8 +17,6 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    env:
-      DESTINATION_ID: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
     steps:
       - name: Check out
         uses: actions/checkout@v2
@@ -54,6 +52,10 @@ jobs:
 
       - name: Show services
         run: docker-compose ps -a
+
+      - name: Get destination id
+        run: |
+          echo "DESTINATION_ID=$(cat ${{ github.workspace }}/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')" >> "$GITHUB_ENV"
 
       - name: Check connection to the destination
         run: |

@@ -92,7 +92,7 @@ jobs:
         run: |
           curl -X POST http://localhost:8080/v1/graphql \
           -H "Content-Type: application/json" \
-          -H "X-Hasura-Admin-Secret:'"$HASURA_GRAPHQL_ADMIN_SECRET"'" \
+          -H "X-Hasura-Admin-Secret:$HASURA_GRAPHQL_ADMIN_SECRET" \
           --data '{"query":"query MyQuery { vcs_User_aggregate { aggregate {count}}}","variables":null}' \
           | jq '.data.vcs_User_aggregate.aggregate' | jq -e '.count > 0'
 

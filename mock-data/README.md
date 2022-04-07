@@ -1,4 +1,4 @@
-# MOCK DATA
+# Mock Data
 This package adds mock data into the Faros CE allowing users to understand what the canned Faros CE metrics (especially DORA) will look like and insights they can get.
 
 When you're ready to configure your own sources, you can delete the mock data.

@@ -64,9 +64,10 @@ jobs:
           -d '{"destinationId":"'"$DESTINATION_ID"'"}' \
           | jq -e '.status == "succeeded"'
 
-      - name: Get hasura admin secret
+      - name: Get hasura admin secret & resources dir
         run: |
           echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
+          echo "RESOURCES_DIR=${{ github.workspace }}/.github/workflows/resources/faros-destination" >> "$GITHUB_ENV"
 
       - name: Get destination config
         run: |
@@ -75,18 +76,18 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{"destinationId":"'"$DESTINATION_ID"'"}' \
           | jq '.connectionConfiguration' | jq '.edition_configs.hasura_admin_secret = "'"$HASURA_GRAPHQL_ADMIN_SECRET"'"' \
-          > ${{ github.workspace }}/ypc/test-config.json
-          cat ${{ github.workspace }}/ypc/test-config.json
+          > $RESOURCES_DIR/config.json
+          cat $RESOURCES_DIR/config.json
 
       - name: Write records
         run: |
           docker pull farosai/airbyte-faros-destination
-          cat ${{ github.workspace }}/ypc/streams.in \
+          cat $RESOURCES_DIR/streams.in \
           | docker run -i --network host \
-          --mount type=bind,source=${{ github.workspace }}/ypc,target=/ypc \
+          --mount type=bind,source=$RESOURCES_DIR,target=/resources/faros-destination \
           farosai/airbyte-faros-destination write \
-          --catalog /ypc/catalog.json \
-          --config /ypc/test-config.json
+          --catalog /resources/faros-destination/catalog.json \
+          --config /resources/faros-destination/config.json
 
       - name: Verify writes in Hasura
         run: |

@@ -68,7 +68,7 @@ jobs:
         run: |
           echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
 
-      - name: Get config
+      - name: Get destination config
         run: |
           curl -X POST "http://localhost:8000/api/v1/destinations/get" \
           -H "Accept: application/json" \
@@ -78,7 +78,7 @@ jobs:
           > ${{ github.workspace }}/ypc/test-config.json
           cat ${{ github.workspace }}/ypc/test-config.json
 
-      - name: Check writes
+      - name: Write records
         run: |
           docker pull farosai/airbyte-faros-destination
           cat ${{ github.workspace }}/ypc/streams.in \
@@ -87,6 +87,14 @@ jobs:
           farosai/airbyte-faros-destination write \
           --catalog /ypc/catalog.json \
           --config /ypc/test-config.json
+
+      - name: Verify writes in Hasura
+        run: |
+          curl -X POST http://localhost:8080/v1/graphql \
+          -H "Content-Type: application/json" \
+          -H "X-Hasura-Admin-Secret:'"$HASURA_GRAPHQL_ADMIN_SECRET"'" \
+          --data '{"query":"query MyQuery { vcs_User_aggregate { aggregate {count}}}","variables":null}' \
+          | jq '.data.vcs_User_aggregate.aggregate' | jq -e '.count > 0'
 
       - name: Stop services
         run: docker-compose down

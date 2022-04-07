@@ -64,13 +64,18 @@ jobs:
           -d '{"destinationId":"'"$DESTINATION_ID"'"}' \
           | jq -e '.status == "succeeded"'
 
+      - name: Get hasura admin secret
+        run: |
+          echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
+
       - name: Get config
         run: |
           curl -X POST "http://localhost:8000/api/v1/destinations/get" \
           -H "Accept: application/json" \
           -H "Content-Type: application/json" \
           -d '{"destinationId":"'"$DESTINATION_ID"'"}' \
-          | jq '.connectionConfiguration' | jq '.edition_configs.hasura_admin_secret = "admin"' > ${{ github.workspace }}/ypc/test-config.json
+          | jq '.connectionConfiguration' | jq '.edition_configs.hasura_admin_secret = "'"$HASURA_GRAPHQL_ADMIN_SECRET"'"' \
+          > ${{ github.workspace }}/ypc/test-config.json
           cat ${{ github.workspace }}/ypc/test-config.json
 
       - name: Check writes

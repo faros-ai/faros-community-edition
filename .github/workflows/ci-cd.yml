@@ -17,7 +17,8 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 5
-
+    env:
+      DESTINATION_ID: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
     steps:
       - name: Check out
         uses: actions/checkout@v2
@@ -55,8 +56,6 @@ jobs:
         run: docker-compose ps -a
 
       - name: Check connection to the destination
-        env:
-          DESTINATION_ID: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
         run: |
           sleep 60 && \
           curl -X POST "http://localhost:8000/api/v1/destinations/check_connection" \
@@ -65,10 +64,18 @@ jobs:
           -d '{"destinationId":"'"$DESTINATION_ID"'"}' \
           | jq -e '.status == "succeeded"'
 
+      - name: Get config
+        run: |
+          curl -X POST "http://localhost:8000/api/v1/destinations/get" \                
+          -H "Accept: application/json" \
+          -H "Content-Type: application/json" \
+          -d '{"destinationId":"ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"}' \
+          | jq '.connectionConfiguration' | jq '.edition_configs.hasura_admin_secret = "admin"' > ${{ github.workspace }}/ypc/test-config.json
+          cat ${{ github.workspace }}/ypc/test-config.json
+
       - name: Check writes
         run: |
           docker pull farosai/airbyte-faros-destination
-          cat ${{ github.workspace }}/ypc/streams.in
           cat ${{ github.workspace }}/ypc/streams.in \
           | docker run -i --network host \
           --mount type=bind,source=${{ github.workspace }}/ypc,target=/ypc \

@@ -55,7 +55,7 @@ jobs:
 
       - name: Get destination id
         run: |
-          echo "DESTINATION_ID=$(cat ${{ github.workspace }}/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')" >> "$GITHUB_ENV"
+          echo "DESTINATION_ID=$(cat ${{ github.workspace }}/init/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')" >> "$GITHUB_ENV"
 
       - name: Check connection to the destination
         run: |

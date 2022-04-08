@@ -22,6 +22,7 @@ describe('integration tests', () => {
   beforeAll(async () => {
     destinationId = process.env.DESTINATION_ID;
     hasuraAdminSecret = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
+    console.log('@integration tests, process.env=%o', process.env);
     console.log('@integration tests, destinationId=%s', destinationId);
     console.log('@integration tests, hasuraAdminSecret=%s', hasuraAdminSecret);
 

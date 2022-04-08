@@ -1,4 +1,4 @@
-import {Endpoint, QueryCollection} from '../../src/hasura/types';
+import {Endpoint, QueryCollection} from '../../../src/hasura/types';
 
 export function getMetadata() {
   return {

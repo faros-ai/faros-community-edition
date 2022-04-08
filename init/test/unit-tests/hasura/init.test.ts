@@ -3,7 +3,7 @@ import nock from 'nock';
 import path from 'path';
 import pino from 'pino';
 
-import {HasuraInit} from '../../src/hasura/init';
+import {HasuraInit} from '../../../src/hasura/init';
 import {
   addCollectionToAllowlist,
   addEndpoint,
@@ -36,7 +36,7 @@ describe('init', () => {
       headers: {'X-Hasura-Role': 'admin'},
     }),
     logger,
-    path.join(__dirname, '..', 'resources', 'hasura')
+    path.join(__dirname, '..', '..', 'resources', 'hasura')
   );
 
   beforeEach(() => {

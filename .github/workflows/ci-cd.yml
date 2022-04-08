@@ -44,6 +44,11 @@ jobs:
       - name: Start services
         run: docker-compose up --quiet-pull -d
 
+      - name: Get destination id & Hasura Admin Secret
+        run: |
+          export DESTINATION_ID=$(cat ${{ github.workspace }}/init/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')
+          export $(echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET"))
+
       - name: Run tests
         run: npm test -- --coverage
         working-directory: init

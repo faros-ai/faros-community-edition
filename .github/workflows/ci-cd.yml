@@ -46,8 +46,8 @@ jobs:
 
       - name: Get destination id & Hasura Admin Secret
         run: |
-          export DESTINATION_ID=$(cat ${{ github.workspace }}/init/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')
-          export $(echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET"))
+          echo "DESTINATION_ID=$(cat ${{ github.workspace }}/init/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')" >> "$GITHUB_ENV"
+          echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
 
       - name: Run tests
         run: npm test -- --coverage

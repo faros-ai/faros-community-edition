@@ -22,16 +22,13 @@ describe('integration tests', () => {
   beforeAll(async () => {
     destinationId = process.env.DESTINATION_ID;
     hasuraAdminSecret = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
-    console.log('@integration tests, process.env=%o', process.env);
-    console.log('@integration tests, destinationId=%s', destinationId);
-    console.log('@integration tests, hasuraAdminSecret=%s', hasuraAdminSecret);
-
-    hasuraClient = new HasuraClient('http://localhost:8080', hasuraAdminSecret);
-    await hasuraClient.waitUntilHealthy();
 
     airbyteClient = new AirbyteClient('http://localhost:8000');
     await airbyteClient.waitUntilHealthy();
-  }, 60 * 1000);
+
+    hasuraClient = new HasuraClient('http://localhost:8080', hasuraAdminSecret);
+    await hasuraClient.waitUntilHealthy();
+  }, 2 * 60 * 1000);
 
   test('check connection to the Faros destination', async () => {
     expect(await airbyteClient.checkDestinationConnection(destinationId)).toBe(
@@ -69,14 +66,12 @@ describe('integration tests', () => {
   );
 
   function writeRecords(tmpDir: string) {
-    console.log(
-      execSync(`docker pull farosai/airbyte-faros-destination \
+    execSync(`docker pull farosai/airbyte-faros-destination \
     && cat ${tmpDir}/streams.in \
     | docker run -i --network host \
     --mount type=bind,source=${tmpDir},target=/integration-test \
     farosai/airbyte-faros-destination write \
     --catalog /integration-test/catalog.json \
-    --config /integration-test/config.json`).toString()
-    );
+    --config /integration-test/config.json`);
   }
 });

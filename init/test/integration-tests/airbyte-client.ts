@@ -34,9 +34,9 @@ export class AirbyteClient {
         }
       },
       {
-        retries: 30,
-        minTimeout: 1000,
-        maxTimeout: 1000,
+        retries: 6,
+        maxTimeout: 10000,
+        minTimeout: 10000,
       }
     );
   }

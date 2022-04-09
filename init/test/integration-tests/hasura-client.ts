@@ -25,7 +25,7 @@ export class HasuraClient {
         }
       },
       {
-        retries: 6,
+        retries: 12,
         minTimeout: 10000,
         maxTimeout: 10000,
       }

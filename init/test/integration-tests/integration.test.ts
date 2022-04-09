@@ -28,7 +28,7 @@ describe('integration tests', () => {
 
     hasuraClient = new HasuraClient('http://localhost:8080', hasuraAdminSecret);
     await hasuraClient.waitUntilHealthy();
-  }, 60 * 1000);
+  }, 5 * 60 * 1000);
 
   test('check connection to the Faros destination', async () => {
     expect(await airbyteClient.checkDestinationConnection(destinationId)).toBe(

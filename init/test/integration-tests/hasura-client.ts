@@ -1,6 +1,12 @@
 import retry from 'async-retry';
 import axios, {AxiosInstance} from 'axios';
+import pino from 'pino';
 import {VError} from 'verror';
+
+const logger = pino({
+    name: 'hasura-client',
+    level: process.env.LOG_LEVEL || 'info',
+});
 
 export class HasuraClient {
   private readonly api: AxiosInstance;
@@ -28,6 +34,9 @@ export class HasuraClient {
         retries: 12,
         minTimeout: 10000,
         maxTimeout: 10000,
+        onRetry: (err, attempt) => {
+            logger.info('attempt=%d err=%o', attempt, err);
+        }
       }
     );
   }

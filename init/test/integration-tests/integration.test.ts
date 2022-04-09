@@ -2,9 +2,15 @@ import {execSync} from 'child_process';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
+import pino from 'pino';
 
 import {AirbyteClient, ConnectionConfiguration} from './airbyte-client';
 import {HasuraClient} from './hasura-client';
+
+const logger = pino({
+    name: 'integration-tests',
+    level: process.env.LOG_LEVEL || 'info',
+});
 
 let destinationId: string;
 let hasuraAdminSecret: string;
@@ -12,6 +18,7 @@ let hasuraClient: HasuraClient;
 let airbyteClient: AirbyteClient;
 
 beforeAll(async () => {
+    logger.info('beforeAll started');
   destinationId = process.env.DESTINATION_ID;
   hasuraAdminSecret = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
 
@@ -20,6 +27,8 @@ beforeAll(async () => {
 
   hasuraClient = new HasuraClient('http://localhost:8080', hasuraAdminSecret);
   await hasuraClient.waitUntilHealthy();
+
+  logger.info('beforeAll ended');
 }, 5 * 60 * 1000);
 
 describe('integration tests', () => {
@@ -31,14 +40,17 @@ describe('integration tests', () => {
   );
 
   test('check connection to the Faros destination', async () => {
+    logger.info('t1 started');
     expect(await airbyteClient.checkDestinationConnection(destinationId)).toBe(
       true
     );
-  });
+    logger.info('t1 ended');
+  }, 60 * 1000);
 
   test(
     'verify writes in Hasura',
     async () => {
+        logger.info('t2 started');
       const connectionConfiguration: ConnectionConfiguration =
         await airbyteClient.getDestinationConnectionConfiguration(
           destinationId
@@ -61,6 +73,7 @@ describe('integration tests', () => {
       await fs.remove(tmpDir);
 
       expect(await hasuraClient.getVcsUserCount()).toBe(1);
+      logger.info('t2 ended');
     },
     60 * 1000
   );

@@ -1,5 +1,7 @@
 import retry from 'async-retry';
 import axios, {AxiosInstance} from 'axios';
+import { attempt } from 'lodash';
+import pino from 'pino';
 import {VError} from 'verror';
 
 export interface ConnectionConfiguration {
@@ -15,6 +17,11 @@ export interface EditionConfigs {
   segment_user_id: string;
   hasura_admin_secret: string;
 }
+
+const logger = pino({
+  name: 'airbyte-client',
+  level: process.env.LOG_LEVEL || 'info',
+});
 
 export class AirbyteClient {
   private readonly api: AxiosInstance;
@@ -37,6 +44,9 @@ export class AirbyteClient {
         retries: 12,
         minTimeout: 10000,
         maxTimeout: 10000,
+        onRetry: (err, attempt) => {
+          logger.info('attempt=%d err=%o', attempt, err);
+        }
       }
     );
   }

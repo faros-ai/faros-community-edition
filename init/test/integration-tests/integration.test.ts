@@ -6,6 +6,22 @@ import path from 'path';
 import {AirbyteClient, ConnectionConfiguration} from './airbyte-client';
 import {HasuraClient} from './hasura-client';
 
+let destinationId: string;
+let hasuraAdminSecret: string;
+let hasuraClient: HasuraClient;
+let airbyteClient: AirbyteClient;
+
+beforeAll(async () => {
+  destinationId = process.env.DESTINATION_ID;
+  hasuraAdminSecret = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
+
+  airbyteClient = new AirbyteClient('http://localhost:8000');
+  await airbyteClient.waitUntilHealthy();
+
+  hasuraClient = new HasuraClient('http://localhost:8080', hasuraAdminSecret);
+  await hasuraClient.waitUntilHealthy();
+}, 5 * 60 * 1000);
+
 describe('integration tests', () => {
   const RESOURCES_DIR = path.join(
     __dirname,
@@ -13,22 +29,6 @@ describe('integration tests', () => {
     'resources',
     'faros-destination'
   );
-
-  let destinationId: string;
-  let hasuraAdminSecret: string;
-  let hasuraClient: HasuraClient;
-  let airbyteClient: AirbyteClient;
-
-  beforeAll(async () => {
-    destinationId = process.env.DESTINATION_ID;
-    hasuraAdminSecret = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
-
-    airbyteClient = new AirbyteClient('http://localhost:8000');
-    await airbyteClient.waitUntilHealthy();
-
-    hasuraClient = new HasuraClient('http://localhost:8080', hasuraAdminSecret);
-    await hasuraClient.waitUntilHealthy();
-  }, 5 * 60 * 1000);
 
   test('check connection to the Faros destination', async () => {
     expect(await airbyteClient.checkDestinationConnection(destinationId)).toBe(

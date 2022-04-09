@@ -1,6 +1,6 @@
 import nock from 'nock';
 
-import {AirbyteInit, FAROS_DEST_REPO} from '../../src/airbyte/init';
+import {AirbyteInit, FAROS_DEST_REPO} from '../../../src/airbyte/init';
 
 describe('airbyte', () => {
   test('get latest Faros Destination version', async () => {

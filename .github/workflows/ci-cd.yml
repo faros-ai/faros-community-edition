@@ -38,6 +38,10 @@ jobs:
         run: npm ci --unsafe-perm
         working-directory: init
 
+      - name: Run unit tests
+        run: npm run test:unit -- --coverage
+        working-directory: init
+
       - name: Docker Compose version
         run: docker-compose version --short
 
@@ -49,8 +53,8 @@ jobs:
           echo "DESTINATION_ID=$(cat ${{ github.workspace }}/init/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')" >> "$GITHUB_ENV"
           echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
 
-      - name: Run tests
-        run: npm test -- --coverage
+      - name: Run integration tests
+        run: npm run test:integration -- --coverage
         working-directory: init
 
       - name: Show logs

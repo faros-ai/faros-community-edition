@@ -48,11 +48,6 @@ jobs:
       - name: Start services
         run: docker-compose up --quiet-pull -d
 
-      - name: Get destination id & Hasura Admin Secret
-        run: |
-          echo "DESTINATION_ID=$(cat ${{ github.workspace }}/init/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')" >> "$GITHUB_ENV"
-          echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
-
       - name: Show logs
         run: docker-compose logs --tail all
 
@@ -61,6 +56,11 @@ jobs:
 
       - name: Wait for init to complete
         run: docker wait faros-community-edition_faros-init_1
+
+      - name: Get destination id & Hasura Admin Secret
+        run: |
+          echo "DESTINATION_ID=$(cat ${{ github.workspace }}/init/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')" >> "$GITHUB_ENV"
+          echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
 
       - name: Run integration tests
         run: npm run test:integration -- --coverage

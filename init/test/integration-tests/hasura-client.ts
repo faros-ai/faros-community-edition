@@ -4,8 +4,8 @@ import pino from 'pino';
 import {VError} from 'verror';
 
 const logger = pino({
-    name: 'hasura-client',
-    level: process.env.LOG_LEVEL || 'info',
+  name: 'hasura-client',
+  level: process.env.LOG_LEVEL || 'info',
 });
 
 export class HasuraClient {
@@ -31,12 +31,12 @@ export class HasuraClient {
         }
       },
       {
-        retries: 12,
+        retries: 3,
         minTimeout: 10000,
         maxTimeout: 10000,
         onRetry: (err, attempt) => {
-            logger.info('attempt=%d err=%o', attempt, err);
-        }
+          logger.info('attempt=%d err=%o', attempt, err);
+        },
       }
     );
   }
@@ -47,10 +47,9 @@ export class HasuraClient {
         query: 'query MyQuery { vcs_User_aggregate {aggregate{count}} }',
         variables: null,
       })
-      .then(
-        (response) => response.data.data.vcs_User_aggregate.aggregate.count
-      ).catch((err) => {
-          logger.info(`query failed with error: ${err}`);
+      .then((response) => response.data.data.vcs_User_aggregate.aggregate.count)
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
       });
   }
 }

@@ -1,6 +1,5 @@
 import retry from 'async-retry';
 import axios, {AxiosInstance} from 'axios';
-import { attempt } from 'lodash';
 import pino from 'pino';
 import {VError} from 'verror';
 
@@ -41,12 +40,12 @@ export class AirbyteClient {
         }
       },
       {
-        retries: 12,
+        retries: 3,
         minTimeout: 10000,
         maxTimeout: 10000,
         onRetry: (err, attempt) => {
           logger.info('attempt=%d err=%o', attempt, err);
-        }
+        },
       }
     );
   }

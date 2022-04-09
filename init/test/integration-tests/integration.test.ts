@@ -28,7 +28,7 @@ describe('integration tests', () => {
 
     hasuraClient = new HasuraClient('http://localhost:8080', hasuraAdminSecret);
     await hasuraClient.waitUntilHealthy();
-  }, 2 * 60 * 1000);
+  }, 3 * 60 * 1000);
 
   test('check connection to the Faros destination', async () => {
     expect(await airbyteClient.checkDestinationConnection(destinationId)).toBe(
@@ -62,7 +62,7 @@ describe('integration tests', () => {
 
       expect(await hasuraClient.getVcsUserCount()).toBe(1);
     },
-    60 * 1000
+    3 * 60 * 1000
   );
 
   function writeRecords(tmpDir: string) {

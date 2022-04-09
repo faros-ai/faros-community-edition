@@ -49,6 +49,8 @@ export class HasuraClient {
       })
       .then(
         (response) => response.data.data.vcs_User_aggregate.aggregate.count
-      );
+      ).catch((err) => {
+          logger.info(`query failed with error: ${err}`);
+      });
   }
 }

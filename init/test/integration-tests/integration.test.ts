@@ -76,7 +76,7 @@ describe('integration tests', () => {
     --mount type=bind,source=${tmpDir},target=/integration-test \
     farosai/airbyte-faros-destination write \
     --catalog /integration-test/catalog.json \
-    --config /integration-test/config.json`)
+    --config /integration-test/config.json`).toString()
     );
   }
 });

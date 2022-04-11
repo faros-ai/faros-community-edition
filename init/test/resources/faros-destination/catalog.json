@@ -1,0 +1,10 @@
+{
+  "streams": [
+    {
+      "stream": {
+        "name": "mytestsource__github__collaborators"
+      },
+      "destination_sync_mode": "append"
+    }
+  ]
+}

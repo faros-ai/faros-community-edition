@@ -13,6 +13,7 @@
     "lint": "eslint 'src/**/*.ts' 'test/**/*.ts'",
     "prepare": "npm run build",
     "test": "jest --verbose --color",
+    "test:integration": "jest test/integration-tests/*.ts --verbose --color",
     "test:unit": "jest test/unit-tests/**/*.ts --verbose --color",
     "test-cov": "jest --coverage --verbose --color",
     "watch": "tsc -b -w src test"

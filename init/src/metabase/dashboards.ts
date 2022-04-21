@@ -458,7 +458,7 @@ export class Dashboards {
           return key === 'query' && isString(value)
             // ->> and #>> must not be replaced
             // https://www.postgresql.org/docs/9.4/functions-json.html
-            ? value.replace(/<</g, '{{').replace(/[^-#]>>/g, '}}')
+            ? value.replace(/<</g, '{{').replace(/([^-#])>>/g, '$1}}')
             : value;
         }
       )

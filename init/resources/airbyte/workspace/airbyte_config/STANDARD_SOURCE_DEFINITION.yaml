@@ -141,8 +141,8 @@
 - sourceDefinitionId: "05f9f7d4-d900-4ebd-89fc-abcce64e342b"
   name: "Agile Accelerator"
   dockerRepository: "farosai/airbyte-agileaccelerator-source"
-  dockerImageTag: "0.1.52"
-  documentationUrl: "https://docs.faros.ai"
+  dockerImageTag: "0.1.70"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/agileaccelerator-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
     connectionSpecification:
@@ -156,14 +156,17 @@
       - "username"
       - "password"
       - "api_token"
+      - "cutoff_days"
       properties:
         password:
           type: "string"
           title: "Password"
+          description: "AgileAccelerator password"
           airbyte_secret: true
         username:
           type: "string"
           title: "Username"
+          description: "AgileAccelerator username"
         api_token:
           type: "string"
           title: "API Token"
@@ -181,15 +184,24 @@
         page_size:
           type: "integer"
           title: "Page Size"
+          description: "Page size to use when requesting records from AgileAccelerator\
+            \ API"
         server_url:
           type: "string"
           title: "Server URL"
           example:
           - "https://test.my.salesforce.com"
+          description: "The API URL for fetching data from AgileAccelerator"
         api_version:
           type: "string"
           title: "API Version"
           default: "v53.0"
+          description: "AgileAccelerator API Version"
+        cutoff_days:
+          type: "integer"
+          title: "Cutoff Days"
+          default: 90
+          description: "Only fetch data updated after cutoff"
         client_secret:
           type: "string"
           title: "Client Secret"
@@ -445,8 +457,8 @@
 - sourceDefinitionId: "172cc5e1-9443-4f1b-a386-5a7813e05f45"
   name: "Datadog"
   dockerRepository: "farosai/airbyte-datadog-source"
-  dockerImageTag: "0.1.52"
-  documentationUrl: "https://docs.faros.ai"
+  dockerImageTag: "0.1.70"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/datadog-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
     connectionSpecification:
@@ -2164,7 +2176,7 @@
 - sourceDefinitionId: "4b3cd0a4-4994-4616-af28-9871e28a8368"
   name: "Statuspage"
   dockerRepository: "farosai/airbyte-statuspage-source"
-  dockerImageTag: "0.1.52"
+  dockerImageTag: "0.1.70"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/statuspage-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -2175,18 +2187,27 @@
       required:
       - "page_id"
       - "api_key"
+      - "cutoff_days"
       properties:
         org_id:
           type: "string"
-          title: "StatusPage Organization ID"
+          title: "Organization ID"
+          description: "StatusPage Organization ID"
         api_key:
           type: "string"
           title: "StatusPage API key"
+          description: "API key for StatusPage API authentication"
           airbyte_secret: true
         page_id:
           type: "string"
-          title: "StatusPage Page ID"
+          title: "Page ID"
+          description: "StatusPage Page ID"
           airbyte_secret: true
+        cutoff_days:
+          type: "integer"
+          title: "Cutoff Days"
+          default: 90
+          description: "Only fetch data updated after cutoff"
       additionalProperties: false
     supportsNormalization: false
     supportsDBT: false
@@ -2283,7 +2304,7 @@
 - sourceDefinitionId: "4c4613d8-ffcd-4db8-a8f8-d325052aec11"
   name: "Jenkins"
   dockerRepository: "farosai/airbyte-jenkins-source"
-  dockerImageTag: "0.1.52"
+  dockerImageTag: "0.1.70"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/jenkins-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -2298,6 +2319,7 @@
       properties:
         user:
           type: "string"
+          title: "User"
           description: "Jenkins User"
         depth:
           type: "integer"
@@ -2308,7 +2330,8 @@
             \ are showed. If depth is not provided we will try to compute it automatically"
         token:
           type: "string"
-          title: "Jenkins Token"
+          title: "Token"
+          description: "Jenkins Token for Jenkins API authentication"
           airbyte_secret: true
         pageSize:
           type: "integer"
@@ -2321,6 +2344,7 @@
           title: "Jenkins Server URL"
           examples:
           - "https://my-jenkins-server.example.com"
+          description: "The Server URL for fetching data from Jenkins"
         last100Builds:
           type: "boolean"
           title: "Last 100 Builds Only"
@@ -2333,8 +2357,8 @@
 - sourceDefinitionId: "51d2be20-0bdc-4532-b5a2-98a2ef91b23e"
   name: "Bitbucket"
   dockerRepository: "farosai/airbyte-bitbucket-source"
-  dockerImageTag: "0.1.52"
-  documentationUrl: "https://docs.faros.ai"
+  dockerImageTag: "0.1.70"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/bitbucket-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
     connectionSpecification:
@@ -2344,6 +2368,7 @@
       required:
       - "workspace"
       - "repositories"
+      - "cutoff_days"
       properties:
         token:
           type: "string"
@@ -2378,6 +2403,11 @@
           examples:
           - "blaze-lib"
           description: "Name of your Bitbucket workspace"
+        cutoff_days:
+          type: "integer"
+          title: "Cutoff Days"
+          default: 90
+          description: "Only fetch data updated after cutoff"
         repositories:
           type: "array"
           items:
@@ -2632,8 +2662,8 @@
 - sourceDefinitionId: "63aa5e31-9490-4730-b2d4-14e42a4eb899"
   name: "Phabricator"
   dockerRepository: "farosai/airbyte-phabricator-source"
-  dockerImageTag: "0.1.52"
-  documentationUrl: "https://docs.faros.ai"
+  dockerImageTag: "0.1.70"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/phabricator-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
     connectionSpecification:
@@ -2643,7 +2673,7 @@
       required:
       - "server_url"
       - "token"
-      - "start_date"
+      - "cutoff_days"
       properties:
         limit:
           type: "integer"
@@ -2655,6 +2685,7 @@
         token:
           type: "string"
           title: "Conduit Token"
+          description: "Conduit Token for Phabricator API authentication"
           airbyte_secret: true
         projects:
           type: "array"
@@ -2672,15 +2703,12 @@
           title: "Phabricator Conduit API URL"
           examples:
           - "https://my-phabricator-server.example.com"
-        start_date:
-          type: "string"
-          title: "Start Date"
-          pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
-          examples:
-          - "2010-03-27T14:03:51-0800"
-          description: "The date from which you'd like to replicate data for Phabricator\
-            \ in the ISO 8601 format, i.e YYYY-MM-DDTmm:HH:ssZ. All data generated\
-            \ after this date will be replicated."
+          description: "The API URL for fetching data from Phabricator"
+        cutoff_days:
+          type: "integer"
+          title: "Cutoff Days"
+          default: 90
+          description: "Only fetch data updated after cutoff"
         repositories:
           type: "array"
           items:
@@ -4107,7 +4135,7 @@
 - sourceDefinitionId: "8b3ac13b-f1b1-4644-bec2-e7b6be6d64c4"
   name: "VictorOps"
   dockerRepository: "farosai/airbyte-victorops-source"
-  dockerImageTag: "0.1.52"
+  dockerImageTag: "0.1.70"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/victorops-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -4118,23 +4146,33 @@
       required:
       - "apiId"
       - "apiKey"
+      - "cutoff_days"
       properties:
         apiId:
           type: "string"
-          title: "VictorOps API ID"
+          title: "API ID"
+          description: "VictorOps API ID"
           airbyte_secret: true
         apiKey:
           type: "string"
           title: "VictorOps API key"
+          description: "API key for VictorOps API authentication"
           airbyte_secret: true
         pageLimit:
           type: "integer"
-          title: "VictorOps Page Limit"
+          title: "Page Limit"
           default: 100
+          description: "VictorOps Page Limit"
+        cutoff_days:
+          type: "integer"
+          title: "Cutoff Days"
+          default: 90
+          description: "Only fetch data updated after cutoff"
         currentPhase:
           type: "string"
-          title: "VictorOps Current Phase"
+          title: "Current Phase"
           default: "triggered,acknowledged,resolved"
+          description: "VictorOps Current Phase"
         maxContentLength:
           type: "integer"
           title: "VictorOps Content Length"
@@ -4748,8 +4786,8 @@
 - sourceDefinitionId: "aed60257-db80-4121-b212-4520807fd94c"
   name: "Backlog"
   dockerRepository: "farosai/airbyte-backlog-source"
-  dockerImageTag: "0.1.52"
-  documentationUrl: "https://docs.faros.ai"
+  dockerImageTag: "0.1.70"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/backlog-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
     connectionSpecification:
@@ -4759,15 +4797,18 @@
       required:
       - "apiKey"
       - "space"
+      - "cutoff_days"
       properties:
         space:
           type: "string"
-          title: "Space ID"
+          title: "SpaceID"
           examples:
           - "devcube"
+          description: "Backlog SpaceID"
         apiKey:
           type: "string"
           title: "API Key"
+          description: "Backlog API Key"
           airbyte_secret: true
         project_id:
           type:
@@ -4776,6 +4817,11 @@
           title: "Project ID"
           description: "Only pull issues from this project. If not set, all issues\
             \ from all projects will be pulled."
+        cutoff_days:
+          type: "integer"
+          title: "Cutoff Days"
+          default: 90
+          description: "Only fetch data updated after cutoff"
       additionalProperties: false
     supportsNormalization: false
     supportsDBT: false
@@ -4783,7 +4829,7 @@
 - sourceDefinitionId: "aee89078-5c00-429e-90bf-cec0174dbb76"
   name: "PagerDuty"
   dockerRepository: "farosai/airbyte-pagerduty-source"
-  dockerImageTag: "0.1.52"
+  dockerImageTag: "0.1.70"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/pagerduty-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -4796,22 +4842,22 @@
       properties:
         token:
           type: "string"
-          title: "PagerDuty API key"
+          title: "API key"
+          description: "API key for PagerDuty API authentication"
           airbyte_secret: true
-        pageSize:
+        page_size:
           type: "integer"
           title: "Page Size"
           default: 25
           maximum: 25
           minimum: 1
           description: "page size to use when querying PagerDuty API"
-        cutoffDays:
+        cutoff_days:
           type: "integer"
           title: "Cutoff Days"
           default: 90
-          minimum: 1
-          description: "fetch pipelines updated in the last number of days"
-        defaultSeverity:
+          description: "Fetch pipelines updated in the last number of days"
+        default_severity:
           type: "string"
           title: "Severity category"
           pattern: "^(Sev[0-5])?(Custom)?$"
@@ -4823,7 +4869,7 @@
           - "Sev5"
           - "Custom"
           description: "A default severity category if not present"
-        incidentLogEntriesOverview:
+        incident_log_entries_overview:
           type: "boolean"
           title: "Incident Log Entries Overview"
           default: true
@@ -5519,14 +5565,14 @@
 - sourceDefinitionId: "b3f853ee-b848-4651-98cb-52f6c6023bf6"
   name: "Shortcut"
   dockerRepository: "farosai/airbyte-shortcut-source"
-  dockerImageTag: "0.1.52"
-  documentationUrl: "https://docs.faros.ai"
+  dockerImageTag: "0.1.70"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/shortcut-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
     connectionSpecification:
       type: "object"
       title: "shortcut Spec"
-      $schema: "http://json-schema.org/draft-04/schema#"
+      $schema: "http://json-schema.org/draft-07/schema#"
       required:
       - "base_url"
       - "version"
@@ -5544,16 +5590,16 @@
           default: "v3"
           examples:
           - "v3"
+          description: "Shortcut API Version"
         base_url:
           type: "string"
           title: "Base API URL"
           default: "https://api.app.shortcut.com"
           examples:
           - "https://api.app.shortcut.com"
+          description: "The Base API URL for fetching data from Shortcut"
         project_public_id:
-          type:
-          - "integer"
-          - "null"
+          type: "integer"
           title: "Project Public ID"
           description: "Only pull stories from the specified project. If not set,\
             \ all stories from all projects will be pulled."
@@ -6105,8 +6151,8 @@
 - sourceDefinitionId: "bcea28f0-e643-4269-bf84-8fb27f48b71e"
   name: "Customer.io"
   dockerRepository: "farosai/airbyte-customer-io-source"
-  dockerImageTag: "0.1.52"
-  documentationUrl: "https://docs.faros.ai"
+  dockerImageTag: "0.1.70"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/customer-io-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
     connectionSpecification:
@@ -6115,11 +6161,18 @@
       $schema: "http://json-schema.org/draft-07/schema#"
       required:
       - "app_api_key"
+      - "cutoff_days"
       properties:
         app_api_key:
           type: "string"
-          title: "Customer.io App API Key"
+          title: "App API Key"
+          description: "App API Key for Customer.io API authentication"
           airbyte_secret: true
+        cutoff_days:
+          type: "integer"
+          title: "Cutoff Days"
+          default: 90
+          description: "Only fetch data updated after cutoff"
       additionalProperties: false
     supportsNormalization: false
     supportsDBT: false
@@ -7077,7 +7130,7 @@
 - sourceDefinitionId: "d8d05baf-bbda-49b3-9489-542e77cbd820"
   name: "Harness"
   dockerRepository: "farosai/airbyte-harness-source"
-  dockerImageTag: "0.1.52"
+  dockerImageTag: "0.1.70"
   documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/harness-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -7088,33 +7141,36 @@
       required:
       - "api_key"
       - "account_id"
+      - "cutoff_days"
       properties:
         api_key:
           type: "string"
-          title: "Harness API key"
+          title: "API key"
           airbyte_secret: true
         api_url:
           type: "string"
-          title: "Harness API URL"
+          title: "API URL"
           default: "https://app.harness.io"
           examples:
           - "https://my-harness-server.example.com"
+          description: "The API URL for fetching data from Harness"
         page_size:
           type: "integer"
-          title: "Harness Page Size"
+          title: "Page Size"
           default: 100
           description: "number of pipelines (builds) to fetch per call"
         account_id:
           type: "string"
-          title: "Harness account ID"
+          title: "Account ID"
+          description: "Harness Account ID"
         cutoff_days:
           type: "integer"
-          title: "Harness Cutoff Days"
+          title: "Cutoff Days"
           default: 90
           description: "Only fetch deployments updated after cutoff"
         deployment_timeout:
           type: "integer"
-          title: "Harness Deployment Timeout"
+          title: "Deployment Timeout"
           default: 24
           description: "Max number of hours to consider for a deployment to be running/queued\
             \ before giving up on syncing it"
@@ -7531,8 +7587,8 @@
 - sourceDefinitionId: "dcb04367-398c-4af9-831c-aef0ce4f8f32"
   name: "Squadcast"
   dockerRepository: "farosai/airbyte-squadcast-source"
-  dockerImageTag: "0.1.52"
-  documentationUrl: "https://docs.faros.ai"
+  dockerImageTag: "0.1.70"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/squadcast-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
     connectionSpecification:
@@ -7541,24 +7597,44 @@
       $schema: "http://json-schema.org/draft-07/schema#"
       required:
       - "token"
+      - "cutoff_days"
       properties:
         token:
           type: "string"
-          title: "SquadCast Token"
+          title: "Token"
           description: "Get API Refresh Token on https://app.squadcast.com/user/USER_ID\
             \ where USER_ID is user's ID"
           airbyte_secret: true
+        cutoff_days:
+          type: "integer"
+          title: "Cutoff Days"
+          default: 90
+          description: "Only fetch data updated after cutoff"
         event_deduped:
           type: "boolean"
-          title: "SquadCast Events Deduped"
+          title: "Events Deduped"
           description: "If set to true, it will return only the deduped events. If\
             \ set to false, it will return only the non-deduped event. Otherwise it\
             \ will return all the events"
+        event_owner_id:
+          type: "string"
+          title: "Event Owner ID"
+          description: "Team ID or User ID"
         event_incident_id:
           type: "string"
-          title: "SquadCast Events Incident ID"
+          title: "Events Incident ID"
           description: "If set it will pull all events from only this Incident. If\
             \ no it pull all events from all incidents"
+        incident_owner_id:
+          type: "string"
+          title: "Incident Owner ID"
+          description: "Team ID or User ID"
+        max_content_length:
+          type: "integer"
+          title: "Max Content Length"
+          default: 20000
+          description: "Max size of Squadcast API response content in bytes. Increase\
+            \ this value if you get a \"maxContentLength exceeded\" error"
       additionalProperties: false
     supportsNormalization: false
     supportsDBT: false
@@ -8156,8 +8232,8 @@
 - sourceDefinitionId: "e57c9890-e3ea-4319-be8b-6cbb4d8b40d8"
   name: "Okta (Faros)"
   dockerRepository: "farosai/airbyte-okta-source"
-  dockerImageTag: "0.1.52"
-  documentationUrl: "https://docs.faros.ai"
+  dockerImageTag: "0.1.70"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/okta-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
     connectionSpecification:
@@ -8171,16 +8247,19 @@
         token:
           type: "string"
           title: "Okta Token"
+          description: "Access Token for Okta API authentication"
           airbyte_secret: true
         version:
           type: "string"
-          title: "version"
+          title: "API Version"
           default: "v1"
+          description: "Okta API Version"
         domain_name:
           type: "string"
-          title: "Domain name (org name part of your Okta URL)"
+          title: "Domain name"
           examples:
           - "dev-12345678"
+          description: "Domain name (org name part of your Okta URL)"
       additionalProperties: false
     supportsNormalization: false
     supportsDBT: false
@@ -8887,8 +8966,8 @@
 - sourceDefinitionId: "ee472a41-b99a-40b3-a671-2a31c3c9c203"
   name: "Google Calendar"
   dockerRepository: "farosai/airbyte-googlecalendar-source"
-  dockerImageTag: "0.1.52"
-  documentationUrl: "https://docs.faros.ai"
+  dockerImageTag: "0.1.70"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/googlecalendar-source"
   spec:
     documentationUrl: "https://docs.faros.ai"
     connectionSpecification:
@@ -8913,12 +8992,14 @@
         private_key:
           type: "string"
           title: "Private Key"
+          description: "Private Key for accessing Google Calendar API"
           airbyte_secret: true
         client_email:
           type: "string"
           title: "Client Email"
           examples:
           - "https://my-google-calendar-server.example.com"
+          description: "Google Calendar API Client Email"
         events_max_results:
           max: 2500
           type: "integer"

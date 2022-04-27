@@ -1614,6 +1614,52 @@
     supportsNormalization: false
     supportsDBT: false
     supported_destination_sync_modes: []
+- sourceDefinitionId: "431b2890-39cb-4138-bc30-7dccdd0b94e0"
+  name: "Buildkite"
+  dockerRepository: "farosai/airbyte-buildkite-source"
+  dockerImageTag: "0.1.70"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/buildkite-source"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "BuildKite Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "token"
+      - "cutoff_days"
+      properties:
+        token:
+          type: "string"
+          title: "Token"
+          description: "To create token go to https://buildkite.com/user/api-access-tokens"
+          airbyte_secret: true
+        page_size:
+          type: "number"
+          title: "Page Size"
+          description: "number of pipelines, builds, jobs to fetch per call"
+        cutoff_days:
+          type: "integer"
+          title: "Cutoff Days"
+          default: 90
+          description: "Only fetch data updated after cutoff"
+        organization:
+          type: "string"
+          title: "Organization Slug"
+          description: "Only pull pipelines from the specified organization. If not\
+            \ set, all pipelines from all organizations will be pulled."
+        graphql_version:
+          type: "string"
+          title: "GraphQL Version"
+          default: "v1"
+        rest_api_version:
+          type: "string"
+          title: "Rest API Version"
+          default: "v2"
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
 - sourceDefinitionId: "435bb9a5-7887-4809-aa58-28c27df0d7ad"
   name: "MySQL"
   dockerRepository: "airbyte/source-mysql"

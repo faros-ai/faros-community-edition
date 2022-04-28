@@ -13,6 +13,4 @@ clean-targets:         # directories to be removed by `dbt clean`
   - "dbt_packages"
 
 models:
-  dbt_tutorial:
-    custom_metrics:
-      +materialized: view
+  +materialized: view

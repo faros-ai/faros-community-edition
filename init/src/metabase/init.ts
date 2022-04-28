@@ -1,7 +1,8 @@
-import {InvalidArgumentError, Option, program} from 'commander';
+import {Option, program} from 'commander';
 import pino from 'pino';
 
 import {Dashboards} from './dashboards';
+import {Metabase} from './metabase';
 
 const logger = pino({
   name: 'metabase-init',
@@ -15,30 +16,42 @@ async function main(): Promise<void> {
     .requiredOption('--password <string>')
     .requiredOption('--database <string>')
     .addOption(new Option('--export <dashboardId>').conflicts('import'))
-    .addOption(new Option('--import').conflicts('export'));
+    .addOption(new Option('--import').conflicts('export'))
+    .addOption(new Option('--sync-schema'));
 
   program.parse();
   const options = program.opts();
 
-  if (!options.export && !options.import) {
-    throw new InvalidArgumentError('Must use with import or export');
-  }
-
-  const dashboards = await Dashboards.fromConfig({
-    metabase: {
+  if (options.syncSchema) {
+    const metabase = await Metabase.fromConfig({
       url: options.metabaseUrl,
       username: options.username,
       password: options.password,
-    },
-    databaseName: options.database,
-    logger,
-  });
+    });
 
-  if (options.export) {
-    console.log(await dashboards.export(parseInt(options.export, 10)));
+    await metabase.syncSchema(options.database);
+    logger.info('Metabase sync schema triggered');
   } else {
-    await dashboards.import();
-    logger.info('Metabase import is complete');
+    if (!options.export && !options.import) {
+      program.help();
+    }
+
+    const dashboards = await Dashboards.fromConfig({
+      metabase: {
+        url: options.metabaseUrl,
+        username: options.username,
+        password: options.password,
+      },
+      databaseName: options.database,
+      logger,
+    });
+
+    if (options.export) {
+      console.log(await dashboards.export(parseInt(options.export, 10)));
+    } else {
+      await dashboards.import();
+      logger.info('Metabase import is complete');
+    }
   }
 }
 

@@ -456,9 +456,9 @@ export class Dashboards {
         JSON.parse(handlebars.compile(template)({})),
         (key, value) => {
           return key === 'query' && isString(value)
-            // ->> and #>> must not be replaced
-            // https://www.postgresql.org/docs/9.4/functions-json.html
-            ? value.replace(/<</g, '{{').replace(/([^-#])>>/g, '$1}}')
+            ? // ->> and #>> must not be replaced
+              // https://www.postgresql.org/docs/9.4/functions-json.html
+              value.replace(/<</g, '{{').replace(/([^-#])>>/g, '$1}}')
             : value;
         }
       )

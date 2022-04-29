@@ -1,0 +1,27 @@
+
+version: 2
+
+models:
+  - name: task_creators
+    description: "Tasks creators ranked by number of tasks by month/year"
+    columns:
+      - name: month
+        description: "The month when tasks were created"
+        tests:
+          - not_null
+      - name: year
+        description: "The year when tasks were created"
+        tests:
+          - not_null
+      - name: creator_identity_id
+        description: "The task creator"
+        tests:
+          - not_null
+      - name: num_tasks_created
+        description: "The number of tasks created by the creator on the month/year"
+        tests:
+          - not_null
+      - name: rank
+        description: "The rank of the creator, based on the number of tasks created, on the month/year"
+        tests:
+          - not_null

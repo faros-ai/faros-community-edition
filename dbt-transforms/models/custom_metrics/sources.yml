@@ -1,0 +1,7 @@
+version: 2
+sources:
+  - name: raw
+    schema: public
+    tables:
+      - name: tms_Task
+      - name: tms_TaskBoard

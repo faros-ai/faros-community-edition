@@ -73,6 +73,16 @@ export class Metabase {
     }
   }
 
+  async syncSchema(databaseName: string): Promise<void> {
+    const db = await this.getDatabase(databaseName);
+
+    if (!db) {
+      throw new VError('unable to find database: ' + databaseName);
+    }
+
+    await this.api.post(`database/${db.id}/sync_schema`);
+  }
+
   async syncTables(
     schema: string,
     fieldsByTable: Map<string, Set<string>>,

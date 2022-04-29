@@ -28,7 +28,7 @@ You should be able to see the new table in the Data Model tab
 
 ![New table](img/metabase-new-table.png)
 
-4. Optional: Track the new table in [http://localhost:8080/console/data/default/schema/public](Hasura)
+4. Optional: Track the new table in [Hasura](http://localhost:8080/console/data/default/schema/public)
 
 ![Tracking the new table](img/hasura-track-table.png)
 

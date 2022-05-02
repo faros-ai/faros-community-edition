@@ -1,4 +1,4 @@
-FROM flyway/flyway:8.5.9 as faros-init
+FROM flyway/flyway:8.5.10 as faros-init
 USER root
 RUN apk --update --no-cache add bash curl jq nodejs npm postgresql-client
 RUN adduser -S faros

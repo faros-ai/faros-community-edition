@@ -47,7 +47,7 @@ services:
     restart: unless-stopped
   faros-init:
     profiles: ["default", "faros-init"]
-    image: farosai/faros-ce-init:latest
+    image: farosai.docker.scarf.sh/farosai/faros-ce-init:latest
     restart: on-failure
     environment:
       AIRBYTE_API_CALLS_CONCURRENCY: ${AIRBYTE_API_CALLS_CONCURRENCY:-}

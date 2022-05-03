@@ -1,7 +1,7 @@
-FROM flyway/flyway:8.4.1-alpine as faros-init
+FROM flyway/flyway:8.5.10 as faros-init
 USER root
-RUN apk --update --no-cache add bash curl jq nodejs npm postgresql-client
-RUN adduser -S faros
+RUN apt-get update && apt-get --assume-yes install bash curl jq nodejs npm postgresql-client netcat
+RUN adduser --system faros
 RUN chown -R faros /flyway
 USER faros
 WORKDIR /home/faros

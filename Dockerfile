@@ -1,6 +1,6 @@
 FROM flyway/flyway:8.5.10 as faros-init
 USER root
-RUN apt-get update && apt-get --assume-yes install bash curl jq nodejs npm postgresql-client netcat wget
+RUN apt-get update && apt-get --assume-yes install bash curl jq nodejs npm postgresql-client netcat
 RUN adduser --system faros
 RUN chown -R faros /flyway
 USER faros

@@ -86,8 +86,11 @@ jobs:
         with:
           images: |
             farosai/faros-ce-init
+          flavor: |
+            latest=auto
           tags: |
             type=sha,format=long,prefix=
+            type=raw,value=latest,enable=true
 
       - name: Set up Docker QEMU
         uses: docker/setup-qemu-action@v1

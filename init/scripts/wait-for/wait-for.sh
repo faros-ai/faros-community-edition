@@ -24,7 +24,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION="2.2.1"
+VERSION="2.2.3"
 
 set -- "$@" -- "$TIMEOUT" "$QUIET" "$PROTOCOL" "$HOST" "$PORT" "$result"
 TIMEOUT=15
@@ -57,7 +57,7 @@ wait_for() {
         exit 1
       fi
       ;;
-    wget)
+    http)
       if ! command -v wget >/dev/null; then
         echoerr 'wget command is missing!'
         exit 1
@@ -69,11 +69,11 @@ wait_for() {
 
   while :; do
     case "$PROTOCOL" in
-      tcp)
+      tcp) 
         nc -w 1 -z "$HOST" "$PORT" > /dev/null 2>&1
         ;;
       http)
-        wget --timeout=1 -q "$HOST" -O /dev/null > /dev/null 2>&1
+        wget --timeout=1 -q "$HOST" -O /dev/null > /dev/null 2>&1 
         ;;
       *)
         echoerr "Unknown protocol '$PROTOCOL'"
@@ -82,7 +82,7 @@ wait_for() {
     esac
 
     result=$?
-
+        
     if [ $result -eq 0 ] ; then
       if [ $# -gt 7 ] ; then
         for result in $(seq $(($# - 7))); do
@@ -98,7 +98,7 @@ wait_for() {
       exit 0
     fi
 
-    if [ $(date +%s) -ge $TIMEOUT_END ]; then
+    if [ $TIMEOUT -ne 0 -a $(date +%s) -ge $TIMEOUT_END ]; then
       echo "Operation timed out" >&2
       exit 1
     fi

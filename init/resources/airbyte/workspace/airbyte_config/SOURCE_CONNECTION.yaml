@@ -1,6 +1,6 @@
 ---
 - name: "My GitHub Source"
-  sourceDefinitionId: "ef69ef6e-aa7f-4af1-a01d-ef775033524e"
+  sourceDefinitionId: "9bef3b40-e2c3-46c0-a792-54580f876d18"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
   sourceId: "5d9079ca-8173-406f-bfdb-41f19c62daff"
   configuration:

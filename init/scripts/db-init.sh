@@ -36,7 +36,7 @@ create_database "$faros_db_name" "$faros_db_host" "$faros_db_port" "$faros_db_us
 
 echo "Applying Flyway migrations"
 flyway \
-  -locations="filesystem:/home/faros/canonical-schema" \
+  -locations="filesystem:/flyway/faros/canonical-schema" \
   -url="jdbc:postgresql://$faros_db_host:$faros_db_port/$faros_db_name" \
   -user="$faros_db_user" \
   -password="$faros_db_pass" \

@@ -4,4 +4,4 @@ sources:
     schema: public
     tables:
       - name: tms_Task
-      - name: tms_TaskBoard
+

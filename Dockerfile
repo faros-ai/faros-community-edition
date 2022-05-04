@@ -1,8 +1,9 @@
 FROM flyway/flyway:8.5.10 as faros-init
 USER root
-RUN apt-get update -yq \
-  && apt-get install -yq bash curl gnupg jq npm postgresql-client netcat wget
-RUN curl -sL https://deb.nodesource.com/setup_17.x | bash && apt-get install -yq nodejs && apt-get clean
+RUN curl -fsSL https://deb.nodesource.com/setup_17.x | bash -
+RUN apt-get update \
+  && apt-get -y install jq nodejs postgresql-client netcat wget \
+  && apt-get clean
 USER flyway
 RUN mkdir -p /flyway/faros
 WORKDIR /flyway/faros

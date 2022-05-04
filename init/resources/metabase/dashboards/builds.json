@@ -1,0 +1,706 @@
+{
+  "name": "Builds dashboard",
+  "cards": [
+    {
+      "name": "Builds by Pipeline",
+      "description": null,
+      "display": "row",
+      "table_id": {{ table "cicd_Build" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "cicd_Build" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "filter": [
+            "time-interval",
+            [
+              "field",
+              {{ field "cicd_Build.createdAt" }},
+              null
+            ],
+            -30,
+            "day"
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "cicd_Pipeline.name" }},
+              {
+                "source-field": {{ field "cicd_Build.pipeline" }}
+              }
+            ]
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "aggregation",
+                0
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "name"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Builds by Status",
+      "description": null,
+      "display": "pie",
+      "table_id": {{ table "cicd_Build" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "cicd_Build" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "cicd_Build.statusCategory" }},
+              null
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "pie.show_legend": true
+      }
+    },
+    {
+      "name": "Average Build Time",
+      "description": null,
+      "display": "scalar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT EXTRACT(epoch FROM (\nSELECT \n    justify_interval(\n      avg(\n        \"cicd_Build\".\"endedAt\" - \"cicd_Build\".\"startedAt\"\n      )\n    ) as build_time \n  FROM \n    \"cicd_Build\" \n  JOIN \"cicd_Pipeline\" ON \"cicd_Build\".\"pipeline\" = \"cicd_Pipeline\".\"id\"\n  WHERE \n    \"cicd_Build\".\"createdAt\" IS NOT NULL AND <<createdAt>> AND <<pipelineName>>\n) / 60)",
+          "template-tags": {
+            "createdAt": {
+              "id": "c5b00e41-e212-a817-bc1a-4c2ff65db256",
+              "name": "createdAt",
+              "display-name": "CreatedAt",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "cicd_Build.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative",
+              "default": "past30days"
+            },
+            "pipelineName": {
+              "id": "5ba685b5-d77e-1aec-e1af-2d9785f02791",
+              "name": "pipelineName",
+              "display-name": "PipelineName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "cicd_Pipeline.name" }},
+                null
+              ],
+              "widget-type": "category"
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "column_settings": {
+          "[\"name\",\"date_part\"]": {
+            "suffix": " min"
+          }
+        }
+      }
+    },
+    {
+      "name": "Average Build Time by Pipeline by Week",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT\n  EXTRACT (epoch FROM (justify_interval(\n    avg(\n      \"cicd_Build\".\"endedAt\" - \"cicd_Build\".\"startedAt\"\n    )\n  ))) / 60 as build_time,\n  \"cicd_Pipeline\".\"name\",\n  DATE_TRUNC ('week', \"cicd_Build\".\"createdAt\") as week\n  FROM \n    \"cicd_Build\" \n  JOIN \"cicd_Pipeline\" ON \"cicd_Build\".\"pipeline\" = \"cicd_Pipeline\".\"id\"\n  WHERE \n    \"cicd_Build\".\"createdAt\" IS NOT NULL AND <<createdAt>> AND <<pipelineName>>\n  GROUP BY \"cicd_Pipeline\".\"name\", week",
+          "template-tags": {
+            "createdAt": {
+              "id": "c5b00e41-e212-a817-bc1a-4c2ff65db256",
+              "name": "createdAt",
+              "display-name": "CreatedAt",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "cicd_Build.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative",
+              "default": "past30days"
+            },
+            "pipelineName": {
+              "id": "5ba685b5-d77e-1aec-e1af-2d9785f02791",
+              "name": "pipelineName",
+              "display-name": "PipelineName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "cicd_Pipeline.name" }},
+                null
+              ],
+              "widget-type": "category"
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "graph.y_axis.title_text": "Build Time (min)",
+        "graph.dimensions": [
+          "week",
+          "name"
+        ],
+        "column_settings": {
+          "[\"name\",\"date_part\"]": {
+            "suffix": " seconds"
+          }
+        },
+        "graph.metrics": [
+          "build_time"
+        ]
+      }
+    },
+    {
+      "name": "Unsuccessful Pipelines",
+      "description": null,
+      "display": "pie",
+      "table_id": {{ table "cicd_Build" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "cicd_Build" }},
+          "filter": [
+            "and",
+            [
+              "!=",
+              [
+                "field",
+                {{ field "cicd_Build.statusCategory" }},
+                null
+              ],
+              "Success"
+            ],
+            [
+              "time-interval",
+              [
+                "field",
+                {{ field "cicd_Build.createdAt" }},
+                null
+              ],
+              -30,
+              "day"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "cicd_Pipeline.name" }},
+              {
+                "source-field": {{ field "cicd_Build.pipeline" }}
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "aggregation",
+                0
+              ]
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "name"
+        ],
+        "series_settings": {
+          "count": {
+            "color": "#EF8C8C"
+          }
+        },
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Average number of Steps",
+      "description": null,
+      "display": "scalar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT avg(\"source\".\"count\") AS \"avg\"\nFROM (SELECT \"cicd_Build\".\"id\" AS \"id\", count(*) AS \"count\" FROM \"cicd_Build\"\nLEFT JOIN \"cicd_BuildStep\" ON \"cicd_Build\".\"id\" = \"cicd_BuildStep\".\"build\" LEFT JOIN \"cicd_Pipeline\" ON \"cicd_Build\".\"pipeline\" = \"cicd_Pipeline\".\"id\"\nWHERE <<pipelineName>> AND <<createdAt>>\nGROUP BY \"cicd_Build\".\"id\"\nORDER BY \"cicd_Build\".\"id\" ASC) \"source\"",
+          "template-tags": {
+            "createdAt": {
+              "id": "98a6c43e-475f-4630-da43-4bb2b412a317",
+              "name": "createdAt",
+              "display-name": "CreatedAt",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "cicd_Build.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative",
+              "default": "past30days"
+            },
+            "pipelineName": {
+              "id": "9b68bcc7-1834-3002-2ec6-8a2f55fc0883",
+              "name": "pipelineName",
+              "display-name": "PipelineName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "cicd_Pipeline.name" }},
+                null
+              ],
+              "widget-type": "category"
+            }
+          }
+        }
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "Builds per Week",
+      "description": null,
+      "display": "scalar",
+      "table_id": null,
+      "dataset_query": {
+        "native": {
+          "template-tags": {
+            "pipelineName": {
+              "id": "d1a99273-11a0-ba75-d5f0-fe51e7d7a3ca",
+              "name": "pipelineName",
+              "display-name": "PipelineName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "cicd_Pipeline.name" }},
+                null
+              ],
+              "widget-type": "category"
+            },
+            "createdAt": {
+              "id": "ffb951ef-1a4f-a0ee-41c1-fb07a2b8c8bf",
+              "name": "createdAt",
+              "display-name": "Createdat",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "cicd_Build.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative",
+              "default": "past30days"
+            }
+          },
+          "query": "SELECT avg(\"source\".\"count\") AS \"avg\"\nFROM (SELECT (CAST(date_trunc('week', CAST((CAST(\"cicd_Build\".\"createdAt\" AS timestamp) + (INTERVAL '1 day')) AS timestamp)) AS timestamp) + (INTERVAL '-1 day')) AS \"createdAt\", count(*) AS \"count\" FROM \"cicd_Build\"\nLEFT JOIN \"cicd_Pipeline\" ON \"cicd_Build\".\"pipeline\" = \"cicd_Pipeline\".\"id\"\nWHERE <<pipelineName>> AND <<createdAt>>\nGROUP BY (CAST(date_trunc('week', CAST((CAST(\"public\".\"cicd_Build\".\"createdAt\" AS timestamp) + (INTERVAL '1 day')) AS timestamp)) AS timestamp) + (INTERVAL '-1 day'))\nORDER BY (CAST(date_trunc('week', CAST((CAST(\"public\".\"cicd_Build\".\"createdAt\" AS timestamp) + (INTERVAL '1 day')) AS timestamp)) AS timestamp) + (INTERVAL '-1 day')) ASC) \"source\""
+        },
+        "type": "native"
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "Build Reliability",
+      "description": null,
+      "display": "gauge",
+      "table_id": {{ table "cicd_Build" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "cicd_Build" }},
+          "expressions": {
+            "isSuccess": [
+              "case",
+              [
+                [
+                  [
+                    "=",
+                    [
+                      "field",
+                      {{ field "cicd_Build.statusCategory" }},
+                      null
+                    ],
+                    "Success"
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": 0
+              }
+            ]
+          },
+          "aggregation": [
+            [
+              "avg",
+              [
+                "expression",
+                "isSuccess"
+              ]
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0.8,
+            "max": 0.95,
+            "color": "#ED6E6E",
+            "label": ""
+          },
+          {
+            "min": 0.95,
+            "max": 0.98,
+            "color": "#F9CF48",
+            "label": ""
+          },
+          {
+            "min": 0.98,
+            "max": 1,
+            "color": "#84BB4C",
+            "label": ""
+          }
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Relative Date",
+      "slug": "relative_date",
+      "id": "478ca4ef",
+      "type": "date/relative",
+      "sectionId": "date",
+      "default": "past30days"
+    },
+    {
+      "name": "Pipeline",
+      "slug": "pipeline",
+      "id": "1929e441",
+      "type": "category"
+    }
+  ],
+  "layout": [
+    {
+      "row": 7,
+      "col": 0,
+      "sizeX": 7,
+      "sizeY": 3,
+      "card_id": {{ card "Builds by Pipeline" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "478ca4ef",
+          "card_id": {{ card "Builds by Pipeline" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Build.createdAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "1929e441",
+          "card_id": {{ card "Builds by Pipeline" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Pipeline.name" }},
+              {
+                "source-field": {{ field "cicd_Build.pipeline" }}
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 6,
+      "col": 7,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Builds by Status" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "478ca4ef",
+          "card_id": {{ card "Builds by Status" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Build.createdAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "1929e441",
+          "card_id": {{ card "Builds by Status" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Pipeline.name" }},
+              {
+                "source-field": {{ field "cicd_Build.pipeline" }}
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 3,
+      "sizeY": 3,
+      "card_id": {{ card "Average Build Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "1929e441",
+          "card_id": {{ card "Average Build Time" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "pipelineName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "478ca4ef",
+          "card_id": {{ card "Average Build Time" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 7,
+      "sizeX": 11,
+      "sizeY": 6,
+      "card_id": {{ card "Average Build Time by Pipeline by Week" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "1929e441",
+          "card_id": {{ card "Average Build Time by Pipeline by Week" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "pipelineName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "478ca4ef",
+          "card_id": {{ card "Average Build Time by Pipeline by Week" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 6,
+      "col": 11,
+      "sizeX": 7,
+      "sizeY": 4,
+      "card_id": {{ card "Unsuccessful Pipelines" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "1929e441",
+          "card_id": {{ card "Unsuccessful Pipelines" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Pipeline.name" }},
+              {
+                "source-field": {{ field "cicd_Build.pipeline" }}
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "478ca4ef",
+          "card_id": {{ card "Unsuccessful Pipelines" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Build.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "sizeX": 3,
+      "sizeY": 4,
+      "card_id": {{ card "Average number of Steps" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "1929e441",
+          "card_id": {{ card "Average number of Steps" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "pipelineName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "478ca4ef",
+          "card_id": {{ card "Average number of Steps" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "sizeX": 4,
+      "sizeY": 3,
+      "card_id": {{ card "Builds per Week" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "1929e441",
+          "card_id": {{ card "Builds per Week" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "pipelineName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "478ca4ef",
+          "card_id": {{ card "Builds per Week" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Build Reliability" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "1929e441",
+          "card_id": {{ card "Build Reliability" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Pipeline.name" }},
+              {
+                "source-field": {{ field "cicd_Build.pipeline" }}
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "478ca4ef",
+          "card_id": {{ card "Build Reliability" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Build.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    }
+  ],
+  "fields": [
+    {
+      "field": {{ field "cicd_Pipeline.name" }},
+      "type": "type/Category"
+    }
+  ],
+  "path": "/Faros CE/Builds",
+  "priority": 6
+}

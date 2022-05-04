@@ -1,5 +1,7 @@
 # ![](img/faros.ico) Faros Community Edition
 
+![Metrics](https://static.scarf.sh/a.png?x-pxid=080b304d-fa4b-4469-a03f-4d13d77d28f0)
+
 [![GitHub Stars](https://img.shields.io/github/stars/faros-ai/faros-community-edition?style=social)](https://github.com/faros-ai/faros-community-edition/stargazers/)
 [![Community Slack](https://img.shields.io/badge/chat-Slack-%234a154b)](https://community.faros.ai/docs/slack)
 [![CI/CD](https://github.com/faros-ai/faros-community-edition/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/faros-ai/faros-community-edition/actions/workflows/ci-cd.yml)

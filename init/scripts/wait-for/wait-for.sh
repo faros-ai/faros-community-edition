@@ -57,7 +57,7 @@ wait_for() {
         exit 1
       fi
       ;;
-    wget)
+    http)
       if ! command -v wget >/dev/null; then
         echoerr 'wget command is missing!'
         exit 1

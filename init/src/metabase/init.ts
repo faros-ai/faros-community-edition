@@ -48,7 +48,6 @@ async function main(): Promise<void> {
 
     if (options.export) {
       console.log(await dashboards.export(parseInt(options.export, 10)));
-      logger.info('Metabase export is complete');
     } else {
       await dashboards.import();
       logger.info('Metabase import is complete');

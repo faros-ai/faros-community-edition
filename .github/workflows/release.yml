@@ -15,6 +15,7 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/pr.yml
+    if: github.ref == 'refs/heads/main' # Skip PRs
 
   publish-docker:
     name: Publish Docker

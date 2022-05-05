@@ -345,13 +345,25 @@
         "query": {
           "source-table": {{ table "cicd_Deployment" }},
           "filter": [
-            "=",
+            "and",
             [
-              "field",
-              {{ field "cicd_Deployment.statusCategory" }},
-              null
+              "=",
+              [
+                "field",
+                {{ field "cicd_Deployment.statusCategory" }},
+                null
+              ],
+              "Success"
             ],
-            "Success"
+            [
+              "=",
+              [
+                "field",
+                {{ field "cicd_Deployment.envCategory" }},
+                null
+              ],
+              "Prod"
+            ]
           ],
           "aggregation": [
             [
@@ -774,6 +786,7 @@
       "display": "line",
       "table_id": null,
       "dataset_query": {
+        "type": "query",
         "query": {
           "source-table": {{ card "IncidentsAndDeployments" }},
           "breakout": [
@@ -868,21 +881,8 @@
                 "display-name": "CFR"
               }
             ]
-          ],
-          "filter": [
-            "time-interval",
-            [
-              "field",
-              "date",
-              {
-                "base-type": "type/DateTimeWithLocalTZ"
-              }
-            ],
-            -30,
-            "day"
           ]
-        },
-        "type": "query"
+        }
       },
       "visualization_settings": {
         "graph.dimensions": [
@@ -906,7 +906,6 @@
       "display": "bar",
       "table_id": {{ table "ims_Incident" }},
       "dataset_query": {
-        "type": "query",
         "query": {
           "source-table": {{ table "ims_Incident" }},
           "joins": [
@@ -972,16 +971,6 @@
               "count"
             ]
           ],
-          "filter": [
-            "time-interval",
-            [
-              "field",
-              {{ field "ims_Incident.createdAt" }},
-              null
-            ],
-            -30,
-            "day"
-          ],
           "order-by": [
             [
               "asc",
@@ -1002,7 +991,8 @@
               ]
             ]
           ]
-        }
+        },
+        "type": "query"
       },
       "visualization_settings": {
         "graph.dimensions": [

@@ -19,6 +19,54 @@
       }
     },
     {
+      "name": "IncidentsAndDeployments",
+      "description": null,
+      "display": "table",
+      "table_id": null,
+      "dataset_query": {
+        "native": {
+          "template-tags": {},
+          "query": "SELECT 'Incident' as type, \"ims_Incident\".\"createdAt\" as date, \"compute_Application\".\"name\" as application FROM \"ims_Incident\" \n  LEFT JOIN \"ims_IncidentApplicationImpact\" ON \"ims_Incident\".\"id\" = \"ims_IncidentApplicationImpact\".\"incident\"\n  LEFT JOIN \"compute_Application\" ON \"ims_IncidentApplicationImpact\".\"application\" = \"compute_Application\".\"id\"\nUNION \nSELECT 'Deployment' as type, \"cicd_Deployment\".\"endedAt\" as date, \"compute_Application\".\"name\" as application FROM \"cicd_Deployment\"\n  LEFT JOIN \"compute_Application\" ON \"cicd_Deployment\".\"application\" = \"compute_Application\".\"id\""
+        },
+        "type": "native"
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0,
+            "max": 15,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 15,
+            "max": 30,
+            "color": "#F9D45C",
+            "label": "High"
+          },
+          {
+            "min": 30,
+            "max": 60,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 60,
+            "max": 100,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ],
+        "table.pivot_column": "type",
+        "table.cell_column": "date",
+        "column_settings": {
+          "[\"name\",\"test\"]": {
+            "suffix": " %"
+          }
+        }
+      }
+    },
+    {
       "name": "Average Lead Time",
       "description": null,
       "display": "gauge",
@@ -29,7 +77,8 @@
           "source-table": {{ card "LeadTime" }},
           "aggregation": [
             [
-              "avg",              [
+              "avg",
+              [
                 "field",
                 "lead_time",
                 {
@@ -77,7 +126,7 @@
       }
     },
     {
-      "name": "Lead time by application over time",
+      "name": "Lead Time by Application over Time",
       "description": null,
       "display": "line",
       "table_id": null,
@@ -123,16 +172,16 @@
           "prod_deployed_at",
           "application"
         ],
-        "graph.metrics": [
-          "avg"
-        ],
         "column_settings": {
           "[\"name\",\"avg\"]": {
             "scale": 1.157e-8,
             "suffix": " days",
             "decimals": 1
           }
-        }
+        },
+        "graph.metrics": [
+          "avg"
+        ]
       }
     },
     {
@@ -233,7 +282,7 @@
             "title": "time in qa"
           },
           "avg_5": {
-            "title": "time in staging"          
+            "title": "time in staging"
           },
           "avg_6": {
             "title": "unaccounted time"
@@ -242,14 +291,8 @@
         "graph.dimensions": [
           "application"
         ],
-        "graph.metrics": [
-          "avg",
-          "avg_2",
-          "avg_3",
-          "avg_4",
-          "avg_5",
-          "avg_6"
-        ],
+        "graph.x_axis.title_text": "Application",
+        "graph.y_axis.title_text": "Lead Time",
         "column_settings": {
           "[\"name\",\"avg\"]": {
             "scale": 1.157e-8,
@@ -281,105 +324,19 @@
             "scale": 1.157e-8,
             "suffix": " days"
           }
-        }
-      }
-    },
-    {
-      "name": "Weekly Production Deployment Frequency (Avg)",
-      "description": null,
-      "display": "gauge",
-      "table_id": {{ table "cicd_Deployment" }},
-      "dataset_query": {
-        "query": {
-          "source-query": {
-            "source-table": {{ table "cicd_Deployment" }},
-            "filter": [
-              "and",
-              [
-                "=",
-                [
-                  "field",
-                  {{ field "cicd_Deployment.envCategory" }},
-                  null
-                ],
-                "Prod"
-              ],
-              [
-                "=",
-                [
-                  "field",
-                  {{ field "cicd_Deployment.statusCategory" }},
-                  null
-                ],
-                "Success"
-              ]
-            ],
-            "aggregation": [
-              [
-                "distinct",
-                [
-                  "field",
-                  {{ field "cicd_Deployment.id" }},
-                  null
-                ]
-              ]
-            ],
-            "breakout": [
-              [
-                "field",
-                {{ field "cicd_Deployment.endedAt" }},
-                {
-                  "temporal-unit": "week"
-                }
-              ]
-            ]
-          },
-          "aggregation": [
-            [
-              "avg",
-              [
-                "field",
-                "count",
-                {
-                  "base-type": "type/Integer"
-                }
-              ]
-            ]
-          ]
         },
-        "type": "query"
-      },
-      "visualization_settings": {
-        "gauge.segments": [
-          {
-            "min": 0,
-            "max": 0.23,
-            "color": "#ED6E6E",
-            "label": "Low"
-          },
-          {
-            "min": 0.23,
-            "max": 1,
-            "color": "#F2A86F",
-            "label": "Medium"
-          },
-          {
-            "min": 1,
-            "max": 7,
-            "color": "#F9D45C",
-            "label": "High"
-          },
-          {
-            "min": 7,
-            "max": 14,
-            "color": "#84BB4C",
-            "label": "Elite"
-          }
+        "graph.metrics": [
+          "avg",
+          "avg_2",
+          "avg_3",
+          "avg_4",
+          "avg_5",
+          "avg_6"
         ]
       }
     },
     {
-      "name": "Weekly production deployments by application over time",
+      "name": "Weekly Production Deployments by Application over Time",
       "description": null,
       "display": "line",
       "table_id": {{ table "cicd_Deployment" }},
@@ -437,7 +394,7 @@
       }
     },
     {
-      "name": "Number of deployments by application and environment",
+      "name": "Number of Deployments by Application by Environment",
       "description": null,
       "display": "bar",
       "table_id": {{ table "cicd_Deployment" }},
@@ -481,11 +438,11 @@
         "type": "query"
       },
       "visualization_settings": {
-        "graph.x_axis.title_text": "Environment",
-        "graph.y_axis.title_text": "Number of deployments",
+        "graph.x_axis.title_text": "Application",
+        "graph.y_axis.title_text": "Number of Deployments",
         "graph.dimensions": [
-          "envCategory",
-          "name"
+          "name",
+          "envCategory"
         ],
         "graph.metrics": [
           "count"
@@ -500,7 +457,7 @@
       "dataset_query": {
         "type": "native",
         "native": {
-          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution\nfrom \"ims_Incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and \{{createdAt}}",
+          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution\nfrom \"ims_Incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and <<createdAt>>",
           "template-tags": {
             "createdAt": {
               "id": "640ead5c-9060-8a86-9129-46678ed8a514",
@@ -561,7 +518,7 @@
       "dataset_query": {
         "type": "native",
         "native": {
-          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution, \"ims_IncidentApplicationImpact\".\"application\", (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')) as \"createdAt\"\nfrom \"ims_Incident\" left join \"ims_IncidentApplicationImpact\" on \"ims_Incident\".\"id\" = \"ims_IncidentApplicationImpact\".\"incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and \{{createdAt}}\ngroup by (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')), \"ims_IncidentApplicationImpact\".\"application\"\norder by (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')) asc, \"ims_IncidentApplicationImpact\".\"application\" asc\n",
+          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution, \"ims_IncidentApplicationImpact\".\"application\", (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')) as \"createdAt\"\nfrom \"ims_Incident\" left join \"ims_IncidentApplicationImpact\" on \"ims_Incident\".\"id\" = \"ims_IncidentApplicationImpact\".\"incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and <<createdAt>>\ngroup by (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')), \"ims_IncidentApplicationImpact\".\"application\"\norder by (cast(date_trunc('week', cast((cast(\"ims_Incident\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')) asc, \"ims_IncidentApplicationImpact\".\"application\" asc\n",
           "template-tags": {
             "createdAt": {
               "id": "640ead5c-9060-8a86-9129-46678ed8a514",
@@ -611,16 +568,16 @@
           "createdAt",
           "application"
         ],
-        "graph.metrics": [
-          "time_to_resolution"
-        ],
         "column_settings": {
           "[\"name\",\"time_to_resolution\"]": {
             "scale": 2.77e-7,
             "suffix": " hours",
             "decimals": 1
           }
-        }
+        },
+        "graph.metrics": [
+          "time_to_resolution"
+        ]
       }
     },
     {
@@ -631,7 +588,7 @@
       "dataset_query": {
         "type": "native",
         "native": {
-          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution, \"ims_IncidentApplicationImpact\".\"application\", \"ims_Incident\".\"severityCategory\"\nfrom \"ims_Incident\" left join \"ims_IncidentApplicationImpact\" on \"ims_Incident\".\"id\" = \"ims_IncidentApplicationImpact\".\"incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and \{{createdAt}}\ngroup by \"ims_Incident\".\"severityCategory\", \"ims_IncidentApplicationImpact\".\"application\"\norder by \"ims_IncidentApplicationImpact\".\"application\" asc, \"ims_Incident\".\"severityCategory\" asc\n",
+          "query": "select extract(epoch from avg(\"ims_Incident\".\"resolvedAt\" - \"ims_Incident\".\"createdAt\"))*1000 as time_to_resolution, \"ims_IncidentApplicationImpact\".\"application\", \"ims_Incident\".\"severityCategory\"\nfrom \"ims_Incident\" left join \"ims_IncidentApplicationImpact\" on \"ims_Incident\".\"id\" = \"ims_IncidentApplicationImpact\".\"incident\"\nwhere \"ims_Incident\".\"resolvedAt\" is not null and <<createdAt>>\ngroup by \"ims_Incident\".\"severityCategory\", \"ims_IncidentApplicationImpact\".\"application\"\norder by  \"ims_Incident\".\"severityCategory\" asc, \"ims_IncidentApplicationImpact\".\"application\" asc\n",
           "template-tags": {
             "createdAt": {
               "id": "640ead5c-9060-8a86-9129-46678ed8a514",
@@ -675,14 +632,11 @@
             "label": "Low"
           }
         ],
-        "graph.x_axis.title_text": "Week Of",
-        "graph.y_axis.title_text": "Mean Time to Resolution",
+        "graph.x_axis.title_text": "Application",
+        "graph.y_axis.title_text": "MTTR",
         "graph.dimensions": [
           "application",
           "severityCategory"
-        ],
-        "graph.metrics": [
-          "time_to_resolution"
         ],
         "column_settings": {
           "[\"name\",\"time_to_resolution\"]": {
@@ -690,7 +644,465 @@
             "suffix": " hours",
             "decimals": 1
           }
+        },
+        "graph.metrics": [
+          "time_to_resolution"
+        ]
+      }
+    },
+    {
+      "name": "Change Failure Rate (CFR)",
+      "description": null,
+      "display": "gauge",
+      "table_id": null,
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ card "IncidentsAndDeployments" }},
+          "expressions": {
+            "isIncident": [
+              "case",
+              [
+                [
+                  [
+                    "=",
+                    [
+                      "field",
+                      "type",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "Incident"
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": 0
+              }
+            ],
+            "isDeployment": [
+              "case",
+              [
+                [
+                  [
+                    "=",
+                    [
+                      "field",
+                      "type",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "Deployment"
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": 0
+              }
+            ]
+          },
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "sum",
+                  [
+                    "expression",
+                    "isIncident"
+                  ]
+                ],
+                [
+                  "sum",
+                  [
+                    "expression",
+                    "isDeployment"
+                  ]
+                ]
+              ],
+              {
+                "name": "CFR",
+                "display-name": "CFR"
+              }
+            ]
+          ]
         }
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0,
+            "max": 0.15,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 0.15,
+            "max": 0.3,
+            "color": "#F9CF48",
+            "label": "High"
+          },
+          {
+            "min": 0.3,
+            "max": 0.6,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 0.6,
+            "max": 1,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ],
+        "column_settings": {
+          "[\"name\",\"CFR\"]": {
+            "scale": 100,
+            "suffix": " %"
+          }
+        }
+      }
+    },
+    {
+      "name": "CFR by Application over Time",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "query": {
+          "source-table": {{ card "IncidentsAndDeployments" }},
+          "breakout": [
+            [
+              "field",
+              "date",
+              {
+                "temporal-unit": "week",
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ],
+            [
+              "field",
+              "application",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ],
+          "expressions": {
+            "isIncident": [
+              "case",
+              [
+                [
+                  [
+                    "=",
+                    [
+                      "field",
+                      "type",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "Incident"
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": 0
+              }
+            ],
+            "isDeployment": [
+              "case",
+              [
+                [
+                  [
+                    "=",
+                    [
+                      "field",
+                      "type",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "Deployment"
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": 0
+              }
+            ]
+          },
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "*",
+                  [
+                    "sum",
+                    [
+                      "expression",
+                      "isIncident"
+                    ]
+                  ],
+                  100
+                ],
+                [
+                  "sum",
+                  [
+                    "expression",
+                    "isDeployment"
+                  ]
+                ]
+              ],
+              {
+                "name": "CFR",
+                "display-name": "CFR"
+              }
+            ]
+          ],
+          "filter": [
+            "time-interval",
+            [
+              "field",
+              "date",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ],
+            -30,
+            "day"
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "date",
+          "application"
+        ],
+        "graph.x_axis.title_text": "Week Of",
+        "column_settings": {
+          "[\"name\",\"CFR\"]": {
+            "suffix": " %"
+          }
+        },
+        "graph.metrics": [
+          "CFR"
+        ]
+      }
+    },
+    {
+      "name": "Incidents by Application by Severity",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "ims_Incident" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "ims_Incident" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "ims_IncidentApplicationImpact" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "ims_Incident.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "ims_IncidentApplicationImpact.incident" }},
+                  {
+                    "join-alias": "Ims IncidentApplicationImpact"
+                  }
+                ]
+              ],
+              "alias": "Ims IncidentApplicationImpact"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "compute_Application" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "ims_IncidentApplicationImpact.application" }},
+                  {
+                    "join-alias": "Ims IncidentApplicationImpact"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "compute_Application.id" }},
+                  {
+                    "join-alias": "Compute Application - Application"
+                  }
+                ]
+              ],
+              "alias": "Compute Application - Application"
+            }
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "ims_Incident.severityCategory" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "compute_Application.name" }},
+              {
+                "join-alias": "Compute Application - Application"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "filter": [
+            "time-interval",
+            [
+              "field",
+              {{ field "ims_Incident.createdAt" }},
+              null
+            ],
+            -30,
+            "day"
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "field",
+                {{ field "ims_Incident.severityCategory" }},
+                null
+              ]
+            ],
+            [
+              "asc",
+              [
+                "field",
+                {{ field "compute_Application.name" }},
+                {
+                  "join-alias": "Compute Application - Application"
+                }
+              ]
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "name",
+          "severityCategory"
+        ],
+        "graph.x_axis.title_text": "Application",
+        "graph.y_axis.title_text": "Incidents",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Weekly Production Deployment Frequency (Avg)",
+      "description": null,
+      "display": "gauge",
+      "table_id": {{ table "cicd_Deployment" }},
+      "dataset_query": {
+        "query": {
+          "source-query": {
+            "source-table": {{ table "cicd_Deployment" }},
+            "filter": [
+              "and",
+              [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_Deployment.envCategory" }},
+                  null
+                ],
+                "Prod"
+              ],
+              [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_Deployment.statusCategory" }},
+                  null
+                ],
+                "Success"
+              ]
+            ],
+            "aggregation": [
+              [
+                "count"
+              ]
+            ],
+            "breakout": [
+              [
+                "field",
+                {{ field "cicd_Deployment.endedAt" }},
+                {
+                  "temporal-unit": "week"
+                }
+              ]
+            ]
+          },
+          "aggregation": [
+            [
+              "avg",
+              [
+                "field",
+                "count",
+                {
+                  "base-type": "type/Integer"
+                }
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 7,
+            "max": 14,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 1,
+            "max": 7,
+            "color": "#F9D45C",
+            "label": "High"
+          },
+          {
+            "min": 0.23,
+            "max": 1,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 0,
+            "max": 0.23,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ]
       }
     }
   ],
@@ -735,12 +1147,12 @@
       "col": 4,
       "sizeX": 8,
       "sizeY": 4,
-      "card_id": {{ card "Lead time by application over time" }},
+      "card_id": {{ card "Lead Time by Application over Time" }},
       "series": [],
       "parameter_mappings": [
         {
           "parameter_id": "fb36dafb",
-          "card_id": {{ card "Lead time by application over time" }},
+          "card_id": {{ card "Lead Time by Application over Time" }},
           "target": [
             "dimension",
             [
@@ -782,40 +1194,15 @@
     },
     {
       "row": 2,
-      "col": 0,
-      "sizeX": 4,
-      "sizeY": 4,
-      "card_id": {{ card "Weekly Production Deployment Frequency (Avg)" }},
-      "series": [],
-      "parameter_mappings": [
-        {
-          "parameter_id": "fb36dafb",
-          "card_id": {{ card "Weekly Production Deployment Frequency (Avg)" }},
-          "target": [
-            "dimension",
-            [
-              "field",
-              "endedAt",
-              {
-                "base-type": "type/DateTimeWithLocalTZ"
-              }
-            ]
-          ]
-        }
-      ],
-      "visualization_settings": {}
-    },
-    {
-      "row": 2,
       "col": 4,
       "sizeX": 8,
       "sizeY": 4,
-      "card_id": {{ card "Weekly production deployments by application over time" }},
+      "card_id": {{ card "Weekly Production Deployments by Application over Time" }},
       "series": [],
       "parameter_mappings": [
         {
           "parameter_id": "fb36dafb",
-          "card_id": {{ card "Weekly production deployments by application over time" }},
+          "card_id": {{ card "Weekly Production Deployments by Application over Time" }},
           "target": [
             "dimension",
             [
@@ -833,12 +1220,12 @@
       "col": 12,
       "sizeX": 6,
       "sizeY": 4,
-      "card_id": {{ card "Number of deployments by application and environment" }},
+      "card_id": {{ card "Number of Deployments by Application by Environment" }},
       "series": [],
       "parameter_mappings": [
         {
           "parameter_id": "fb36dafb",
-          "card_id": {{ card "Number of deployments by application and environment" }},
+          "card_id": {{ card "Number of Deployments by Application by Environment" }},
           "target": [
             "dimension",
             [
@@ -855,7 +1242,7 @@
       "row": 0,
       "col": 0,
       "sizeX": 18,
-      "sizeY": 2,
+      "sizeY": 1,
       "card_id": null,
       "series": [],
       "parameter_mappings": [],
@@ -867,7 +1254,8 @@
           "dataset_query": {},
           "archived": false
         },
-        "text": "The widely used DORA metrics* are used to measure velocity and quality of software delivery. The summary below details overall performance with respect to each DORA metric (left), along with trends across applications (middle), and supporting detail (right), for context. These charts require data from deployments, commits, pull requests, and incidents in order to render completely. \n\n# Velocity Metrics"
+        "text": "The widely used DORA metrics* are used to measure velocity and quality of software delivery. The summary below details overall performance with respect to each DORA metric (left), along with trends across applications (middle), and supporting detail (right), for context. These charts require data from deployments, commits, pull requests, and incidents in order to render completely.",
+        "dashcard.background": false
       }
     },
     {
@@ -890,7 +1278,7 @@
       }
     },
     {
-      "row": 11,
+      "row": 15,
       "col": 0,
       "sizeX": 4,
       "sizeY": 4,
@@ -912,7 +1300,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 11,
+      "row": 15,
       "col": 4,
       "sizeX": 8,
       "sizeY": 4,
@@ -934,7 +1322,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 11,
+      "row": 15,
       "col": 12,
       "sizeX": 6,
       "sizeY": 4,
@@ -949,6 +1337,123 @@
             [
               "template-tag",
               "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 11,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Change Failure Rate (CFR)" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Change Failure Rate (CFR)" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "date",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 11,
+      "col": 4,
+      "sizeX": 8,
+      "sizeY": 4,
+      "card_id": {{ card "CFR by Application over Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "CFR by Application over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "date",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 11,
+      "col": 12,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Incidents by Application by Severity" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Incidents by Application by Severity" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "ims_Incident.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "# Velocity Metrics"
+      }
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Weekly Production Deployment Frequency (Avg)" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Weekly Production Deployment Frequency (Avg)" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "endedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
             ]
           ]
         }

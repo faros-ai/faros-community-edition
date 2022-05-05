@@ -6,7 +6,6 @@ on:
       - main
     paths-ignore:
       - '**.md'
-  workflow_call:
 
 jobs:
   test:

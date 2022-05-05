@@ -8,14 +8,10 @@ on:
       - '**.md'
 
 jobs:
-  test:
-    uses: ./.github/workflows/pr.yml
-
   publish-docker:
     name: Publish Docker
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: test
 
     steps:
       - name: Check out

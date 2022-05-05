@@ -11,7 +11,7 @@ jobs:
   publish-docker:
     name: Publish Docker
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Check out
@@ -20,48 +20,11 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 17
 
       - name: Build
         run: npm ci --unsafe-perm
         working-directory: init
-
-      - name: Docker Compose version
-        run: docker-compose version --short
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Build and export to Docker
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          load: true
-          tags: farosai/faros-ce-init:${{ github.sha }}
-
-      - name: Start services
-        run: FAROS_INIT_IMAGE=farosai/faros-ce-init:${{ github.sha }} docker-compose up --quiet-pull -d
-
-      - name: Show logs
-        run: docker-compose logs --tail all
-
-      - name: Show services
-        run: docker-compose ps -a
-
-      - name: Wait for init to complete
-        run: docker wait faros-community-edition_faros-init_1
-
-      - name: Get destination id & Hasura Admin Secret
-        run: |
-          echo "DESTINATION_ID=$(cat ${{ github.workspace }}/init/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')" >> "$GITHUB_ENV"
-          echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
-
-      - name: Run integration tests
-        run: npm run test:integration -- --coverage
-        working-directory: init
-
-      - name: Stop services
-        run: docker-compose down
 
       - name: Docker meta
         id: meta
@@ -81,13 +44,44 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Start services
+        run: FAROS_INIT_IMAGE=farosai/faros-ce-init:${{ github.sha }} docker-compose up --quiet-pull -d
+
+      - name: Show logs
+        run: docker-compose logs --tail all
+
+      - name: Show services
+        run: docker-compose ps -a
+
+      - name: Wait for init to complete
+        run: docker wait faros-community-edition_faros-init_1
+
+      - name: Get destination id & Hasura Admin Secret
+        run: |
+          echo "DESTINATION_ID=$(cat ${{ github.workspace }}/init/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')" >> "$GITHUB_ENV"
+          echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
+      - name: Run integration tests
+        run: npm run test:integration -- --coverage
+        working-directory: init
+
+      - name: Stop services
+        run: docker-compose down
+
       - name: Docker login
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -95,4 +89,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-

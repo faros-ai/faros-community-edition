@@ -1,0 +1,73 @@
+name: PR
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Check for style & bugs
+        uses: ludeeus/action-shellcheck@1.1.0
+        with:
+          ignore: wait-for
+        env:
+          SHELLCHECK_OPTS: -s bash -e SC2162 -e SC2153
+
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Build
+        run: npm ci --unsafe-perm
+        working-directory: init
+
+      - name: Run unit tests
+        run: npm run test:unit -- --coverage
+        working-directory: init
+
+      - name: Docker Compose version
+        run: docker-compose version --short
+
+      # In order to optimize for speed, we use the latest init image.
+      - name: Start services
+        run: FAROS_INIT_IMAGE=farosai/faros-ce-init:latest docker-compose up --quiet-pull -d
+
+      - name: Show logs
+        run: docker-compose logs --tail all
+
+      - name: Show services
+        run: docker-compose ps -a
+
+      - name: Wait for init to complete
+        run: docker wait faros-community-edition_faros-init_1
+
+      - name: Get destination id & Hasura Admin Secret
+        run: |
+          echo "DESTINATION_ID=$(cat ${{ github.workspace }}/init/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')" >> "$GITHUB_ENV"
+          echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
+
+      - name: Run integration tests
+        run: npm run test:integration -- --coverage
+        working-directory: init
+
+      - name: Stop services
+        run: docker-compose down
+
+

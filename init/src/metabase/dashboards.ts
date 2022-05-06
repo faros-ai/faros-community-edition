@@ -672,7 +672,9 @@ export class Dashboards {
   }
 
   private static equalCards(card1: any, card2: any): boolean {
-    const predicate = (v: any, k: string): boolean => k === 'id' || !v;
+    // series cards lack a table_id on export
+    const predicate = (v: any, k: string): boolean =>
+      k === 'id' || k === 'table_id' || !v;
     return isEqual(omitBy(card1, predicate), omitBy(card2, predicate));
   }
 }

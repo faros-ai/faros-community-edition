@@ -15,8 +15,19 @@ async function main(): Promise<void> {
     .requiredOption('--username <string>')
     .requiredOption('--password <string>')
     .requiredOption('--database <string>')
-    .addOption(new Option('--export <dashboardId>').conflicts('import'))
-    .addOption(new Option('--import').conflicts('export'))
+    .addOption(
+      new Option('--export <dashboardId>')
+        .conflicts('import-one')
+        .conflicts('import-new')
+    )
+    .addOption(
+      new Option('--import-one <filename>')
+        .conflicts('export')
+        .conflicts('import-new')
+    )
+    .addOption(
+      new Option('--import-new').conflicts('export').conflicts('import-one')
+    )
     .addOption(new Option('--sync-schema'));
 
   program.parse();
@@ -32,7 +43,7 @@ async function main(): Promise<void> {
     await metabase.syncSchema(options.database);
     logger.info('Metabase sync schema triggered');
   } else {
-    if (!options.export && !options.import) {
+    if (!options.export && !options.importOne && !options.importNew) {
       program.help();
     }
 
@@ -49,7 +60,11 @@ async function main(): Promise<void> {
     if (options.export) {
       console.log(await dashboards.export(parseInt(options.export, 10)));
     } else {
-      await dashboards.import();
+      if (options.importNew) {
+        await dashboards.importNew();
+      } else {
+        await dashboards.importOne(options.importOne);
+      }
       logger.info('Metabase import is complete');
     }
   }

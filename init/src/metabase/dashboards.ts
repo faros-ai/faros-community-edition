@@ -11,7 +11,7 @@ import {
 import pino from 'pino';
 import {VError} from 'verror';
 
-import {loadDashboards} from './config';
+import {Dashboard, loadDashboard, loadDashboards} from './config';
 import {Metabase} from './metabase';
 
 const DASHBOARD_REGEX = /\(\/dashboard\/(\d+)\)/g;
@@ -465,8 +465,36 @@ export class Dashboards {
     );
   }
 
-  async import(): Promise<void> {
+  async importNew(): Promise<void> {
     const dashboards = await loadDashboards();
+    const existingDashboards = await this.metabase.getDashboards();
+    const existingDashboardNames = new Set<string>();
+
+    for (const item of existingDashboards) {
+      existingDashboardNames.add(item.name);
+      this.logger.info('existing dashboard: %s', item.name);
+    }
+    // we need to quickly parse the json to access the dashboard name
+    // we simply ignore missing helpers
+    const handlebars = Handlebars.create();
+    handlebars.registerHelper('helperMissing', function () {
+      return new Handlebars.SafeString('""');
+    });
+    const newDashboards = dashboards.filter(
+      (dashboard) =>
+        !existingDashboardNames.has(
+          JSON.parse(handlebars.compile(dashboard.template)({})).name
+        )
+    );
+    return await this.import(newDashboards);
+  }
+
+  async importOne(name: string): Promise<void> {
+    const dashboards = new Array(await loadDashboard(name));
+    return await this.import(dashboards);
+  }
+
+  private async import(dashboards: ReadonlyArray<Dashboard>): Promise<void> {
     this.logger.info(
       'Importing dashboards: %s',
       dashboards.map((d) => d.name)

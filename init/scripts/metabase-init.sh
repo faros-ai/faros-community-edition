@@ -115,9 +115,9 @@ else
     echo "Metabase setup failed with response code: $setup_status"
     exit 1
   fi
-
-  echo "Importing dashboards"
-  node ../lib/metabase/init.js --metabase-url "$mb_url" --username "$mb_user" --password "$mb_password" --database "$db_name" --import
 fi
 
 echo "Attached Faros database to Metabase"
+
+echo "Importing dashboards"
+node ../lib/metabase/init.js --metabase-url "$mb_url" --username "$mb_user" --password "$mb_password" --database "$db_name" --import-new

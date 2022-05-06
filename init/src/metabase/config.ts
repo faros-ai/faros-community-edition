@@ -22,3 +22,16 @@ export async function loadDashboards(): Promise<ReadonlyArray<Dashboard>> {
     });
   return await Promise.all(promises);
 }
+
+export async function loadDashboard(name: string): Promise<Dashboard> {
+  const dashboardPath = path.join(
+    BASE_RESOURCES_DIR,
+    'metabase',
+    'dashboards',
+    name
+  );
+
+  const template = await fs.readFile(dashboardPath, 'utf-8');
+
+  return {name, template};
+}

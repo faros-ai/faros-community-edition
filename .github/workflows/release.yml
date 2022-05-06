@@ -26,6 +26,10 @@ jobs:
         run: npm ci --unsafe-perm
         working-directory: init
 
+      - name: Run unit tests
+        run: npm run test:unit -- --coverage
+        working-directory: init
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v3

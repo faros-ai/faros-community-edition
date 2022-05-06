@@ -3,5 +3,8 @@ sources:
   - name: raw
     schema: public
     tables:
+      - name: cicd_Build
+      - name: cicd_Pipeline
       - name: tms_Task
+
 

@@ -472,7 +472,7 @@ export class Dashboards {
 
     for (const item of existingDashboards) {
       existingDashboardNames.add(item.name);
-      this.logger.info('existing dashboard: %s', item.name);
+      this.logger.debug('existing dashboard: %s', item.name);
     }
     // we need to quickly parse the json to access the dashboard name
     // we simply ignore missing helpers

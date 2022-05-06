@@ -8,7 +8,7 @@ export interface Dashboard {
   readonly template: string;
 }
 
-export async function loadDashboards(): Promise<Dashboard[]> {
+export async function loadDashboards(): Promise<ReadonlyArray<Dashboard>> {
   const dir = path.join(BASE_RESOURCES_DIR, 'metabase', 'dashboards');
   const dirents = await fs.readdir(dir, {withFileTypes: true});
   const promises = dirents
@@ -30,8 +30,8 @@ export async function loadDashboard(name: string): Promise<Dashboard> {
     'dashboards',
     name
   );
-  return {
-    name,
-    template: await fs.readFile(dashboardPath, 'utf-8'),
-  };
+
+  const template = await fs.readFile(dashboardPath, 'utf-8');
+
+  return {name, template};
 }

@@ -470,13 +470,6 @@ create table "vcs_PullRequestComment" (
   author text,
   "pullRequest" text
 );
-create table "vcs_PullRequestCommitAssociation" (
-  id text generated always as (pkey("pullRequest", commit)) stored primary key,
-  origin text,
-  "refreshedAt" timestamptz not null default now(),
-  "pullRequest" text,
-  commit text
-);
 create table "vcs_PullRequestReview" (
   id text generated always as (pkey("pullRequest", uid)) stored primary key,
   origin text,
@@ -616,8 +609,6 @@ alter table "vcs_PullRequest" add foreign key (author) references "vcs_User"(id)
 alter table "vcs_PullRequest" add foreign key (repository) references "vcs_Repository"(id);
 alter table "vcs_PullRequestComment" add foreign key ("pullRequest") references "vcs_PullRequest"(id);
 alter table "vcs_PullRequestComment" add foreign key (author) references "vcs_User"(id);
-alter table "vcs_PullRequestCommitAssociation" add foreign key ("pullRequest") references "vcs_PullRequest"(id);
-alter table "vcs_PullRequestCommitAssociation" add foreign key (commit) references "vcs_Commit"(id);
 alter table "vcs_PullRequestReview" add foreign key ("pullRequest") references "vcs_PullRequest"(id);
 alter table "vcs_PullRequestReview" add foreign key (reviewer) references "vcs_User"(id);
 alter table "vcs_Repository" add foreign key (organization) references "vcs_Organization"(id);

@@ -238,9 +238,6 @@ create index "vcs_PullRequestComment_createdAt_idx" on "vcs_PullRequestComment"(
 create index "vcs_PullRequestComment_updatedAt_idx" on "vcs_PullRequestComment"("updatedAt");
 create index "vcs_PullRequestComment_author_idx" on "vcs_PullRequestComment"(author);
 create index "vcs_PullRequestComment_pullRequest_idx" on "vcs_PullRequestComment"("pullRequest");
-create index "vcs_PullRequestCommitAssociation_origin_idx" on "vcs_PullRequestCommitAssociation"(origin);
-create index "vcs_PullRequestCommitAssociation_pullRequest_idx" on "vcs_PullRequestCommitAssociation"("pullRequest");
-create index "vcs_PullRequestCommitAssociation_commit_idx" on "vcs_PullRequestCommitAssociation"(commit);
 create index "vcs_PullRequestReview_origin_idx" on "vcs_PullRequestReview"(origin);
 create index "vcs_PullRequestReview_uid_idx" on "vcs_PullRequestReview"(uid);
 create index "vcs_PullRequestReview_number_idx" on "vcs_PullRequestReview"(number);

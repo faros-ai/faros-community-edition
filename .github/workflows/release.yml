@@ -57,7 +57,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Start services
-        run: FAROS_INIT_IMAGE=farosai/faros-ce-init:${{ github.sha }} docker-compose up --quiet-pull -d
+        run: FAROS_EMAIL=integration.tests@faros.ai FAROS_INIT_IMAGE=farosai/faros-ce-init:${{ github.sha }} docker-compose up --quiet-pull -d
 
       - name: Show logs
         run: docker-compose logs --tail all

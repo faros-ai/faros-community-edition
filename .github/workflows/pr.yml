@@ -39,7 +39,7 @@ jobs:
 
       # In order to optimize for speed, we use the latest init image.
       - name: Start services
-        run: FAROS_INIT_IMAGE=farosai/faros-ce-init:latest docker-compose up --quiet-pull -d
+        run: FAROS_EMAIL=integration.tests@faros.ai FAROS_INIT_IMAGE=farosai/faros-ce-init:latest docker-compose up --quiet-pull -d
 
       - name: Show logs
         run: docker-compose logs --tail all

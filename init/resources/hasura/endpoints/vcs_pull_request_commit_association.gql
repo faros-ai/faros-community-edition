@@ -63,8 +63,8 @@ mutation insert_vcs_PullRequestCommitAssociation(
             }
           }
         }
-				on_conflict: {
-					constraint: vcs_PullRequest_pkey
+        on_conflict: {
+          constraint: vcs_PullRequest_pkey
           update_columns: refreshedAt
         }
       }

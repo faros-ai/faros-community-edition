@@ -74,7 +74,7 @@ describe('integration tests', () => {
 
       expect(await hasuraClient.getCicdBuildCount(origin)).toBe(1);
       expect(await hasuraClient.getCicdPipelineCount(origin)).toBe(1);
-      expect(await hasuraClient.getCicdOrganizationCount(origin)).toBe(2);
+      expect(await hasuraClient.getCicdOrganizationCount(origin)).toBe(1);
       expect(await hasuraClient.getCicdArtifactCount(origin)).toBe(1);
       expect(
         await hasuraClient.getCicdArtifactCommitAssociationCount(origin)
@@ -100,10 +100,10 @@ describe('integration tests', () => {
   function sendCIEvent(origin: string) {
     execSync(`docker pull farosai/faros-events-cli:latest \
     && docker run -i --network host farosai/faros-events-cli:latest CI \
-    --run "<run_source>://<run_organization>/<run_pipeline>/<run_id>" \
-    --commit "<commit_source>://<commit_organization>/<commit_repository>/<commit_sha>" \
+    --run "GitHub://faros-ai/faros-community-edition/123" \
+    --commit "GitHub://faros-ai/faros-community-edition/XYZ" \
     --pull_request_number 1 \
-    --artifact "<artifact_source>://<artifact_organization>/<artifact_repository>/<artifact_id>" \
+    --artifact "GitHub://faros-ai/faros-community-edition/456" \
     --run_status "Success" \
     --run_status_details "Some extra details" \
     --run_start_time "1000" \

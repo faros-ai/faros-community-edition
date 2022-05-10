@@ -68,7 +68,7 @@ describe('integration tests', () => {
   test(
     'check CI event writes in Hasura',
     async () => {
-      const origin = 'Faros_Script_Event';
+      const origin = 'CI_test';
 
       sendCIEvent(origin);
 

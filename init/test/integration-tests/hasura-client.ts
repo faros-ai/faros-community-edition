@@ -52,4 +52,121 @@ export class HasuraClient {
         logger.info(`query failed with error: ${err}`);
       });
   }
+
+  async getCicdBuildCount(origin: string): Promise<number> {
+    return await this.api
+      .post('/v1/graphql', {
+        query: `query MyQuery { cicd_Build_aggregate(where: {\
+          origin: {_eq: "${origin}"}}) {aggregate{count}} }`,
+        variables: null,
+      })
+      .then(
+        (response) => response.data.data.cicd_Build_aggregate.aggregate.count
+      )
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
+      });
+  }
+
+  async getCicdPipelineCount(origin: string): Promise<number> {
+    return await this.api
+      .post('/v1/graphql', {
+        query: `query MyQuery { cicd_Pipeline_aggregate(where: {\
+          origin: {_eq: "${origin}"}}) {aggregate{count}} }`,
+        variables: null,
+      })
+      .then(
+        (response) => response.data.data.cicd_Pipeline_aggregate.aggregate.count
+      )
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
+      });
+  }
+
+  async getCicdOrganizationCount(origin: string): Promise<number> {
+    return await this.api
+      .post('/v1/graphql', {
+        query: `query MyQuery { cicd_Organization_aggregate(where: {\
+          origin: {_eq: "${origin}"}}) {aggregate{count}} }`,
+        variables: null,
+      })
+      .then(
+        (response) =>
+          response.data.data.cicd_Organization_aggregate.aggregate.count
+      )
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
+      });
+  }
+
+  async getCicdArtifactCount(origin: string): Promise<number> {
+    return await this.api
+      .post('/v1/graphql', {
+        query: `query MyQuery { cicd_Artifact_aggregate(where: {\
+          origin: {_eq: "${origin}"}}) {aggregate{count}} }`,
+        variables: null,
+      })
+      .then(
+        (response) => response.data.data.cicd_Artifact_aggregate.aggregate.count
+      )
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
+      });
+  }
+
+  async getCicdArtifactCommitAssociationCount(origin: string): Promise<number> {
+    return await this.api
+      .post('/v1/graphql', {
+        query: `query MyQuery { \
+            cicd_ArtifactCommitAssociation_aggregate(where: {\
+              origin: {_eq: "${origin}"}}) {aggregate{count}} \
+          }`,
+        variables: null,
+      })
+      .then(
+        (response) =>
+          response.data.data.cicd_ArtifactCommitAssociation_aggregate.aggregate
+            .count
+      )
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
+      });
+  }
+
+  async getCicdRepositoryCount(origin: string): Promise<number> {
+    return await this.api
+      .post('/v1/graphql', {
+        query: `query MyQuery { cicd_Repository_aggregate(where: {\
+          origin: {_eq: "${origin}"}}) {aggregate{count}} }`,
+        variables: null,
+      })
+      .then(
+        (response) =>
+          response.data.data.cicd_Repository_aggregate.aggregate.count
+      )
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
+      });
+  }
+
+  async getVcsPullRequestCommitAssociationCount(
+    origin: string
+  ): Promise<number> {
+    return await this.api
+      .post('/v1/graphql', {
+        query: `query MyQuery { \
+            vcs_PullRequestCommitAssociation_aggregate(where: {\
+              origin: {_eq: "${origin}"}}) {aggregate{count}} \
+          }`,
+        variables: null,
+      })
+      .then(
+        (response) =>
+          response.data.data.vcs_PullRequestCommitAssociation_aggregate
+            .aggregate.count
+      )
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
+      });
+  }
 }

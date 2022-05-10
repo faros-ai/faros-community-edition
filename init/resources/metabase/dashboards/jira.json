@@ -23,7 +23,7 @@
               "required": false
             }
           },
-          "query": "SELECT \"source\".\"taskDateInSprint\", coalesce(max(\"source\".\"sum\"),0) as \"pointsInSprint\"\nFROM (SELECT date_trunc('day', greatest(\"aug\".\"createdAt\", \"tms_Sprint\".\"startedAt\")) as \"taskDateInSprint\", sum(\"aug\".\"points\") OVER (ORDER BY date_trunc('day', greatest(\"aug\".\"createdAt\", \"tms_Sprint\".\"startedAt\")) ASC) AS \"sum\"\n/* makes sure we have a data point for the sprint endedAt */\nFROM (SELECT \"tms_Task\".\"createdAt\", \"tms_Task\".\"points\", \"tms_Task\".\"sprint\" FROM \"tms_Task\" UNION (SELECT \"tms_Sprint\".\"endedAt\", 0, \"tms_Sprint\".\"id\" FROM \"tms_Sprint\")) \"aug\"\nLEFT JOIN \"tms_Sprint\" ON \"aug\".\"sprint\" = \"tms_Sprint\".\"id\"\n/* assumes last status change was the final one */\nWHERE \"tms_Sprint\".\"endedAt\" >= \"aug\".\"createdAt\" AND <<sprintName>>\nORDER BY date_trunc('day', greatest(\"aug\".\"createdAt\", \"tms_Sprint\".\"startedAt\")) ASC) \"source\"\nGROUP BY \"source\".\"taskDateInSprint\""
+          "query": "SELECT \"source\".\"taskDateInSprint\", coalesce(max(\"source\".\"sum\"),0) as \"pointsInSprint\"\nFROM (SELECT date_trunc('day', greatest(\"aug\".\"createdAt\", \"tms_Sprint\".\"startedAt\")) as \"taskDateInSprint\", sum(\"aug\".\"points\") OVER (ORDER BY date_trunc('day', greatest(\"aug\".\"createdAt\", \"tms_Sprint\".\"startedAt\")) ASC) AS \"sum\"\n/* makes sure we have a data point for the sprint endedAt */\nFROM (SELECT \"tms_Task\".\"createdAt\", \"tms_Task\".\"points\", \"tms_Task\".\"sprint\", \"tms_Task\".\"source\" FROM \"tms_Task\" UNION (SELECT \"tms_Sprint\".\"endedAt\", 0, \"tms_Sprint\".\"id\", 'Jira' FROM \"tms_Sprint\")) \"aug\"\nLEFT JOIN \"tms_Sprint\" ON \"aug\".\"sprint\" = \"tms_Sprint\".\"id\"\n/* assumes last status change was the final one */\nWHERE \"aug\".\"source\" = 'Jira' AND \"tms_Sprint\".\"endedAt\" >= \"aug\".\"createdAt\" AND <<sprintName>>\nORDER BY date_trunc('day', greatest(\"aug\".\"createdAt\", \"tms_Sprint\".\"startedAt\")) ASC) \"source\"\nGROUP BY \"source\".\"taskDateInSprint\""
         },
         "type": "native"
       },
@@ -69,7 +69,7 @@
       "dataset_query": {
         "type": "native",
         "native": {
-          "query": "SELECT \"source\".\"statusChangedAtInSprint\", coalesce(max(\"source\".\"sum\"),0) as \"donePointsInSprint\"\nFROM (SELECT date_trunc('day', greatest(\"aug\".\"statusChangedAt\", \"tms_Sprint\".\"startedAt\")) as \"statusChangedAtInSprint\", sum(\"aug\".\"points\") OVER (ORDER BY date_trunc('day', greatest(\"aug\".\"statusChangedAt\", \"tms_Sprint\".\"startedAt\")) ASC) AS \"sum\"\n/* makes sure we have a data point for the sprint endedAt */\nFROM (SELECT \"tms_Task\".\"statusChangedAt\", \"tms_Task\".\"points\", \"tms_Task\".\"sprint\", \"tms_Task\".\"statusCategory\"  FROM \"tms_Task\" UNION (SELECT \"tms_Sprint\".\"endedAt\", 0, \"tms_Sprint\".\"id\", 'Done' FROM \"tms_Sprint\")) \"aug\"\nLEFT JOIN \"tms_Sprint\" ON \"aug\".\"sprint\" = \"tms_Sprint\".\"id\"\n/* assumes last status change was the final one */\nWHERE \"aug\".\"statusCategory\" = 'Done' AND \"tms_Sprint\".\"endedAt\" >= \"aug\".\"statusChangedAt\" AND <<sprintName>>\nORDER BY date_trunc('day', greatest(\"aug\".\"statusChangedAt\", \"tms_Sprint\".\"startedAt\")) ASC) \"source\"\nGROUP BY \"source\".\"statusChangedAtInSprint\"",
+          "query": "SELECT \"source\".\"statusChangedAtInSprint\", coalesce(max(\"source\".\"sum\"),0) as \"donePointsInSprint\"\nFROM (SELECT date_trunc('day', greatest(\"aug\".\"statusChangedAt\", \"tms_Sprint\".\"startedAt\")) as \"statusChangedAtInSprint\", sum(\"aug\".\"points\") OVER (ORDER BY date_trunc('day', greatest(\"aug\".\"statusChangedAt\", \"tms_Sprint\".\"startedAt\")) ASC) AS \"sum\"\n/* makes sure we have a data point for the sprint endedAt */\nFROM (SELECT \"tms_Task\".\"statusChangedAt\", \"tms_Task\".\"points\", \"tms_Task\".\"sprint\", \"tms_Task\".\"statusCategory\", \"tms_Task\".\"source\" FROM \"tms_Task\" UNION (SELECT \"tms_Sprint\".\"endedAt\", 0, \"tms_Sprint\".\"id\", 'Done', 'Jira' FROM \"tms_Sprint\")) \"aug\"\nLEFT JOIN \"tms_Sprint\" ON \"aug\".\"sprint\" = \"tms_Sprint\".\"id\"\n/* assumes last status change was the final one */\nWHERE \"aug\".\"source\" = 'Jira' AND \"aug\".\"statusCategory\" = 'Done' AND \"tms_Sprint\".\"endedAt\" >= \"aug\".\"statusChangedAt\" AND <<sprintName>>\nORDER BY date_trunc('day', greatest(\"aug\".\"statusChangedAt\", \"tms_Sprint\".\"startedAt\")) ASC) \"source\"\nGROUP BY \"source\".\"statusChangedAtInSprint\"",
           "template-tags": {
             "sprintName": {
               "id": "668192ed-e6a5-e484-cdc8-09125008e299",
@@ -154,6 +154,15 @@
               {{ field "tms_Task.priority" }},
               null
             ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
           ]
         },
         "type": "query"
@@ -210,6 +219,15 @@
               {{ field "tms_Task.typeCategory" }},
               null
             ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
           ]
         },
         "type": "query"
@@ -226,7 +244,6 @@
       "display": "row",
       "table_id": {{ table "tms_Task" }},
       "dataset_query": {
-        "type": "query",
         "query": {
           "source-table": {{ table "tms_Task" }},
           "joins": [
@@ -279,13 +296,25 @@
             ]
           ],
           "filter": [
-            "not-empty",
+            "and",
             [
-              "field",
-              {{ field "tms_Epic.name" }},
-              {
-                "source-field": {{ field "tms_Task.epic" }}
-              }
+              "not-empty",
+              [
+                "field",
+                {{ field "tms_Epic.name" }},
+                {
+                  "source-field": {{ field "tms_Task.epic" }}
+                }
+              ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
             ]
           ],
           "expressions": {
@@ -313,7 +342,8 @@
               }
             ]
           }
-        }
+        },
+        "type": "query"
       },
       "visualization_settings": {
         "graph.dimensions": [
@@ -421,6 +451,15 @@
                 null
               ]
             ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
           ]
         }
       },
@@ -435,7 +474,6 @@
       "display": "progress",
       "table_id": {{ table "tms_Task" }},
       "dataset_query": {
-        "type": "query",
         "query": {
           "source-table": {{ table "tms_Task" }},
           "joins": [
@@ -506,8 +544,18 @@
                 "default": "yes"
               }
             ]
-          }
-        }
+          },
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
+          ]
+        },
+        "type": "query"
       },
       "visualization_settings": {
         "progress.goal": 1,
@@ -525,6 +573,7 @@
       "display": "table",
       "table_id": {{ table "tms_Sprint" }},
       "dataset_query": {
+        "type": "query",
         "query": {
           "source-table": {{ table "tms_Sprint" }},
           "fields": [
@@ -558,9 +607,17 @@
                 null
               ]
             ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Sprint.source" }},
+              null
+            ],
+            "Jira"
           ]
-        },
-        "type": "query"
+        }
       },
       "visualization_settings": {
         "table.pivot_column": "state",
@@ -573,7 +630,6 @@
       "display": "pie",
       "table_id": {{ table "tms_Task" }},
       "dataset_query": {
-        "type": "query",
         "query": {
           "source-table": {{ table "tms_Task" }},
           "breakout": [
@@ -619,8 +675,18 @@
                 null
               ]
             ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
           ]
-        }
+        },
+        "type": "query"
       },
       "visualization_settings": {
         "pie.slice_threshold": 2.5,
@@ -648,7 +714,7 @@
               "widget-type": "category"
             }
           },
-          "query": "SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"points\" AS \"points\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeCategory\" AS \"typeCategory\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_Sprint\" ON \"tms_Task\".\"sprint\" = \"tms_Sprint\".\"id\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\" GROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\" AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"public\".\"tms_Task\".\"statusCategory\" = 'InProgress' AND <<sprintName>>"
+          "query": "SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"points\" AS \"points\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeCategory\" AS \"typeCategory\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_Sprint\" ON \"tms_Task\".\"sprint\" = \"tms_Sprint\".\"id\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\" GROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\" AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<sprintName>>"
         },
         "type": "native"
       },
@@ -678,7 +744,7 @@
               "widget-type": "category"
             }
           },
-          "query": "SELECT avg(\"source\".\"count\") AS \"avg\"\nFROM (SELECT \"source\".\"assignee\" AS \"assignee\", count(*) AS \"count\" FROM (SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"points\" AS \"points\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeCategory\" AS \"typeCategory\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_Sprint\" ON \"tms_Task\".\"sprint\" = \"tms_Sprint\".\"id\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"public\".\"tms_Task\".\"statusCategory\" = 'InProgress' AND <<sprintName>>) \"source\" GROUP BY \"source\".\"assignee\"\nORDER BY \"source\".\"assignee\" ASC) \"source\""
+          "query": "SELECT avg(\"source\".\"count\") AS \"avg\"\nFROM (SELECT \"source\".\"assignee\" AS \"assignee\", count(*) AS \"count\" FROM (SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"points\" AS \"points\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeCategory\" AS \"typeCategory\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_Sprint\" ON \"tms_Task\".\"sprint\" = \"tms_Sprint\".\"id\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<sprintName>>) \"source\" GROUP BY \"source\".\"assignee\"\nORDER BY \"source\".\"assignee\" ASC) \"source\""
         },
         "type": "native"
       },
@@ -711,6 +777,7 @@
       "display": "pie",
       "table_id": {{ table "tms_Task" }},
       "dataset_query": {
+        "type": "query",
         "query": {
           "source-table": {{ table "tms_Task" }},
           "joins": [
@@ -746,9 +813,17 @@
               {{ field "tms_Task.statusCategory" }},
               null
             ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
           ]
-        },
-        "type": "query"
+        }
       },
       "visualization_settings": {
         "pie.show_legend": true

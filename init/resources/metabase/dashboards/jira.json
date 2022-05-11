@@ -1,0 +1,1190 @@
+{
+  "name": "JIRA Sprint",
+  "cards": [
+    {
+      "name": "PointsInSprint",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "native": {
+          "template-tags": {
+            "sprintName": {
+              "id": "e21d78a3-5906-e5ae-f67e-3e77239c14aa",
+              "name": "sprintName",
+              "display-name": "SprintName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Sprint.name" }},
+                null
+              ],
+              "widget-type": "category",
+              "required": false
+            }
+          },
+          "query": "SELECT \"source\".\"taskDateInSprint\", coalesce(max(\"source\".\"sum\"),0) as \"pointsInSprint\"\nFROM (SELECT date_trunc('day', greatest(\"aug\".\"createdAt\", \"tms_Sprint\".\"startedAt\")) as \"taskDateInSprint\", sum(\"aug\".\"points\") OVER (ORDER BY date_trunc('day', greatest(\"aug\".\"createdAt\", \"tms_Sprint\".\"startedAt\")) ASC) AS \"sum\"\n/* makes sure we have a data point for the sprint endedAt */\nFROM (SELECT \"tms_Task\".\"createdAt\", \"tms_Task\".\"points\", \"tms_Task\".\"sprint\", \"tms_Task\".\"source\" FROM \"tms_Task\" UNION (SELECT \"tms_Sprint\".\"endedAt\", 0, \"tms_Sprint\".\"id\", 'Jira' FROM \"tms_Sprint\")) \"aug\"\nLEFT JOIN \"tms_Sprint\" ON \"aug\".\"sprint\" = \"tms_Sprint\".\"id\"\n/* assumes last status change was the final one */\nWHERE \"aug\".\"source\" = 'Jira' AND \"tms_Sprint\".\"endedAt\" >= \"aug\".\"createdAt\" AND <<sprintName>>\nORDER BY date_trunc('day', greatest(\"aug\".\"createdAt\", \"tms_Sprint\".\"startedAt\")) ASC) \"source\"\nGROUP BY \"source\".\"taskDateInSprint\""
+        },
+        "type": "native"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "pointsInSprint",
+        "table.cell_column": "taskDateInSprint",
+        "graph.dimensions": [
+          "taskDateInSprint"
+        ],
+        "series_settings": {
+          "sum": {
+            "line.missing": "none",
+            "line.interpolate": "step-after"
+          },
+          "max": {
+            "line.interpolate": "step-after",
+            "line.missing": "interpolate"
+          },
+          "PointsInSprint": {
+            "line.interpolate": "step-after"
+          },
+          "undefined": {
+            "line.interpolate": "step-after",
+            "line.missing": "interpolate"
+          },
+          "pointsInSprint": {
+            "line.interpolate": "step-after",
+            "title": "Points in Sprint"
+          }
+        },
+        "graph.x_axis.scale": "timeseries",
+        "graph.x_axis.title_text": "date",
+        "graph.y_axis.title_text": "Points in Sprint",
+        "graph.metrics": [
+          "pointsInSprint"
+        ]
+      }
+    },
+    {
+      "name": "DonePointsInSprint",
+      "description": null,
+      "display": "area",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT \"source\".\"statusChangedAtInSprint\", coalesce(max(\"source\".\"sum\"),0) as \"donePointsInSprint\"\nFROM (SELECT date_trunc('day', greatest(\"aug\".\"statusChangedAt\", \"tms_Sprint\".\"startedAt\")) as \"statusChangedAtInSprint\", sum(\"aug\".\"points\") OVER (ORDER BY date_trunc('day', greatest(\"aug\".\"statusChangedAt\", \"tms_Sprint\".\"startedAt\")) ASC) AS \"sum\"\n/* makes sure we have a data point for the sprint endedAt */\nFROM (SELECT \"tms_Task\".\"statusChangedAt\", \"tms_Task\".\"points\", \"tms_Task\".\"sprint\", \"tms_Task\".\"statusCategory\", \"tms_Task\".\"source\" FROM \"tms_Task\" UNION (SELECT \"tms_Sprint\".\"endedAt\", 0, \"tms_Sprint\".\"id\", 'Done', 'Jira' FROM \"tms_Sprint\")) \"aug\"\nLEFT JOIN \"tms_Sprint\" ON \"aug\".\"sprint\" = \"tms_Sprint\".\"id\"\n/* assumes last status change was the final one */\nWHERE \"aug\".\"source\" = 'Jira' AND \"aug\".\"statusCategory\" = 'Done' AND \"tms_Sprint\".\"endedAt\" >= \"aug\".\"statusChangedAt\" AND <<sprintName>>\nORDER BY date_trunc('day', greatest(\"aug\".\"statusChangedAt\", \"tms_Sprint\".\"startedAt\")) ASC) \"source\"\nGROUP BY \"source\".\"statusChangedAtInSprint\"",
+          "template-tags": {
+            "sprintName": {
+              "id": "668192ed-e6a5-e484-cdc8-09125008e299",
+              "name": "sprintName",
+              "display-name": "SprintName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Sprint.name" }},
+                null
+              ],
+              "widget-type": "category"
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "statusChangedAtInSprint"
+        ],
+        "table.pivot_column": "statusChangedAt",
+        "table.cell_column": "donePoints",
+        "series_settings": {
+          "sum": {
+            "line.interpolate": "step-after"
+          },
+          "donePointsInSprint": {
+            "line.interpolate": "step-after",
+            "title": "Done in Sprint"
+          }
+        },
+        "graph.y_axis.title_text": "Points Done in Sprint",
+        "graph.x_axis.title_text": "Date",
+        "graph.metrics": [
+          "donePointsInSprint"
+        ]
+      }
+    },
+    {
+      "name": "Points by Priority",
+      "description": null,
+      "display": "pie",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Sprint" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.sprint" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Sprint.id" }},
+                  {
+                    "join-alias": "Tms Sprint - Sprint"
+                  }
+                ]
+              ],
+              "alias": "Tms Sprint - Sprint"
+            }
+          ],
+          "aggregation": [
+            [
+              "sum",
+              [
+                "field",
+                {{ field "tms_Task.points" }},
+                null
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.priority" }},
+              null
+            ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "typeCategory",
+        "table.cell_column": "sum",
+        "pie.show_legend": true
+      }
+    },
+    {
+      "name": "Points by Issue Type",
+      "description": null,
+      "display": "pie",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Sprint" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.sprint" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Sprint.id" }},
+                  {
+                    "join-alias": "Tms Sprint - Sprint"
+                  }
+                ]
+              ],
+              "alias": "Tms Sprint - Sprint"
+            }
+          ],
+          "aggregation": [
+            [
+              "sum",
+              [
+                "field",
+                {{ field "tms_Task.points" }},
+                null
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.typeCategory" }},
+              null
+            ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "typeCategory",
+        "table.cell_column": "sum",
+        "pie.show_legend": true
+      }
+    },
+    {
+      "name": "Issues / Points by Epic",
+      "description": null,
+      "display": "row",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Sprint" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.sprint" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Sprint.id" }},
+                  {
+                    "join-alias": "Tms Sprint - Sprint"
+                  }
+                ]
+              ],
+              "alias": "Tms Sprint - Sprint"
+            }
+          ],
+          "aggregation": [
+            [
+              "sum",
+              [
+                "expression",
+                "PointsImputed"
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "source-field": {{ field "tms_Task.epic" }}
+              }
+            ]
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "aggregation",
+                0
+              ]
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "not-empty",
+              [
+                "field",
+                {{ field "tms_Epic.name" }},
+                {
+                  "source-field": {{ field "tms_Task.epic" }}
+                }
+              ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ]
+          ],
+          "expressions": {
+            "PointsImputed": [
+              "case",
+              [
+                [
+                  [
+                    "is-null",
+                    [
+                      "field",
+                      {{ field "tms_Task.points" }},
+                      null
+                    ]
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": [
+                  "field",
+                  {{ field "tms_Task.points" }},
+                  null
+                ]
+              }
+            ]
+          }
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "name"
+        ],
+        "series_settings": {
+          "sum": {
+            "color": "#509EE3"
+          }
+        },
+        "graph.metrics": [
+          "sum"
+        ]
+      }
+    },
+    {
+      "name": "Issue Activity",
+      "description": null,
+      "display": "table",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Sprint" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.sprint" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Sprint.id" }},
+                  {
+                    "join-alias": "Tms Sprint - Sprint"
+                  }
+                ]
+              ],
+              "alias": "Tms Sprint - Sprint"
+            }
+          ],
+          "fields": [
+            [
+              "field",
+              {{ field "tms_Task.uid" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.name" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.priority" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.points" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.createdAt" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.updatedAt" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.statusChangedAt" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.epic" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.typeCategory" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.statusCategory" }},
+              null
+            ]
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "field",
+                {{ field "tms_Task.statusChangedAt" }},
+                null
+              ]
+            ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
+          ]
+        }
+      },
+      "visualization_settings": {
+        "table.pivot_column": "description",
+        "table.cell_column": "points"
+      }
+    },
+    {
+      "name": "Ratio of Issues with Points",
+      "description": null,
+      "display": "progress",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Sprint" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.sprint" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Sprint.id" }},
+                  {
+                    "join-alias": "Tms Sprint - Sprint"
+                  }
+                ]
+              ],
+              "alias": "Tms Sprint - Sprint"
+            }
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "count-where",
+                  [
+                    "=",
+                    [
+                      "expression",
+                      "issue has points"
+                    ],
+                    "yes"
+                  ]
+                ],
+                [
+                  "count"
+                ]
+              ],
+              {
+                "name": "Issues with Points ratio",
+                "display-name": "Issues with Points ratio"
+              }
+            ]
+          ],
+          "expressions": {
+            "issue has points": [
+              "case",
+              [
+                [
+                  [
+                    "is-null",
+                    [
+                      "field",
+                      {{ field "tms_Task.points" }},
+                      null
+                    ]
+                  ],
+                  "no"
+                ]
+              ],
+              {
+                "default": "yes"
+              }
+            ]
+          },
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "progress.goal": 1,
+        "progress.color": "#88BF4D",
+        "column_settings": {
+          "[\"name\",\"Issues with Points ratio\"]": {
+            "number_style": "percent"
+          }
+        }
+      }
+    },
+    {
+      "name": "Sprint Details",
+      "description": null,
+      "display": "table",
+      "table_id": {{ table "tms_Sprint" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Sprint" }},
+          "fields": [
+            [
+              "field",
+              {{ field "tms_Sprint.name" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Sprint.state" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Sprint.startedAt" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Sprint.endedAt" }},
+              null
+            ]
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "field",
+                {{ field "tms_Sprint.startedAt" }},
+                null
+              ]
+            ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Sprint.source" }},
+              null
+            ],
+            "Jira"
+          ]
+        }
+      },
+      "visualization_settings": {
+        "table.pivot_column": "state",
+        "table.cell_column": "endedAt"
+      }
+    },
+    {
+      "name": "Issues by Points",
+      "description": null,
+      "display": "pie",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.points" }},
+              null
+            ]
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Sprint" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.sprint" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Sprint.id" }},
+                  {
+                    "join-alias": "Tms Sprint - Sprint"
+                  }
+                ]
+              ],
+              "alias": "Tms Sprint - Sprint"
+            }
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "field",
+                {{ field "tms_Task.points" }},
+                null
+              ]
+            ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "pie.slice_threshold": 2.5,
+        "pie.show_legend": true
+      }
+    },
+    {
+      "name": "Issues in Progress",
+      "description": null,
+      "display": "table",
+      "table_id": null,
+      "dataset_query": {
+        "native": {
+          "template-tags": {
+            "sprintName": {
+              "id": "de61f32e-3a43-dc24-c42d-7bc95bec9ddd",
+              "name": "sprintName",
+              "display-name": "SprintName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Sprint.name" }},
+                null
+              ],
+              "widget-type": "category"
+            }
+          },
+          "query": "SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"points\" AS \"points\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeCategory\" AS \"typeCategory\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_Sprint\" ON \"tms_Task\".\"sprint\" = \"tms_Sprint\".\"id\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\" GROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\" AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<sprintName>>"
+        },
+        "type": "native"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "uid_2",
+        "table.cell_column": "points"
+      }
+    },
+    {
+      "name": "Average Work In Progress",
+      "description": null,
+      "display": "gauge",
+      "table_id": null,
+      "dataset_query": {
+        "native": {
+          "template-tags": {
+            "sprintName": {
+              "id": "4cbe6910-b6ac-f029-3a0a-cdb30262ef5a",
+              "name": "sprintName",
+              "display-name": "SprintName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Sprint.name" }},
+                null
+              ],
+              "widget-type": "category"
+            }
+          },
+          "query": "SELECT avg(\"source\".\"count\") AS \"avg\"\nFROM (SELECT \"source\".\"assignee\" AS \"assignee\", count(*) AS \"count\" FROM (SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"points\" AS \"points\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeCategory\" AS \"typeCategory\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_Sprint\" ON \"tms_Task\".\"sprint\" = \"tms_Sprint\".\"id\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<sprintName>>) \"source\" GROUP BY \"source\".\"assignee\"\nORDER BY \"source\".\"assignee\" ASC) \"source\""
+        },
+        "type": "native"
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 1,
+            "max": 1.1,
+            "color": "#84BB4C",
+            "label": ""
+          },
+          {
+            "min": 1.1,
+            "max": 1.3,
+            "color": "#F9CF48",
+            "label": ""
+          },
+          {
+            "min": 1.3,
+            "max": 2,
+            "color": "#ED6E6E",
+            "label": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "Issues by Status",
+      "description": null,
+      "display": "pie",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Sprint" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.sprint" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Sprint.id" }},
+                  {
+                    "join-alias": "Tms Sprint - Sprint"
+                  }
+                ]
+              ],
+              "alias": "Tms Sprint - Sprint"
+            }
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.statusCategory" }},
+              null
+            ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
+          ]
+        }
+      },
+      "visualization_settings": {
+        "pie.show_legend": true
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Sprint",
+      "slug": "sprint",
+      "id": "bb149580",
+      "type": "category"
+    }
+  ],
+  "layout": [
+    {
+      "row": 4,
+      "col": 0,
+      "sizeX": 9,
+      "sizeY": 8,
+      "card_id": {{ card "PointsInSprint" }},
+      "series": [
+        {
+          "id": {{ card "DonePointsInSprint" }}
+        }
+      ],
+      "parameter_mappings": [
+        {
+          "parameter_id": "bb149580",
+          "card_id": {{ card "PointsInSprint" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "sprintName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "bb149580",
+          "card_id": {{ card "DonePointsInSprint" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "sprintName"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {
+        "graph.show_trendline": false,
+        "graph.y_axis.title_text": "Points",
+        "graph.show_values": false,
+        "table.cell_column": "taskDateInSprint",
+        "graph.x_axis.title_text": "date",
+        "graph.y_axis.auto_split": false,
+        "graph.metrics": [
+          "pointsInSprint"
+        ],
+        "table.pivot_column": "pointsInSprint",
+        "series_settings": {
+          "sum": {
+            "line.missing": "none",
+            "line.interpolate": "step-after"
+          },
+          "max": {
+            "line.interpolate": "step-after",
+            "line.missing": "interpolate"
+          },
+          "PointsInSprint": {
+            "line.interpolate": "step-after"
+          },
+          "undefined": {
+            "line.interpolate": "step-after",
+            "line.missing": "interpolate"
+          },
+          "pointsInSprint": {
+            "line.interpolate": "step-after",
+            "title": "Points in Sprint",
+            "show_series_values": true,
+            "line.marker_enabled": false
+          },
+          "DonePointsInSprint": {
+            "title": "Points Done in Sprint",
+            "line.interpolate": "step-after",
+            "show_series_values": true
+          }
+        },
+        "graph.x_axis.scale": "timeseries",
+        "graph.dimensions": [
+          "taskDateInSprint"
+        ]
+      }
+    },
+    {
+      "row": 8,
+      "col": 14,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Points by Priority" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "bb149580",
+          "card_id": {{ card "Points by Priority" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Sprint.name" }},
+              {
+                "join-alias": "Tms Sprint - Sprint"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 14,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Points by Issue Type" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "bb149580",
+          "card_id": {{ card "Points by Issue Type" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Sprint.name" }},
+              {
+                "join-alias": "Tms Sprint - Sprint"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 9,
+      "sizeX": 5,
+      "sizeY": 5,
+      "card_id": {{ card "Issues / Points by Epic" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "bb149580",
+          "card_id": {{ card "Issues / Points by Epic" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Sprint.name" }},
+              {
+                "join-alias": "Tms Sprint - Sprint"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 16,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 14,
+      "card_id": {{ card "Issue Activity" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "bb149580",
+          "card_id": {{ card "Issue Activity" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Sprint.name" }},
+              {
+                "join-alias": "Tms Sprint - Sprint"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 9,
+      "col": 9,
+      "sizeX": 5,
+      "sizeY": 3,
+      "card_id": {{ card "Ratio of Issues with Points" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "bb149580",
+          "card_id": {{ card "Ratio of Issues with Points" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Sprint.name" }},
+              {
+                "join-alias": "Tms Sprint - Sprint"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 10,
+      "sizeY": 4,
+      "card_id": {{ card "Sprint Details" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "bb149580",
+          "card_id": {{ card "Sprint Details" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Sprint.name" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {
+        "column_settings": {
+          "[\"ref\",[\"field\",{{ field "tms_Sprint.name" }},null]]": {
+            "click_behavior": {
+              "type": "crossfilter",
+              "parameterMapping": {
+                "bb149580": {
+                  "source": {
+                    "type": "column",
+                    "id": "name",
+                    "name": "Name"
+                  },
+                  "target": {
+                    "type": "parameter",
+                    "id": "bb149580"
+                  },
+                  "id": "bb149580"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "row": 0,
+      "col": 14,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Issues by Points" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "bb149580",
+          "card_id": {{ card "Issues by Points" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Sprint.name" }},
+              {
+                "join-alias": "Tms Sprint - Sprint"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 12,
+      "col": 0,
+      "sizeX": 14,
+      "sizeY": 4,
+      "card_id": {{ card "Issues in Progress" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "bb149580",
+          "card_id": {{ card "Issues in Progress" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "sprintName"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 12,
+      "col": 14,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Average Work In Progress" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "bb149580",
+          "card_id": {{ card "Average Work In Progress" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "sprintName"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 10,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Issues by Status" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "bb149580",
+          "card_id": {{ card "Issues by Status" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Sprint.name" }},
+              {
+                "join-alias": "Tms Sprint - Sprint"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    }
+  ],
+  "path": "/Faros CE/JIRA",
+  "priority": 7
+}
+

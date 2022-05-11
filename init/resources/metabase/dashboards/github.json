@@ -7,15 +7,70 @@
       "display": "scalar",
       "table_id": {{ table "vcs_PullRequest" }},
       "dataset_query": {
+        "type": "query",
         "query": {
           "source-table": {{ table "vcs_PullRequest" }},
           "aggregation": [
             [
               "count"
             ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.repository" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Organization" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Repository.organization" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Organization.id" }},
+                  {
+                    "join-alias": "Vcs Organization - Organization"
+                  }
+                ]
+              ],
+              "alias": "Vcs Organization - Organization"
+            }
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "vcs_Organization.source" }},
+              {
+                "join-alias": "Vcs Organization - Organization"
+              }
+            ],
+            "GitHub"
           ]
-        },
-        "type": "query"
+        }
       },
       "visualization_settings": {
         "table.pivot_column": "stateDetail",
@@ -28,6 +83,7 @@
       "display": "scalar",
       "table_id": {{ table "vcs_PullRequest" }},
       "dataset_query": {
+        "type": "query",
         "query": {
           "source-table": {{ table "vcs_PullRequest" }},
           "aggregation": [
@@ -53,10 +109,64 @@
                 {{ field "vcs_PullRequest.mergedAt" }},
                 null
               ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "vcs_Organization.source" }},
+                {
+                  "join-alias": "Vcs Organization - Organization"
+                }
+              ],
+              "GitHub"
             ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.repository" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Organization" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Repository.organization" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Organization.id" }},
+                  {
+                    "join-alias": "Vcs Organization - Organization"
+                  }
+                ]
+              ],
+              "alias": "Vcs Organization - Organization"
+            }
           ]
-        },
-        "type": "query"
+        }
       },
       "visualization_settings": {
         "table.pivot_column": "stateDetail",
@@ -69,6 +179,7 @@
       "display": "scalar",
       "table_id": {{ table "vcs_PullRequest" }},
       "dataset_query": {
+        "type": "query",
         "query": {
           "source-table": {{ table "vcs_PullRequest" }},
           "aggregation": [
@@ -77,15 +188,72 @@
             ]
           ],
           "filter": [
-            "not-null",
+            "and",
             [
-              "field",
-              {{ field "vcs_PullRequest.mergedAt" }},
-              null
+              "not-null",
+              [
+                "field",
+                {{ field "vcs_PullRequest.mergedAt" }},
+                null
+              ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "vcs_Organization.source" }},
+                {
+                  "join-alias": "Vcs Organization - Organization"
+                }
+              ],
+              "GitHub"
             ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.repository" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Organization" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Repository.organization" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Organization.id" }},
+                  {
+                    "join-alias": "Vcs Organization - Organization"
+                  }
+                ]
+              ],
+              "alias": "Vcs Organization - Organization"
+            }
           ]
-        },
-        "type": "query"
+        }
       },
       "visualization_settings": {
         "table.pivot_column": "stateDetail",
@@ -114,6 +282,61 @@
             [
               "count"
             ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.repository" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Organization" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Repository.organization" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Organization.id" }},
+                  {
+                    "join-alias": "Vcs Organization - Organization"
+                  }
+                ]
+              ],
+              "alias": "Vcs Organization - Organization"
+            }
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "vcs_Organization.source" }},
+              {
+                "join-alias": "Vcs Organization - Organization"
+              }
+            ],
+            "GitHub"
           ]
         }
       },
@@ -135,11 +358,25 @@
         "query": {
           "source-table": {{ table "vcs_PullRequest" }},
           "filter": [
-            "not-null",
+            "and",
             [
-              "field",
-              {{ field "vcs_PullRequest.mergedAt" }},
-              null
+              "not-null",
+              [
+                "field",
+                {{ field "vcs_PullRequest.mergedAt" }},
+                null
+              ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "vcs_Organization.source" }},
+                {
+                  "join-alias": "Vcs Organization - Organization"
+                }
+              ],
+              "GitHub"
             ]
           ],
           "aggregation": [
@@ -155,6 +392,50 @@
                 "temporal-unit": "week"
               }
             ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.repository" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Organization" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Repository.organization" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Organization.id" }},
+                  {
+                    "join-alias": "Vcs Organization - Organization"
+                  }
+                ]
+              ],
+              "alias": "Vcs Organization - Organization"
+            }
           ]
         }
       },
@@ -231,6 +512,15 @@
               ],
               "alias": "Tms TaskBoard - Board"
             }
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "GitHub"
           ]
         },
         "type": "query"
@@ -267,13 +557,25 @@
             ]
           ],
           "filter": [
-            "=",
+            "and",
             [
-              "field",
-              {{ field "tms_Task.statusDetail" }},
-              null
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusDetail" }},
+                null
+              ],
+              "closed"
             ],
-            "closed"
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "GitHub"
+            ]
           ],
           "joins": [
             {
@@ -336,68 +638,7 @@
       "display": "scalar",
       "table_id": {{ table "tms_Task" }},
       "dataset_query": {
-        "query": {
-          "source-table": {{ table "tms_Task" }},
-          "aggregation": [
-            [
-              "count"
-            ]
-          ],
-          "joins": [
-            {
-              "fields": "all",
-              "source-table": {{ table "tms_TaskBoardRelationship" }},
-              "condition": [
-                "=",
-                [
-                  "field",
-                  {{ field "tms_Task.id" }},
-                  null
-                ],
-                [
-                  "field",
-                  {{ field "tms_TaskBoardRelationship.task" }},
-                  {
-                    "join-alias": "Tms TaskBoardRelationship"
-                  }
-                ]
-              ],
-              "alias": "Tms TaskBoardRelationship"
-            },
-            {
-              "fields": "all",
-              "source-table": {{ table "tms_TaskBoard" }},
-              "condition": [
-                "=",
-                [
-                  "field",
-                  {{ field "tms_TaskBoardRelationship.board" }},
-                  {
-                    "join-alias": "Tms TaskBoardRelationship"
-                  }
-                ],
-                [
-                  "field",
-                  {{ field "tms_TaskBoard.id" }},
-                  {
-                    "join-alias": "Tms TaskBoard - Board"
-                  }
-                ]
-              ],
-              "alias": "Tms TaskBoard - Board"
-            }
-          ]
-        },
-        "type": "query"
-      },
-      "visualization_settings": {}
-    },
-    {
-      "name": "Issues Closed",
-      "description": null,
-      "display": "scalar",
-      "table_id": {{ table "tms_Task" }},
-      "dataset_query": {
+        "type": "query",
         "query": {
           "source-table": {{ table "tms_Task" }},
           "aggregation": [
@@ -453,13 +694,95 @@
             "=",
             [
               "field",
-              {{ field "tms_Task.statusDetail" }},
+              {{ field "tms_Task.source" }},
               null
             ],
-            "closed"
+            "GitHub"
           ]
-        },
-        "type": "query"
+        }
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "Issues Closed",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            }
+          ],
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusDetail" }},
+                null
+              ],
+              "closed"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "GitHub"
+            ]
+          ]
+        }
       },
       "visualization_settings": {}
     },
@@ -471,7 +794,7 @@
       "dataset_query": {
         "type": "native",
         "native": {
-          "query": "SELECT EXTRACT(epoch FROM (\nSELECT \n    justify_interval(\n      avg(\n        \"vcs_PullRequest\".\"mergedAt\" - \"vcs_PullRequest\".\"createdAt\"\n      )\n    ) as cycle_time \n  FROM \n    \"vcs_PullRequest\" \n  JOIN \"vcs_Repository\" ON \"vcs_PullRequest\".\"repository\" = \"vcs_Repository\".\"id\"\n  WHERE \n    \"vcs_PullRequest\".\"mergedAt\" IS NOT NULL AND <<mergedAt>> AND <<repositoryName>>\n) / 3600 / 24)",
+          "query": "SELECT EXTRACT(epoch FROM (\nSELECT \n    justify_interval(\n      avg(\n        \"vcs_PullRequest\".\"mergedAt\" - \"vcs_PullRequest\".\"createdAt\"\n      )\n    ) as cycle_time \n  FROM \n    \"vcs_PullRequest\" \n  JOIN \"vcs_Repository\" ON \"vcs_PullRequest\".\"repository\" = \"vcs_Repository\".\"id\"\n  JOIN \"vcs_Organization\" ON \"vcs_Repository\".\"organization\" = \"vcs_Organization\".\"id\"\n  WHERE \n    \"vcs_Organization\".\"source\" = 'GitHub' AND \"vcs_PullRequest\".\"mergedAt\" IS NOT NULL AND <<mergedAt>> AND <<repositoryName>>\n) / 3600 / 24)",
           "template-tags": {
             "mergedAt": {
               "id": "6d632c6b-fb36-9c68-fe23-f392a44e8616",
@@ -559,6 +882,61 @@
                 0
               ]
             ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.repository" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Organization" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Repository.organization" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Organization.id" }},
+                  {
+                    "join-alias": "Vcs Organization - Organization"
+                  }
+                ]
+              ],
+              "alias": "Vcs Organization - Organization"
+            }
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "vcs_Organization.source" }},
+              {
+                "join-alias": "Vcs Organization - Organization"
+              }
+            ],
+            "GitHub"
           ]
         },
         "type": "query"
@@ -582,28 +960,6 @@
         "query": {
           "source-query": {
             "source-table": {{ table "vcs_PullRequest" }},
-            "joins": [
-              {
-                "fields": "all",
-                "source-table": {{ table "vcs_PullRequestReview" }},
-                "condition": [
-                  "=",
-                  [
-                    "field",
-                    {{ field "vcs_PullRequest.id" }},
-                    null
-                  ],
-                  [
-                    "field",
-                    {{ field "vcs_PullRequestReview.pullRequest" }},
-                    {
-                      "join-alias": "Vcs PullRequestReview"
-                    }
-                  ]
-                ],
-                "alias": "Vcs PullRequestReview"
-              }
-            ],
             "expressions": {
               "review": [
                 "case",
@@ -660,9 +1016,73 @@
                 "field",
                 {{ field "vcs_Repository.name" }},
                 {
-                  "source-field": {{ field "vcs_PullRequest.repository" }}
+                  "join-alias": "Vcs Repository - Repository"
                 }
               ]
+            ],
+            "joins": [
+              {
+                "fields": "all",
+                "source-table": {{ table "vcs_Repository" }},
+                "condition": [
+                  "=",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.repository" }},
+                    null
+                  ],
+                  [
+                    "field",
+                    {{ field "vcs_Repository.id" }},
+                    {
+                      "join-alias": "Vcs Repository - Repository"
+                    }
+                  ]
+                ],
+                "alias": "Vcs Repository - Repository"
+              },
+              {
+                "fields": "all",
+                "source-table": {{ table "vcs_Organization" }},
+                "condition": [
+                  "=",
+                  [
+                    "field",
+                    {{ field "vcs_Repository.organization" }},
+                    {
+                      "join-alias": "Vcs Repository - Repository"
+                    }
+                  ],
+                  [
+                    "field",
+                    {{ field "vcs_Organization.id" }},
+                    {
+                      "join-alias": "Vcs Organization - Organization"
+                    }
+                  ]
+                ],
+                "alias": "Vcs Organization - Organization"
+              },
+              {
+                "fields": "all",
+                "source-table": {{ table "vcs_PullRequestReview" }},
+                "condition": [
+                  "=",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.id" }},
+                    null
+                  ],
+                  [
+                    "field",
+                    {{ field "vcs_PullRequestReview.pullRequest" }},
+                    {
+                      "join-alias": "Vcs PullRequestReview"
+                    }
+                  ]
+                ],
+                "alias": "Vcs PullRequestReview"
+              }
             ]
           },
           "aggregation": [
@@ -744,7 +1164,7 @@
               "field",
               {{ field "vcs_Repository.name" }},
               {
-                "source-field": {{ field "vcs_PullRequest.repository" }}
+                "join-alias": "Vcs Repository - Repository"
               }
             ]
           ]
@@ -781,7 +1201,7 @@
               "field",
               {{ field "vcs_Repository.name" }},
               {
-                "source-field": {{ field "vcs_PullRequest.repository" }}
+                "join-alias": "Vcs Repository - Repository"
               }
             ]
           ]
@@ -818,7 +1238,7 @@
               "field",
               {{ field "vcs_Repository.name" }},
               {
-                "source-field": {{ field "vcs_PullRequest.repository" }}
+                "join-alias": "Vcs Repository - Repository"
               }
             ]
           ]
@@ -929,7 +1349,7 @@
               "field",
               {{ field "vcs_Repository.name" }},
               {
-                "source-field": {{ field "vcs_PullRequest.repository" }}
+                "join-alias": "Vcs Repository - Repository"
               }
             ]
           ]
@@ -943,7 +1363,7 @@
               "field",
               {{ field "vcs_Repository.name" }},
               {
-                "source-field": {{ field "vcs_PullRequest.repository" }}
+                "join-alias": "Vcs Repository - Repository"
               }
             ]
           ]
@@ -1087,7 +1507,7 @@
               "field",
               {{ field "vcs_Repository.name" }},
               {
-                "source-field": {{ field "vcs_PullRequest.repository" }}
+                "join-alias": "Vcs Repository - Repository"
               }
             ]
           ]

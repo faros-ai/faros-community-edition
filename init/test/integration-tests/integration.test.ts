@@ -96,6 +96,7 @@ describe('integration tests', () => {
 
       expect(await hasuraClient.getComputeApplicationCount(origin)).toBe(1);
       expect(await hasuraClient.getCicdArtifactDeploymentCount(origin)).toBe(1);
+      expect(await hasuraClient.getCicdArtifactCount(origin)).toBe(1);
       expect(await hasuraClient.getCicdDeploymentCount(origin)).toBe(1);
       expect(await hasuraClient.getCicdBuildCount(origin)).toBe(1);
       expect(await hasuraClient.getCicdPipelineCount(origin)).toBe(1);

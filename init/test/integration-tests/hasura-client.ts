@@ -169,4 +169,52 @@ export class HasuraClient {
         logger.info(`query failed with error: ${err}`);
       });
   }
+
+  async getComputeApplicationCount(origin: string): Promise<number> {
+    return await this.api
+      .post('/v1/graphql', {
+        query: `query MyQuery { compute_Application_aggregate(where: {\
+          origin: {_eq: "${origin}"}}) {aggregate{count}} }`,
+        variables: null,
+      })
+      .then(
+        (response) =>
+          response.data.data.compute_Application_aggregate.aggregate.count
+      )
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
+      });
+  }
+
+  async getCicdArtifactDeploymentCount(origin: string): Promise<number> {
+    return await this.api
+      .post('/v1/graphql', {
+        query: `query MyQuery { cicd_ArtifactDeployment_aggregate(where: {\
+          origin: {_eq: "${origin}"}}) {aggregate{count}} }`,
+        variables: null,
+      })
+      .then(
+        (response) =>
+          response.data.data.cicd_ArtifactDeployment_aggregate.aggregate.count
+      )
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
+      });
+  }
+
+  async getCicdDeploymentCount(origin: string): Promise<number> {
+    return await this.api
+      .post('/v1/graphql', {
+        query: `query MyQuery { cicd_Deployment_aggregate(where: {\
+          origin: {_eq: "${origin}"}}) {aggregate{count}} }`,
+        variables: null,
+      })
+      .then(
+        (response) =>
+          response.data.data.cicd_Deployment_aggregate.aggregate.count
+      )
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
+      });
+  }
 }

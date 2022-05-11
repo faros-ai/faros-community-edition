@@ -478,7 +478,7 @@ export class Dashboards {
     // we simply ignore missing helpers
     const handlebars = Handlebars.create();
     handlebars.registerHelper('helperMissing', function () {
-      return new Handlebars.SafeString('""');
+      return new Handlebars.SafeString('null');
     });
     const newDashboards = dashboards.filter(
       (dashboard) =>

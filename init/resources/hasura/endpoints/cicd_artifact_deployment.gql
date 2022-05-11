@@ -44,6 +44,7 @@ mutation insert_cicd_ArtifactDeployment(
               update_columns: refreshedAt
             }
           }
+          origin: $data_origin
         }
         on_conflict: {
           constraint: cicd_Artifact_pkey

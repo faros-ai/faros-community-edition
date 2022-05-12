@@ -1,0 +1,12 @@
+query MyQuery {
+  cicd_Organization(where: {origin: {_eq: "origin1"}}) {
+    description
+    id
+    name
+    origin
+    # refreshedAt
+    source
+    uid
+    url
+  }
+}

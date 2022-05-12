@@ -41,6 +41,27 @@ export class HasuraClient {
     );
   }
 
+  async hitEndpoint(endpoint: string, payload: string): Promise<any> {
+    return await this.api
+      .post(`/api/rest/${endpoint}`, payload)
+      .then((response) => response.data)
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
+      });
+  }
+
+  async makeQuery(query: string): Promise<any> {
+    return await this.api
+      .post('/v1/graphql', {
+        query,
+        variables: null,
+      })
+      .then((response) => response.data)
+      .catch((err) => {
+        logger.info(`query failed with error: ${err}`);
+      });
+  }
+
   async getVcsUserCount(): Promise<number> {
     return await this.api
       .post('/v1/graphql', {

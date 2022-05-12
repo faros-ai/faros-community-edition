@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eo pipefail
+
 [[ -z "$METABASE_URL" ]] && echo "METABASE_URL not set" && exit 1
 [[ -z "$METABASE_USER" ]] && echo "METABASE_USER not set" && exit 1
 [[ -z "$METABASE_PASSWORD" ]] && echo "METABASE_PASSWORD not set" && exit 1

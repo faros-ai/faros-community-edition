@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+set -eo pipefail
 
 faros_db_name=${FAROS_DB_NAME}
 faros_db_host=${FAROS_DB_HOST}

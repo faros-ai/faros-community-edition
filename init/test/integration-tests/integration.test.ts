@@ -6,6 +6,7 @@ import path from 'path';
 
 import {AirbyteClient, ConnectionConfiguration} from './airbyte-client';
 import {HasuraClient} from './hasura-client';
+import {TestDefinition} from './types';
 
 let destinationId: string;
 let hasuraAdminSecret: string;
@@ -105,7 +106,9 @@ describe('integration tests', () => {
   test(
     'check cicd_organization Hasura endpoint',
     async () => {
-      await loadAndExecuteTestDefinition('cicd_organization.json');
+      await loadTestDefinition('cicd_organization.json').then((test) =>
+        checkHasuraEndpoint(test)
+      );
     },
     5 * 1000
   );
@@ -154,43 +157,27 @@ describe('integration tests', () => {
     --community_edition`);
   }
 
-  async function loadAndExecuteTestDefinition(testDefinitionFileName: string) {
+  async function loadTestDefinition(
+    testDefinitionFileName: string
+  ): Promise<TestDefinition> {
     const directory = path.join(RESOURCES_DIR, 'hasura', 'test_definitions');
 
-    const testDefinition = JSON.parse(
+    return JSON.parse(
       await fs.readFile(path.join(directory, testDefinitionFileName), 'utf8')
-    );
-
-    checkHasuraEndpoint(
-      testDefinition.endpoint,
-      testDefinition.input,
-      testDefinition.output,
-      testDefinition.query
     );
   }
 
-  async function checkHasuraEndpoint(
-    endpoint: string,
-    inputFileName: string,
-    outputFileName: string,
-    queryFileName: string
-  ) {
+  async function checkHasuraEndpoint(test: TestDefinition) {
     const directory = path.join(RESOURCES_DIR, 'hasura', 'test_data');
 
-    const input = await fs.readFile(
-      path.join(directory, inputFileName),
-      'utf8'
-    );
+    const input = await fs.readFile(path.join(directory, test.input), 'utf8');
     const expectedOutput = await fs.readFile(
-      path.join(directory, outputFileName),
+      path.join(directory, test.output),
       'utf8'
     );
-    const query = await fs.readFile(
-      path.join(directory, queryFileName),
-      'utf8'
-    );
+    const query = await fs.readFile(path.join(directory, test.query), 'utf8');
 
-    await hasuraClient.hitEndpoint(endpoint, input);
+    await hasuraClient.hitEndpoint(test.endpoint, input);
     const output = await hasuraClient.makeQuery(query);
 
     expect(isEqual(output, JSON.parse(expectedOutput))).toBe(true);

@@ -48,7 +48,8 @@ services:
   faros-init:
     profiles: ["default", "faros-init"]
     image: ${FAROS_INIT_IMAGE?}
-    restart: on-failure
+    # 3 retries on failure
+    restart: on-failure:3
     environment:
       AIRBYTE_API_CALLS_CONCURRENCY: ${AIRBYTE_API_CALLS_CONCURRENCY:-}
       AIRBYTE_DESTINATION_HASURA_URL: ${AIRBYTE_DESTINATION_HASURA_URL?}

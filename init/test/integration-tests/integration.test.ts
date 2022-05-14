@@ -1,10 +1,12 @@
 import {execSync} from 'child_process';
 import fs from 'fs-extra';
+import {isEqual} from 'lodash';
 import os from 'os';
 import path from 'path';
 
 import {AirbyteClient, ConnectionConfiguration} from './airbyte-client';
 import {HasuraClient} from './hasura-client';
+import {TestDefinition} from './types';
 
 let destinationId: string;
 let hasuraAdminSecret: string;
@@ -23,12 +25,7 @@ beforeAll(async () => {
 }, 60 * 1000);
 
 describe('integration tests', () => {
-  const RESOURCES_DIR = path.join(
-    __dirname,
-    '..',
-    'resources',
-    'faros-destination'
-  );
+  const RESOURCES_DIR = path.join(__dirname, '..', 'resources');
 
   test('check connection to the Faros destination', async () => {
     expect(await airbyteClient.checkDestinationConnection(destinationId)).toBe(
@@ -50,7 +47,8 @@ describe('integration tests', () => {
       const tmpDir = await fs.mkdtemp(
         path.join(os.tmpdir(), 'integration-tests')
       );
-      await fs.copy(RESOURCES_DIR, tmpDir, {recursive: true});
+      const directory = path.join(RESOURCES_DIR, 'faros-destination');
+      await fs.copy(directory, tmpDir, {recursive: true});
       await fs.writeFile(
         path.join(tmpDir, 'config.json'),
         JSON.stringify(connectionConfiguration),
@@ -105,6 +103,16 @@ describe('integration tests', () => {
     60 * 1000
   );
 
+  test(
+    'check cicd_organization Hasura endpoint',
+    async () => {
+      await loadTestDefinition('cicd_organization.json').then((test) =>
+        checkHasuraEndpoint(test)
+      );
+    },
+    5 * 1000
+  );
+
   function writeRecords(tmpDir: string) {
     execSync(`docker pull farosai/airbyte-faros-destination \
     && cat ${tmpDir}/streams.in \
@@ -147,5 +155,31 @@ describe('integration tests', () => {
     --hasura_admin_secret ${hasuraAdminSecret} \
     --origin ${origin} \
     --community_edition`);
+  }
+
+  async function loadTestDefinition(
+    testDefinitionFileName: string
+  ): Promise<TestDefinition> {
+    const directory = path.join(RESOURCES_DIR, 'hasura', 'test_definitions');
+
+    return JSON.parse(
+      await fs.readFile(path.join(directory, testDefinitionFileName), 'utf8')
+    );
+  }
+
+  async function checkHasuraEndpoint(test: TestDefinition) {
+    const directory = path.join(RESOURCES_DIR, 'hasura', 'test_data');
+
+    const input = await fs.readFile(path.join(directory, test.input), 'utf8');
+    const expectedOutput = await fs.readFile(
+      path.join(directory, test.output),
+      'utf8'
+    );
+    const query = await fs.readFile(path.join(directory, test.query), 'utf8');
+
+    await hasuraClient.hitEndpoint(test.endpoint, input);
+    const output = await hasuraClient.makeQuery(query);
+
+    expect(isEqual(output, JSON.parse(expectedOutput))).toBe(true);
   }
 });

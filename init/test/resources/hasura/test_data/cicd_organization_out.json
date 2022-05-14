@@ -1,0 +1,15 @@
+{
+  "data": {
+    "cicd_Organization": [
+      {
+        "description": null,
+        "id": "source1|organization1",
+        "name": null,
+        "origin": "origin1",
+        "source": "source1",
+        "uid": "organization1",
+        "url": null
+      }
+    ]
+  }
+}

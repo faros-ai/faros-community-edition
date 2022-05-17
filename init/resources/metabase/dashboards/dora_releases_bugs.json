@@ -1264,7 +1264,7 @@
           "dataset_query": {},
           "archived": false
         },
-        "text": "The widely used DORA metrics* are used to measure velocity and quality of software delivery. The summary below details overall performance with respect to each DORA metric (left), along with trends across applications (middle), and supporting detail (right), for context. These charts require data from deployments, commits, pull requests, and incidents in order to render completely.",
+        "text": "The widely used DORA metrics* are used to measure velocity and quality of software delivery. The summary below details overall performance with respect to each DORA metric (left), along with trends across applications (middle), and supporting detail (right), for context. These charts require data from releases, commits, pull requests, and issues (aka tasks) labeled "bug" from the same repository in order to render completely.",
         "dashcard.background": false
       }
     },

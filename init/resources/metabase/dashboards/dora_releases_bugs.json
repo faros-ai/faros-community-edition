@@ -1,0 +1,1560 @@
+{
+  "name": "DORA - Releases and Bugs",
+  "cards": [
+    {
+      "name": "Release LeadTime",
+      "description": null,
+      "display": "table",
+      "table_id": null,
+      "dataset_query": {
+        "native": {
+          "template-tags": {},
+          "query": "with tag_release as (\n    select \n        \"cicd_Release\".*,\n        \"vcs_Commit\".\"createdAt\" as release_created_at,\n        \"vcs_Repository\".\"name\" as repository_name,\n        \"vcs_Repository\".\"id\" as repository_id,\n        row_number() over (\n            partition by \"vcs_Repository\".\"id\"\n            order by \"vcs_Commit\".\"createdAt\" asc\n        ) as tag_rank \n    from \"cicd_Release\"\n    join \"cicd_ReleaseTagAssociation\" on \"cicd_Release\".\"id\" = \"cicd_ReleaseTagAssociation\".\"release\"\n    join \"vcs_Tag\" on \"vcs_Tag\".\"id\" = \"cicd_ReleaseTagAssociation\".\"tag\"\n    join \"vcs_Commit\" on \"vcs_Tag\".\"commit\" = \"vcs_Commit\".\"id\"\n    join \"vcs_Repository\" on \"vcs_Commit\".\"repository\" = \"vcs_Repository\".\"id\"\n),\npr_review as (\n    select \n        \"pr\".\"id\" as pr_id,\n        \"pr\".\"mergeCommit\",\n        \"pr\".\"createdAt\" as pr_created_at,\n        \"pr\".\"uid\" as pr_uid,\n        case\n            when \"review\".\"state\" is null then extract(epoch from (\"pr\".\"mergedAt\" - \"pr\".\"createdAt\")) * 1000\n            else extract(epoch from (\"pr\".\"mergedAt\" - \"review\".\"submittedAt\")) * 1000\n        end as pr_merge_time,\n        case\n            when \"review\".\"state\" is null then 0\n            else extract(epoch from (\"review\".\"submittedAt\" - \"pr\".\"createdAt\")) * 1000\n        end as pr_review_time, \n        row_number() over (\n            partition by \"pr\".\"id\"\n            order by \"review\".\"submittedAt\" desc\n        ) as review_rank\n    from \"vcs_PullRequest\" as pr left outer join \"vcs_PullRequestReview\" as review \n    on \"pr\".\"id\" = \"review\".\"pullRequest\" and\n        (\"pr\".\"mergedAt\" > \"review\".\"submittedAt\" or \"review\".\"state\" is null)  \n    where \"pr\".\"mergedAt\" is not null\n),\ncommit_pr as (\n    select * from \"vcs_Commit\" as commit inner join pr_review on \"commit\".\"id\" = \"pr_review\".\"mergeCommit\" where review_rank = 1\n),\nrelease_first_last_commit as (\n    select\n        tag_release.*,\n        prev_tag_release.id as prev_deploy_commit,\n        prev_tag_release.release_created_at as prev_release_created_at\n    from tag_release, tag_release as prev_tag_release\n    where \n        tag_release.tag_rank = prev_tag_release.tag_rank + 1 and \n        tag_release.repository_id = prev_tag_release.repository_id\n),\nrelease_changeset as (\n    select \n        release_first_last_commit.*,\n        commit.pr_uid,\n        commit.pr_created_at,\n        commit.pr_merge_time,\n        pr_review_time\n    from release_first_last_commit, commit_pr as commit\n    where \n        commit.\"createdAt\" > release_first_last_commit.prev_release_created_at and\n        commit.\"createdAt\" <= release_first_last_commit.release_created_at and\n        commit.repository = release_first_last_commit.repository_id\n),\nbreakdown as (\n    select\n        id,\n        pr_uid,\n        repository_name,\n        repository_id,\n        release_created_at,\n        pr_created_at,\n        pr_merge_time,\n        pr_review_time,\n        extract(epoch from (release_created_at - pr_created_at)) * 1000 as lead_time\n    from release_changeset\n)\nselect \n  *, (lead_time - pr_merge_time - pr_review_time) as wait_time\nfrom breakdown\n"
+        },
+        "type": "native"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "message",
+        "table.cell_column": "pr_merge_time"
+      }
+    },
+    {
+      "name": "BugsAndReleases",
+      "description": null,
+      "display": "table",
+      "table_id": null,
+      "dataset_query": {
+        "native": {
+          "template-tags": {},
+          "query": "SELECT 'Bug' as type, \"tms_Task\".\"createdAt\" as date, \"tms_TaskBoard\".\"name\" as repository\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskTag\" ON \"tms_Task\".\"id\" = \"tms_TaskTag\".\"task\"\nLEFT JOIN \"tms_Label\" ON \"tms_Label\".\"id\" = \"tms_TaskTag\".\"label\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\"\nWHERE \"tms_TaskBoard\".\"source\" != 'Jira' \nAND \"tms_Label\".\"name\" = 'bug'\nUNION \nSELECT 'Release' as type, \"cicd_Release\".\"createdAt\" as date, \"vcs_Repository\".\"name\" as repository\nFROM \"cicd_Release\"\nJOIN \"cicd_ReleaseTagAssociation\" ON \"cicd_Release\".\"id\" = \"cicd_ReleaseTagAssociation\".\"release\"\nJOIN \"vcs_Tag\" ON \"vcs_Tag\".\"id\" = \"cicd_ReleaseTagAssociation\".\"tag\"\nJOIN \"vcs_Repository\" ON \"vcs_Repository\".\"id\" = \"vcs_Tag\".\"repository\""
+        },
+        "type": "native"
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0,
+            "max": 15,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 15,
+            "max": 30,
+            "color": "#F9D45C",
+            "label": "High"
+          },
+          {
+            "min": 30,
+            "max": 60,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 60,
+            "max": 100,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ],
+        "table.pivot_column": "type",
+        "table.cell_column": "date",
+        "column_settings": {
+          "[\"name\",\"test\"]": {
+            "suffix": " %"
+          }
+        }
+      }
+    },
+    {
+      "name": "Weekly Release Frequency (Avg)",
+      "description": null,
+      "display": "gauge",
+      "table_id": {{ table "cicd_Release" }},
+      "dataset_query": {
+        "query": {
+          "source-query": {
+            "source-table": {{ table "cicd_Release" }},
+            "aggregation": [
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "cicd_Release.id" }},
+                  null
+                ]
+              ]
+            ],
+            "breakout": [
+              [
+                "field",
+                {{ field "cicd_Release.createdAt" }},
+                {
+                  "temporal-unit": "week"
+                }
+              ]
+            ]
+          },
+          "aggregation": [
+            [
+              "avg",
+              [
+                "field",
+                "count",
+                {
+                  "base-type": "type/Integer"
+                }
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 7,
+            "max": 14,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 1,
+            "max": 7,
+            "color": "#F9D45C",
+            "label": "High"
+          },
+          {
+            "min": 0.23,
+            "max": 1,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 0,
+            "max": 0.23,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Weekly Releases by Repository over Time",
+      "description": null,
+      "display": "line",
+      "table_id": {{ table "cicd_Release" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "cicd_Release" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "cicd_ReleaseTagAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_Release.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "cicd_ReleaseTagAssociation.release" }},
+                  {
+                    "join-alias": "Cicd ReleaseTagAssociation"
+                  }
+                ]
+              ],
+              "alias": "Cicd ReleaseTagAssociation"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Tag" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_ReleaseTagAssociation.tag" }},
+                  {
+                    "join-alias": "Cicd ReleaseTagAssociation"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Tag.id" }},
+                  {
+                    "join-alias": "Vcs Tag - Tag"
+                  }
+                ]
+              ],
+              "alias": "Vcs Tag - Tag"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Tag.repository" }},
+                  {
+                    "join-alias": "Vcs Tag - Tag"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            }
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "cicd_Release.id" }},
+                null
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "cicd_Release.createdAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ],
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "join-alias": "Vcs Repository - Repository"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "createdAt",
+          "name"
+        ],
+        "graph.x_axis.title_text": "Week of",
+        "graph.y_axis.title_text": "Number of Releases",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Number of Releases by Repository",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "cicd_Release" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "cicd_Release" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "cicd_ReleaseTagAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_Release.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "cicd_ReleaseTagAssociation.release" }},
+                  {
+                    "join-alias": "Cicd ReleaseTagAssociation"
+                  }
+                ]
+              ],
+              "alias": "Cicd ReleaseTagAssociation"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Tag" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_ReleaseTagAssociation.tag" }},
+                  {
+                    "join-alias": "Cicd ReleaseTagAssociation"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Tag.id" }},
+                  {
+                    "join-alias": "Vcs Tag - Tag"
+                  }
+                ]
+              ],
+              "alias": "Vcs Tag - Tag"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Tag.repository" }},
+                  {
+                    "join-alias": "Vcs Tag - Tag"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            }
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "cicd_Release.id" }},
+                null
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "join-alias": "Vcs Repository - Repository"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "name"
+        ],
+        "graph.x_axis.title_text": "Repository",
+        "graph.y_axis.title_text": "Number of Releases",
+        "series_settings": {
+          "count": {
+            "color": "#98D9D9"
+          }
+        },
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Average Release Lead Time",
+      "description": null,
+      "display": "gauge",
+      "table_id": null,
+      "dataset_query": {
+        "query": {
+          "source-table": {{ card "Release LeadTime" }},
+          "aggregation": [
+            [
+              "avg",
+              [
+                "field",
+                "lead_time",
+                {
+                  "base-type": "type/Float"
+                }
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0,
+            "max": 86400000,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 86400000,
+            "max": 604800000,
+            "color": "#F9CF48",
+            "label": "High"
+          },
+          {
+            "min": 604800000,
+            "max": 2608520630,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 2608520630,
+            "max": 5217041260,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ],
+        "column_settings": {
+          "[\"name\",\"avg\"]": {
+            "scale": 1.15e-8,
+            "suffix": " days",
+            "decimals": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "Release Lead Time by Repository over Time",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "query": {
+          "source-table": {{ card "Release LeadTime" }},
+          "aggregation": [
+            [
+              "avg",
+              [
+                "field",
+                "lead_time",
+                {
+                  "base-type": "type/Float"
+                }
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              "repository_name",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            [
+              "field",
+              "release_created_at",
+              {
+                "temporal-unit": "week",
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.x_axis.title_text": "Week of",
+        "graph.y_axis.title_text": "Average of lead time",
+        "graph.dimensions": [
+          "release_created_at",
+          "repository_name"
+        ],
+        "column_settings": {
+          "[\"name\",\"avg\"]": {
+            "scale": 1.157e-8,
+            "suffix": " days"
+          }
+        },
+        "graph.metrics": [
+          "avg"
+        ]
+      }
+    },
+    {
+      "name": "Release Lead Time Breakdown by Repository",
+      "description": null,
+      "display": "bar",
+      "table_id": null,
+      "dataset_query": {
+        "query": {
+          "source-table": {{ card "Release LeadTime" }},
+          "aggregation": [
+            [
+              "avg",
+              [
+                "field",
+                "pr_review_time",
+                {
+                  "base-type": "type/Float"
+                }
+              ]
+            ],
+            [
+              "avg",
+              [
+                "field",
+                "pr_merge_time",
+                {
+                  "base-type": "type/Float"
+                }
+              ]
+            ],
+            [
+              "avg",
+              [
+                "field",
+                "wait_time",
+                {
+                  "base-type": "type/Float"
+                }
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              "repository_name",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "series_settings": {
+          "avg": {
+            "title": "pr review time",
+            "color": "#88BF4D"
+          },
+          "avg_2": {
+            "title": "pr merge time"
+          },
+          "avg_3": {
+            "title": "wait time",
+            "color": "#4C5773"
+          },
+          "avg_4": {
+            "title": "time in qa"
+          },
+          "avg_5": {
+            "title": "time in staging"
+          },
+          "avg_6": {
+            "title": "unaccounted time"
+          }
+        },
+        "graph.dimensions": [
+          "repository_name"
+        ],
+        "graph.x_axis.title_text": "Repository",
+        "graph.y_axis.title_text": "Release Lead Time",
+        "column_settings": {
+          "[\"name\",\"avg\"]": {
+            "scale": 1.157e-8,
+            "suffix": " days",
+            "decimals": 1
+          },
+          "[\"name\",\"avg_2\"]": {
+            "scale": 1.157e-8,
+            "decimals": 1,
+            "suffix": " days"
+          },
+          "[\"name\",\"avg_3\"]": {
+            "scale": 1.157e-8,
+            "decimals": 1,
+            "suffix": " days"
+          },
+          "[\"name\",\"avg_4\"]": {
+            "decimals": 1,
+            "scale": 1.157e-8,
+            "suffix": " days"
+          },
+          "[\"name\",\"avg_5\"]": {
+            "decimals": 1,
+            "scale": 1.157e-8,
+            "suffix": " days"
+          },
+          "[\"name\",\"avg_6\"]": {
+            "decimals": 1,
+            "scale": 1.157e-8,
+            "suffix": " days"
+          }
+        },
+        "graph.metrics": [
+          "avg",
+          "avg_2",
+          "avg_3"
+        ]
+      }
+    },
+    {
+      "name": "Change Failure Rate (CFR)",
+      "description": null,
+      "display": "gauge",
+      "table_id": null,
+      "dataset_query": {
+        "query": {
+          "source-table": {{ card "BugsAndReleases" }},
+          "expressions": {
+            "isRelease": [
+              "case",
+              [
+                [
+                  [
+                    "=",
+                    [
+                      "field",
+                      "type",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "Release"
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": 0
+              }
+            ],
+            "isBug": [
+              "case",
+              [
+                [
+                  [
+                    "=",
+                    [
+                      "field",
+                      "type",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "Bug"
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": 0
+              }
+            ]
+          },
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "sum",
+                  [
+                    "expression",
+                    "isBug"
+                  ]
+                ],
+                [
+                  "sum",
+                  [
+                    "expression",
+                    "isRelease"
+                  ]
+                ]
+              ],
+              {
+                "name": "CFR",
+                "display-name": "CFR"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0,
+            "max": 0.5,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 0.5,
+            "max": 1,
+            "color": "#F9CF48",
+            "label": "High"
+          },
+          {
+            "min": 1,
+            "max": 2,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 2,
+            "max": 5,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ],
+        "column_settings": {
+          "[\"name\",\"CFR\"]": {
+            "scale": 100,
+            "suffix": " %"
+          }
+        }
+      }
+    },
+    {
+      "name": "CFR by Repository over Time",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ card "BugsAndReleases" }},
+          "expressions": {
+            "isBug": [
+              "case",
+              [
+                [
+                  [
+                    "=",
+                    [
+                      "field",
+                      "type",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "Bug"
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": 0
+              }
+            ],
+            "isRelease": [
+              "case",
+              [
+                [
+                  [
+                    "=",
+                    [
+                      "field",
+                      "type",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "Release"
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": 0
+              }
+            ]
+          },
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "*",
+                  [
+                    "sum",
+                    [
+                      "expression",
+                      "isBug"
+                    ]
+                  ],
+                  100
+                ],
+                [
+                  "sum",
+                  [
+                    "expression",
+                    "isRelease"
+                  ]
+                ]
+              ],
+              {
+                "name": "CFR",
+                "display-name": "CFR"
+              }
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              "date",
+              {
+                "base-type": "type/DateTimeWithLocalTZ",
+                "temporal-unit": "week"
+              }
+            ],
+            [
+              "field",
+              "repository",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "date",
+          "repository"
+        ],
+        "graph.x_axis.title_text": "Week Of",
+        "column_settings": {
+          "[\"name\",\"CFR\"]": {
+            "suffix": " %"
+          }
+        },
+        "graph.metrics": [
+          "CFR"
+        ]
+      }
+    },
+    {
+      "name": "Bugs by Repository",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskTag" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskTag.task" }},
+                  {
+                    "join-alias": "Tms TaskTag"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskTag"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Label" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskTag.label" }},
+                  {
+                    "join-alias": "Tms TaskTag"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Label.id" }},
+                  {
+                    "join-alias": "Tms Label - Label"
+                  }
+                ]
+              ],
+              "alias": "Tms Label - Label"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            }
+          ],
+          "filter": [
+            "and",
+            [
+              "!=",
+              [
+                "field",
+                {{ field "tms_TaskBoard.source" }},
+                {
+                  "join-alias": "Tms TaskBoard - Board"
+                }
+              ],
+              "Jira"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Label.name" }},
+                {
+                  "join-alias": "Tms Label - Label"
+                }
+              ],
+              "bug"
+            ]
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "name"
+        ],
+        "graph.x_axis.title_text": "Repository",
+        "graph.y_axis.title_text": "Bugs",
+        "series_settings": {
+          "count": {
+            "color": "#EF8C8C"
+          }
+        },
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Mean Time to Resolution (MTTR)",
+      "description": null,
+      "display": "gauge",
+      "table_id": null,
+      "dataset_query": {
+        "native": {
+          "template-tags": {
+            "createdAt": {
+              "id": "640ead5c-9060-8a86-9129-46678ed8a514",
+              "name": "createdAt",
+              "display-name": "Created At",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Task.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative"
+            }
+          },
+          "query": "SELECT extract(epoch from avg(\"tms_Task\".\"updatedAt\" - \"tms_Task\".\"createdAt\"))*1000 as time_to_resolution\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskTag\" ON \"tms_Task\".\"id\" = \"tms_TaskTag\".\"task\"\nLEFT JOIN \"tms_Label\" ON \"tms_Label\".\"id\" = \"tms_TaskTag\".\"label\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\"\nWHERE \"tms_TaskBoard\".\"source\" != 'Jira' \nAND \"tms_Label\".\"name\" = 'bug'\nAND \"tms_Task\".\"statusCategory\" = 'Done' and <<createdAt>>"
+        },
+        "type": "native"
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0,
+            "max": 86400000,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 86400000,
+            "max": 172800000,
+            "color": "#F9CF48",
+            "label": "High"
+          },
+          {
+            "min": 172800000,
+            "max": 864000000,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 864000000,
+            "max": 1728000000,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ],
+        "column_settings": {
+          "[\"name\",\"time_to_resolution\"]": {
+            "scale": 2.77e-7,
+            "suffix": " hours",
+            "decimals": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "MTTR by Repository over Time",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "native": {
+          "template-tags": {
+            "createdAt": {
+              "id": "640ead5c-9060-8a86-9129-46678ed8a514",
+              "name": "createdAt",
+              "display-name": "Created At",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Task.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative"
+            }
+          },
+          "query": "SELECT extract(epoch from avg(\"tms_Task\".\"updatedAt\" - \"tms_Task\".\"createdAt\"))*1000 as time_to_resolution, \"tms_TaskBoard\".\"name\" as repository, (cast(date_trunc('week', cast((cast(\"tms_Task\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')) as \"createdAt\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskTag\" ON \"tms_Task\".\"id\" = \"tms_TaskTag\".\"task\"\nLEFT JOIN \"tms_Label\" ON \"tms_Label\".\"id\" = \"tms_TaskTag\".\"label\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\"\nWHERE \"tms_TaskBoard\".\"source\" != 'Jira' \nAND \"tms_Label\".\"name\" = 'bug'\nAND \"tms_Task\".\"statusCategory\" = 'Done' and <<createdAt>>\ngroup by (cast(date_trunc('week', cast((cast(\"tms_Task\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')), \"tms_TaskBoard\".\"name\"\norder by (cast(date_trunc('week', cast((cast(\"tms_Task\".\"createdAt\" as timestamp) + (interval '1 day')) as timestamp)) as timestamp) + (interval '-1 day')) asc, \"tms_TaskBoard\".\"name\" asc"
+        },
+        "type": "native"
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0,
+            "max": 3600000,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 3600000,
+            "max": 86400000,
+            "color": "#F9CF48",
+            "label": "High"
+          },
+          {
+            "min": 86400000,
+            "max": 432000000,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 432000000,
+            "max": 864000000,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ],
+        "graph.x_axis.title_text": "Week Of",
+        "graph.y_axis.title_text": "Mean Time to Resolution",
+        "graph.dimensions": [
+          "createdAt",
+          "repository"
+        ],
+        "column_settings": {
+          "[\"name\",\"time_to_resolution\"]": {
+            "scale": 2.77e-7,
+            "suffix": " hours",
+            "decimals": 1
+          }
+        },
+        "graph.metrics": [
+          "time_to_resolution"
+        ]
+      }
+    },
+    {
+      "name": "MTTR by Repository",
+      "description": null,
+      "display": "bar",
+      "table_id": null,
+      "dataset_query": {
+        "native": {
+          "template-tags": {
+            "createdAt": {
+              "id": "640ead5c-9060-8a86-9129-46678ed8a514",
+              "name": "createdAt",
+              "display-name": "Created At",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Task.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative"
+            }
+          },
+          "query": "SELECT extract(epoch from avg(\"tms_Task\".\"updatedAt\" - \"tms_Task\".\"createdAt\"))*1000 as time_to_resolution, \"tms_TaskBoard\".\"name\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskTag\" ON \"tms_Task\".\"id\" = \"tms_TaskTag\".\"task\"\nLEFT JOIN \"tms_Label\" ON \"tms_Label\".\"id\" = \"tms_TaskTag\".\"label\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\"\nWHERE \"tms_TaskBoard\".\"source\" != 'Jira' \nAND \"tms_Label\".\"name\" = 'bug'\nAND \"tms_Task\".\"statusCategory\" = 'Done' and <<createdAt>>\ngroup by \"tms_TaskBoard\".\"name\"\norder by \"tms_TaskBoard\".\"name\" asc"
+        },
+        "type": "native"
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0,
+            "max": 3600000,
+            "color": "#84BB4C",
+            "label": "Elite"
+          },
+          {
+            "min": 3600000,
+            "max": 86400000,
+            "color": "#F9CF48",
+            "label": "High"
+          },
+          {
+            "min": 86400000,
+            "max": 432000000,
+            "color": "#F2A86F",
+            "label": "Medium"
+          },
+          {
+            "min": 432000000,
+            "max": 864000000,
+            "color": "#ED6E6E",
+            "label": "Low"
+          }
+        ],
+        "graph.x_axis.title_text": "Repository",
+        "graph.y_axis.title_text": "MTTR",
+        "graph.dimensions": [
+          "name"
+        ],
+        "series_settings": {
+          "time_to_resolution": {
+            "color": "#F9D45C"
+          }
+        },
+        "column_settings": {
+          "[\"name\",\"time_to_resolution\"]": {
+            "scale": 2.77e-7,
+            "suffix": " hours",
+            "decimals": 1
+          }
+        },
+        "graph.metrics": [
+          "time_to_resolution"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Relative Date",
+      "slug": "relative_date",
+      "id": "fb36dafb",
+      "type": "date/relative",
+      "sectionId": "date",
+      "default": "past30days"
+    }
+  ],
+  "layout": [
+    {
+      "row": 10,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "# Quality Metrics"
+      }
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "# Velocity Metrics"
+      }
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "The widely used DORA metrics* are used to measure velocity and quality of software delivery. The summary below details overall performance with respect to each DORA metric (left), along with trends across applications (middle), and supporting detail (right), for context. These charts require data from releases, commits, pull requests, and issues (aka tasks) labeled "bug" from the same repository in order to render completely.",
+        "dashcard.background": false
+      }
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Weekly Release Frequency (Avg)" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Weekly Release Frequency (Avg)" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "createdAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 2,
+      "col": 4,
+      "sizeX": 8,
+      "sizeY": 4,
+      "card_id": {{ card "Weekly Releases by Repository over Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Weekly Releases by Repository over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Release.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 2,
+      "col": 12,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Number of Releases by Repository" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Number of Releases by Repository" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Release.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Average Release Lead Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Average Release Lead Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "release_created_at",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 6,
+      "col": 4,
+      "sizeX": 8,
+      "sizeY": 4,
+      "card_id": {{ card "Release Lead Time by Repository over Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Release Lead Time by Repository over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "release_created_at",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 6,
+      "col": 12,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Release Lead Time Breakdown by Repository" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Release Lead Time Breakdown by Repository" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "release_created_at",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 11,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Change Failure Rate (CFR)" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Change Failure Rate (CFR)" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "date",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 11,
+      "col": 4,
+      "sizeX": 8,
+      "sizeY": 4,
+      "card_id": {{ card "CFR by Repository over Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "CFR by Repository over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "date",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 11,
+      "col": 12,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Bugs by Repository" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Bugs by Repository" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 15,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Mean Time to Resolution (MTTR)" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "Mean Time to Resolution (MTTR)" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 15,
+      "col": 4,
+      "sizeX": 8,
+      "sizeY": 4,
+      "card_id": {{ card "MTTR by Repository over Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "MTTR by Repository over Time" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 15,
+      "col": 12,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "MTTR by Repository" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "fb36dafb",
+          "card_id": {{ card "MTTR by Repository" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    }
+  ],
+  "path": "/Faros CE/DORA - Releases and Bugs",
+  "priority": 8
+}
+

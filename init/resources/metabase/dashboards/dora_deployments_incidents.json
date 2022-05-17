@@ -1,5 +1,5 @@
 {
-  "name": "DORA",
+  "name": "DORA - Deployments and Incidents",
   "cards": [
     {
       "name": "LeadTime",
@@ -1451,7 +1451,7 @@
       "visualization_settings": {}
     }
   ],
-  "path": "/Faros CE/DORA",
+  "path": "/Faros CE/DORA - Deployments and Incidents",
   "priority": 3
 }
 

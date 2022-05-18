@@ -4590,7 +4590,7 @@
 - sourceDefinitionId: "9bef3b40-e2c3-46c0-a792-54580f876d18"
   name: "GitHub (fork by Faros AI)"
   dockerRepository: "farosai/airbyte-github-source"
-  dockerImageTag: "0.0.1"
+  dockerImageTag: "0.0.2"
   documentationUrl: "https://docs.faros.ai"
   spec:
     documentationUrl: "https://docs.airbyte.com/integrations/sources/github"

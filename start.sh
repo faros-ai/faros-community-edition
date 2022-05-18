@@ -29,7 +29,7 @@ fi
 export FAROS_EMAIL=$EMAIL
 
 # Ensure we're using the latest faros-init image
-FAROS_INIT_IMAGE=farosai.docker.scarf.sh/farosai/faros-ce-init:latest
+export FAROS_INIT_IMAGE=farosai.docker.scarf.sh/farosai/faros-ce-init:latest
 
 docker-compose pull faros-init
 

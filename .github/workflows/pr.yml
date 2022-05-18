@@ -46,7 +46,7 @@ jobs:
         run: docker-compose ps -a
 
       - name: Wait for init to complete
-        run: docker wait faros-community-edition_faros-init_1
+        run: [[ $(docker wait faros-community-edition_faros-init_1) -eq 0 ]]
 
       - name: Get destination id & Hasura Admin Secret
         run: |

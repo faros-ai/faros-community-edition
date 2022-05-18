@@ -47,7 +47,9 @@ jobs:
 
       - name: Wait for init to complete
         run: |
-          [[ $(docker wait faros-community-edition_faros-init_1) -eq 0 ]]
+          CONTAINER_EXIT_CODE=$(docker wait faros-community-edition_faros-init_1)
+          echo "init exit code was ${CONTAINER_EXIT_CODE}"
+          [[ $CONTAINER_EXIT_CODE -eq 0 ]]
 
       - name: Get destination id & Hasura Admin Secret
         run: |

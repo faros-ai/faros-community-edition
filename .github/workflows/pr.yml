@@ -46,7 +46,10 @@ jobs:
         run: docker-compose ps -a
 
       - name: Wait for init to complete
-        run: docker wait faros-community-edition_faros-init_1
+        run: |
+          CONTAINER_EXIT_CODE=$(docker wait faros-community-edition_faros-init_1)
+          echo "Faros init container exit code was ${CONTAINER_EXIT_CODE}"
+          [[ $CONTAINER_EXIT_CODE -eq 0 ]]
 
       - name: Get destination id & Hasura Admin Secret
         run: |

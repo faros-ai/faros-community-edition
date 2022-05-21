@@ -71,7 +71,7 @@ mutation insert_vcs_PullRequestCommit(
       origin: $data_origin
     }
     on_conflict: {
-      constraint: vcs_PullRequestCommit_pkey
+      constraint: vcs_PullRequestCommitAssociation_pkey
       update_columns: refreshedAt
     }
   ) {

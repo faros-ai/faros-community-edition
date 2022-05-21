@@ -7,7 +7,7 @@ mutation insert_vcs_PullRequestCommitAssociation(
   $data_pull_request_number: Int!
   $data_origin: String!
 ) {
-  insert_vcs_PullRequestCommitAssociation_one(
+  insert_vcs_PullRequestCommit_one(
     object: {
       vcs_Commit: {
         data: {

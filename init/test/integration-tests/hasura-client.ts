@@ -170,21 +170,18 @@ export class HasuraClient {
       });
   }
 
-  async getVcsPullRequestCommitAssociationCount(
-    origin: string
-  ): Promise<number> {
+  async getVcsPullRequestCommitCount(origin: string): Promise<number> {
     return await this.api
       .post('/v1/graphql', {
         query: `query MyQuery { \
-            vcs_PullRequestCommitAssociation_aggregate(where: {\
+            vcs_PullRequestCommit_aggregate(where: {\
               origin: {_eq: "${origin}"}}) {aggregate{count}} \
           }`,
         variables: null,
       })
       .then(
         (response) =>
-          response.data.data.vcs_PullRequestCommitAssociation_aggregate
-            .aggregate.count
+          response.data.data.vcs_PullRequestCommit_aggregate.aggregate.count
       )
       .catch((err) => {
         logger.info(`query failed with error: ${err}`);

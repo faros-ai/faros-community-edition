@@ -1,4 +1,4 @@
-mutation insert_vcs_PullRequestCommitAssociation(
+mutation insert_vcs_PullRequestCommit(
   $data_commit_organization: String!
   $data_commit_repository: String!
   $data_commit_sha: String!
@@ -71,7 +71,7 @@ mutation insert_vcs_PullRequestCommitAssociation(
       origin: $data_origin
     }
     on_conflict: {
-      constraint: vcs_PullRequestCommitAssociation_pkey
+      constraint: vcs_PullRequestCommit_pkey
       update_columns: refreshedAt
     }
   ) {

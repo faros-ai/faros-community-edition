@@ -79,7 +79,7 @@ describe('integration tests', () => {
       ).toBe(1);
       expect(await hasuraClient.getCicdRepositoryCount(origin)).toBe(1);
       expect(
-        await hasuraClient.getVcsPullRequestCommitAssociationCount(origin)
+        await hasuraClient.getVcsPullRequestCommitCount(origin)
       ).toBe(1);
     },
     60 * 1000

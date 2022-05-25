@@ -1,0 +1,2440 @@
+{
+  "name": "JIRA Kanban",
+  "cards": [
+    {
+      "name": "Done Issues by Type",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskReleaseRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskReleaseRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Release" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.release" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Release.id" }},
+                  {
+                    "join-alias": "Tms Release - Release"
+                  }
+                ]
+              ],
+              "alias": "Tms Release - Release"
+            }
+          ],
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "Done"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ]
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "tms_Task.id" }},
+                null
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.statusChangedAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Task.typeDetail" }},
+              null
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "statusChangedAt",
+          "typeDetail"
+        ],
+        "series_settings": {
+          "Custom": {
+            "color": "#509EE3"
+          },
+          "Bug": {
+            "color": "#F2A86F"
+          },
+          "Story": {
+            "color": "#88BF4D"
+          },
+          "Incident": {
+            "color": "#EF8C8C"
+          },
+          "Epic": {
+            "color": "#A989C5"
+          },
+          "Task": {
+            "color": "#509EE3"
+          }
+        },
+        "graph.x_axis.title_text": "date",
+        "graph.y_axis.title_text": "Issues",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Board / Release Issue Activity",
+      "description": null,
+      "display": "table",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "fields": [
+            [
+              "field",
+              {{ field "tms_Task.uid" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.name" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.priority" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.points" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.createdAt" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.updatedAt" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.statusChangedAt" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.epic" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.typeCategory" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Task.statusCategory" }},
+              null
+            ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
+          ],
+          "joins": [
+            {
+              "fields": "none",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "none",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            },
+            {
+              "fields": "none",
+              "source-table": {{ table "tms_TaskReleaseRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskReleaseRelationship"
+            },
+            {
+              "fields": [
+                [
+                  "field",
+                  {{ field "tms_Release.name" }},
+                  {
+                    "join-alias": "Tms Release - Release"
+                  }
+                ]
+              ],
+              "source-table": {{ table "tms_Release" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.release" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Release.id" }},
+                  {
+                    "join-alias": "Tms Release - Release"
+                  }
+                ]
+              ],
+              "alias": "Tms Release - Release"
+            }
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "field",
+                {{ field "tms_Task.updatedAt" }},
+                null
+              ]
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "table.pivot_column": "description",
+        "table.cell_column": "points",
+        "table.column_formatting": [
+          {
+            "columns": [
+              "statusCategory"
+            ],
+            "type": "single",
+            "operator": "=",
+            "value": "Done",
+            "color": "#88BF4D",
+            "highlight_row": true
+          },
+          {
+            "columns": [
+              "statusCategory"
+            ],
+            "type": "single",
+            "operator": "=",
+            "value": "InProgress",
+            "color": "#509EE3",
+            "highlight_row": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "Done Issues by Epic",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskReleaseRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskReleaseRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Release" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.release" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Release.id" }},
+                  {
+                    "join-alias": "Tms Release - Release"
+                  }
+                ]
+              ],
+              "alias": "Tms Release - Release"
+            }
+          ],
+          "filter": [
+            "and",
+            [
+              "not-empty",
+              [
+                "field",
+                {{ field "tms_Epic.name" }},
+                {
+                  "source-field": {{ field "tms_Task.epic" }}
+                }
+              ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "Done"
+            ]
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "tms_Task.id" }},
+                null
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "source-field": {{ field "tms_Task.epic" }}
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Task.statusChangedAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "statusChangedAt",
+          "name"
+        ],
+        "stackable.stack_type": "stacked",
+        "graph.y_axis.title_text": "Issues",
+        "graph.x_axis.title_text": "date",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Average Work in Progress in Board / Release",
+      "description": null,
+      "display": "gauge",
+      "table_id": null,
+      "dataset_query": {
+        "native": {
+          "template-tags": {
+            "boardName": {
+              "id": "e3d64aa0-4ff2-e46b-9ffd-7896455c15a8",
+              "name": "boardName",
+              "display-name": "BoardName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_TaskBoard.name" }},
+                null
+              ],
+              "widget-type": "category"
+            },
+            "statusChangedAt": {
+              "id": "e11b505d-3beb-4464-214b-9f617dfff873",
+              "name": "statusChangedAt",
+              "display-name": "StatusChangedAt",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Task.statusChangedAt" }},
+                null
+              ],
+              "widget-type": "date/relative",
+              "default": "past30days"
+            },
+            "releaseName": {
+              "id": "b856220e-7445-d334-77be-62b01bb7b4c6",
+              "name": "releaseName",
+              "display-name": "ReleaseName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Release.name" }},
+                null
+              ],
+              "widget-type": "category"
+            }
+          },
+          "query": "SELECT avg(\"source\".\"count\") AS \"avg\"\nFROM (SELECT \"source\".\"assignee\" AS \"assignee\", count(distinct \"uid\") as count FROM (SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nLEFT JOIN \"tms_TaskReleaseRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskReleaseRelationship\".\"task\"\nLEFT JOIN \"tms_Release\" ON \"tms_Release\".\"id\" = \"tms_TaskReleaseRelationship\".\"release\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<boardName>> AND <<releaseName>> AND <<statusChangedAt>>) \"source\" GROUP BY \"source\".\"assignee\"\nORDER BY \"source\".\"assignee\" ASC) \"source\""
+        },
+        "type": "native"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "avg",
+        "gauge.segments": [
+          {
+            "min": 1,
+            "max": 1.1,
+            "color": "#88BF4D",
+            "label": ""
+          },
+          {
+            "min": 1.1,
+            "max": 1.3,
+            "color": "#F9CF48",
+            "label": ""
+          },
+          {
+            "min": 1.3,
+            "max": 2,
+            "color": "#ED6E6E",
+            "label": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "Boards",
+      "description": null,
+      "display": "table",
+      "table_id": {{ table "tms_TaskBoard" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_TaskBoard" }},
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_TaskBoard.source" }},
+              null
+            ],
+            "Jira"
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "field",
+                {{ field "tms_TaskBoard.name" }},
+                null
+              ]
+            ]
+          ],
+          "fields": [
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              null
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "table.pivot_column": "name"
+      }
+    },
+    {
+      "name": "Work in Progress",
+      "description": null,
+      "display": "table",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeDetail\" AS \"typeDetail\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nLEFT JOIN \"tms_TaskReleaseRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskReleaseRelationship\".\"task\"\nLEFT JOIN \"tms_Release\" ON \"tms_Release\".\"id\" = \"tms_TaskReleaseRelationship\".\"release\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<boardName>> AND <<statusChangedAt>> AND <<releaseName>>\nORDER BY \"tms_Task\".\"statusChangedAt\" DESC",
+          "template-tags": {
+            "boardName": {
+              "id": "69aa1939-f031-26ec-b3b4-8f0db290e697",
+              "name": "boardName",
+              "display-name": "BoardName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_TaskBoard.name" }},
+                null
+              ],
+              "widget-type": "category"
+            },
+            "statusChangedAt": {
+              "id": "7c9ec11d-aa4c-abf2-cf2b-befd7702b446",
+              "name": "statusChangedAt",
+              "display-name": "StatusChangedAt",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Task.statusChangedAt" }},
+                null
+              ],
+              "widget-type": "date/relative",
+              "default": "past30days"
+            },
+            "releaseName": {
+              "id": "87e1a387-0ce8-dde1-64da-f53f7ce08fbb",
+              "name": "releaseName",
+              "display-name": "ReleaseName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Release.name" }},
+                null
+              ],
+              "widget-type": "category"
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "table.pivot_column": "uid_2",
+        "table.cell_column": "points",
+        "table.column_formatting": [
+          {
+            "columns": [
+              "typeDetail"
+            ],
+            "type": "single",
+            "operator": "=",
+            "value": "",
+            "color": "#509EE3",
+            "highlight_row": false
+          },
+          {
+            "columns": [
+              "typeDetail"
+            ],
+            "type": "single",
+            "operator": "=",
+            "value": "Bug",
+            "color": "#EF8C8C",
+            "highlight_row": true
+          },
+          {
+            "columns": [
+              "typeDetail"
+            ],
+            "type": "single",
+            "operator": "=",
+            "value": "Task",
+            "color": "#509EE3",
+            "highlight_row": true
+          },
+          {
+            "columns": [
+              "typeDetail"
+            ],
+            "type": "single",
+            "operator": "=",
+            "value": "Story",
+            "color": "#88BF4D",
+            "highlight_row": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "In Progress Issues by Status",
+      "description": null,
+      "display": "pie",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskReleaseRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskReleaseRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Release" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.release" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Release.id" }},
+                  {
+                    "join-alias": "Tms Release - Release"
+                  }
+                ]
+              ],
+              "alias": "Tms Release - Release"
+            }
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "tms_Task.id" }},
+                null
+              ]
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "InProgress"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.statusDetail" }},
+              null
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "statusChangedAt",
+          "typeCategory"
+        ],
+        "series_settings": {
+          "Custom": {
+            "color": "#509EE3"
+          },
+          "Bug": {
+            "color": "#EF8C8C"
+          },
+          "Story": {
+            "color": "#88BF4D"
+          }
+        },
+        "pie.colors": {
+          "Sub-task": "#98D9D9",
+          "Review": "#A989C5",
+          "In Progress": "#88BF4D",
+          "Incident": "#EF8C8C",
+          "Story": "#88BF4D",
+          "Bug": "#F2A86F",
+          "Epic": "#F2A86F",
+          "Task": "#509EE3",
+          "Waiting": "#EF8C8C",
+          "null": "#7172AD"
+        },
+        "pie.show_legend": true,
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Issues Created by Week (Cumulative)",
+      "description": null,
+      "display": "area",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskReleaseRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskReleaseRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Release" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.release" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Release.id" }},
+                  {
+                    "join-alias": "Tms Release - Release"
+                  }
+                ]
+              ],
+              "alias": "Tms Release - Release"
+            }
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.createdAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "cum-count"
+            ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Task.source" }},
+              null
+            ],
+            "Jira"
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.y_axis.title_text": "Issues",
+        "pie.slice_threshold": 2.5,
+        "graph.x_axis.title_text": "date",
+        "pie.colors": {
+          "Sub-task": "#98D9D9",
+          "Review": "#A989C5",
+          "In Progress": "#88BF4D",
+          "Incident": "#EF8C8C",
+          "Story": "#88BF4D",
+          "Bug": "#F2A86F",
+          "Epic": "#F2A86F",
+          "Task": "#509EE3",
+          "Waiting": "#EF8C8C",
+          "null": "#7172AD"
+        },
+        "graph.y_axis.auto_split": false,
+        "graph.metrics": [
+          "count"
+        ],
+        "series_settings": {
+          "Custom": {
+            "color": "#509EE3"
+          },
+          "Bug": {
+            "color": "#EF8C8C"
+          },
+          "Story": {
+            "color": "#88BF4D"
+          },
+          "count": {
+            "display": "line"
+          }
+        },
+        "graph.dimensions": [
+          "createdAt"
+        ],
+        "stackable.stack_type": null
+      }
+    },
+    {
+      "name": "Issues Done by Week (Cumulative)",
+      "description": null,
+      "display": "line",
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskReleaseRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskReleaseRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Release" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.release" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Release.id" }},
+                  {
+                    "join-alias": "Tms Release - Release"
+                  }
+                ]
+              ],
+              "alias": "Tms Release - Release"
+            }
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.statusChangedAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "cum-count"
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "Done"
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "statusChangedAt"
+        ],
+        "series_settings": {
+          "Custom": {
+            "color": "#509EE3"
+          },
+          "Bug": {
+            "color": "#EF8C8C"
+          },
+          "Story": {
+            "color": "#88BF4D"
+          },
+          "count": {
+            "color": "#88BF4D",
+            "display": "area"
+          }
+        },
+        "pie.colors": {
+          "Sub-task": "#98D9D9",
+          "Review": "#A989C5",
+          "In Progress": "#88BF4D",
+          "Incident": "#EF8C8C",
+          "Story": "#88BF4D",
+          "Bug": "#F2A86F",
+          "Epic": "#F2A86F",
+          "Task": "#509EE3",
+          "Waiting": "#EF8C8C",
+          "null": "#7172AD"
+        },
+        "pie.slice_threshold": 2.5,
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "In Progress Issues by Type",
+      "description": null,
+      "display": "pie",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskReleaseRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskReleaseRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Release" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.release" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Release.id" }},
+                  {
+                    "join-alias": "Tms Release - Release"
+                  }
+                ]
+              ],
+              "alias": "Tms Release - Release"
+            }
+          ],
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "InProgress"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ]
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "tms_Task.id" }},
+                null
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.typeDetail" }},
+              null
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "statusChangedAt",
+          "typeCategory"
+        ],
+        "series_settings": {
+          "Custom": {
+            "color": "#509EE3"
+          },
+          "Bug": {
+            "color": "#EF8C8C"
+          },
+          "Story": {
+            "color": "#88BF4D"
+          }
+        },
+        "pie.colors": {
+          "Bug": "#F2A86F",
+          "Epic": "#F2A86F",
+          "Incident": "#EF8C8C",
+          "Sub-task": "#98D9D9",
+          "Story": "#88BF4D",
+          "Task": "#509EE3",
+          "null": "#7172AD"
+        },
+        "pie.show_legend": true,
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Releases",
+      "description": null,
+      "display": "table",
+      "table_id": {{ table "tms_Release" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Release" }},
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "tms_Release.source" }},
+              null
+            ],
+            "Jira"
+          ],
+          "fields": [
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Release.startedAt" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Release.releasedAt" }},
+              null
+            ]
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "field",
+                {{ field "tms_Release.releasedAt" }},
+                null
+              ]
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "table.pivot_column": "name",
+        "table.cell_column": "releasedAt"
+      }
+    },
+    {
+      "name": "Number of Developers",
+      "description": null,
+      "display": "scalar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT count(distinct \"source\".\"assignee\") FROM (SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeDetail\" AS \"typeDetail\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nLEFT JOIN \"tms_TaskReleaseRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskReleaseRelationship\".\"task\"\nLEFT JOIN \"tms_Release\" ON \"tms_Release\".\"id\" = \"tms_TaskReleaseRelationship\".\"release\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<boardName>> AND <<statusChangedAt>> AND <<releaseName>>\nORDER BY \"tms_Task\".\"statusChangedAt\" DESC) \"source\"",
+          "template-tags": {
+            "boardName": {
+              "id": "69aa1939-f031-26ec-b3b4-8f0db290e697",
+              "name": "boardName",
+              "display-name": "BoardName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_TaskBoard.name" }},
+                null
+              ],
+              "widget-type": "category"
+            },
+            "statusChangedAt": {
+              "id": "7c9ec11d-aa4c-abf2-cf2b-befd7702b446",
+              "name": "statusChangedAt",
+              "display-name": "StatusChangedAt",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Task.statusChangedAt" }},
+                null
+              ],
+              "widget-type": "date/relative",
+              "default": "past30days"
+            },
+            "releaseName": {
+              "id": "87e1a387-0ce8-dde1-64da-f53f7ce08fbb",
+              "name": "releaseName",
+              "display-name": "ReleaseName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "tms_Release.name" }},
+                null
+              ],
+              "widget-type": "category"
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "table.pivot_column": "uid_2",
+        "table.cell_column": "points"
+      }
+    },
+    {
+      "name": "Developers by Epic",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskReleaseRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskReleaseRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Release" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.release" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Release.id" }},
+                  {
+                    "join-alias": "Tms Release - Release"
+                  }
+                ]
+              ],
+              "alias": "Tms Release - Release"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskAssignment" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskAssignment.task" }},
+                  {
+                    "join-alias": "Tms TaskAssignment"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskAssignment"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_User" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskAssignment.assignee" }},
+                  {
+                    "join-alias": "Tms TaskAssignment"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_User.id" }},
+                  {
+                    "join-alias": "Tms User - Assignee"
+                  }
+                ]
+              ],
+              "alias": "Tms User - Assignee"
+            }
+          ],
+          "filter": [
+            "and",
+            [
+              "not-empty",
+              [
+                "field",
+                {{ field "tms_Epic.name" }},
+                {
+                  "source-field": {{ field "tms_Task.epic" }}
+                }
+              ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "Done"
+            ]
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "tms_User.id" }},
+                {
+                  "join-alias": "Tms User - Assignee"
+                }
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "source-field": {{ field "tms_Task.epic" }}
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_TaskAssignment.assignedAt" }},
+              {
+                "temporal-unit": "week",
+                "join-alias": "Tms TaskAssignment"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "assignedAt",
+          "name"
+        ],
+        "stackable.stack_type": "stacked",
+        "graph.y_axis.title_text": "Issues",
+        "graph.x_axis.title_text": "date",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Board",
+      "slug": "board",
+      "id": "3390e64e",
+      "type": "category"
+    },
+    {
+      "name": "Relative Date",
+      "slug": "relative_date",
+      "id": "8d5e8dae",
+      "type": "date/relative",
+      "sectionId": "date",
+      "default": "past30days"
+    },
+    {
+      "name": "Release",
+      "slug": "release",
+      "id": "597847b",
+      "type": "category"
+    }
+  ],
+  "layout": [
+    {
+      "row": 8,
+      "col": 0,
+      "sizeX": 6,
+      "sizeY": 6,
+      "card_id": {{ card "Done Issues by Type" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "8d5e8dae",
+          "card_id": {{ card "Done Issues by Type" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.statusChangedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "3390e64e",
+          "card_id": {{ card "Done Issues by Type" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "597847b",
+          "card_id": {{ card "Done Issues by Type" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 20,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 7,
+      "card_id": {{ card "Board / Release Issue Activity" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "3390e64e",
+          "card_id": {{ card "Board / Release Issue Activity" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "8d5e8dae",
+          "card_id": {{ card "Board / Release Issue Activity" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.statusChangedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "597847b",
+          "card_id": {{ card "Board / Release Issue Activity" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 8,
+      "col": 6,
+      "sizeX": 12,
+      "sizeY": 6,
+      "card_id": {{ card "Done Issues by Epic" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "3390e64e",
+          "card_id": {{ card "Done Issues by Epic" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "8d5e8dae",
+          "card_id": {{ card "Done Issues by Epic" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.statusChangedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "597847b",
+          "card_id": {{ card "Done Issues by Epic" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 10,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Average Work in Progress in Board / Release" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "3390e64e",
+          "card_id": {{ card "Average Work in Progress in Board / Release" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "boardName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "8d5e8dae",
+          "card_id": {{ card "Average Work in Progress in Board / Release" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "statusChangedAt"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "597847b",
+          "card_id": {{ card "Average Work in Progress in Board / Release" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "releaseName"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Boards" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "3390e64e",
+          "card_id": {{ card "Boards" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {
+        "column_settings": {
+          "[\"ref\",[\"field\",{{ field "tms_TaskBoard.name" }},null]]": {
+            "click_behavior": {
+              "type": "crossfilter",
+              "parameterMapping": {
+                "3390e64e": {
+                  "source": {
+                    "type": "column",
+                    "id": "name",
+                    "name": "Name"
+                  },
+                  "target": {
+                    "type": "parameter",
+                    "id": "3390e64e"
+                  },
+                  "id": "3390e64e"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "sizeX": 10,
+      "sizeY": 4,
+      "card_id": {{ card "Work in Progress" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "3390e64e",
+          "card_id": {{ card "Work in Progress" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "boardName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "8d5e8dae",
+          "card_id": {{ card "Work in Progress" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "statusChangedAt"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "597847b",
+          "card_id": {{ card "Work in Progress" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "releaseName"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 14,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "In Progress Issues by Status" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "3390e64e",
+          "card_id": {{ card "In Progress Issues by Status" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "8d5e8dae",
+          "card_id": {{ card "In Progress Issues by Status" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.statusChangedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "597847b",
+          "card_id": {{ card "In Progress Issues by Status" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 14,
+      "col": 0,
+      "sizeX": 6,
+      "sizeY": 6,
+      "card_id": {{ card "Issues Created by Week (Cumulative)" }},
+      "series": [
+        {
+          "id": {{ card "Issues Done by Week (Cumulative)" }}
+        }
+      ],
+      "parameter_mappings": [
+        {
+          "parameter_id": "3390e64e",
+          "card_id": {{ card "Issues Created by Week (Cumulative)" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "3390e64e",
+          "card_id": {{ card "Issues Done by Week (Cumulative)" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "8d5e8dae",
+          "card_id": {{ card "Issues Done by Week (Cumulative)" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.statusChangedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "8d5e8dae",
+          "card_id": {{ card "Issues Created by Week (Cumulative)" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.createdAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "597847b",
+          "card_id": {{ card "Issues Created by Week (Cumulative)" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "597847b",
+          "card_id": {{ card "Issues Done by Week (Cumulative)" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {
+        "graph.y_axis.title_text": "Issues",
+        "pie.slice_threshold": 2.5,
+        "graph.x_axis.title_text": "date",
+        "pie.colors": {
+          "Sub-task": "#98D9D9",
+          "Review": "#A989C5",
+          "In Progress": "#88BF4D",
+          "Incident": "#EF8C8C",
+          "Story": "#88BF4D",
+          "Bug": "#F2A86F",
+          "Epic": "#F2A86F",
+          "Task": "#509EE3",
+          "Waiting": "#EF8C8C",
+          "null": "#7172AD"
+        },
+        "graph.y_axis.auto_split": false,
+        "graph.metrics": [
+          "count"
+        ],
+        "series_settings": {
+          "Custom": {
+            "color": "#509EE3"
+          },
+          "Bug": {
+            "color": "#EF8C8C"
+          },
+          "Story": {
+            "color": "#88BF4D"
+          }
+        },
+        "graph.dimensions": [
+          "createdAt"
+        ],
+        "stackable.stack_type": null
+      }
+    },
+    {
+      "row": 4,
+      "col": 14,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "In Progress Issues by Type" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "3390e64e",
+          "card_id": {{ card "In Progress Issues by Type" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "8d5e8dae",
+          "card_id": {{ card "In Progress Issues by Type" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.statusChangedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "597847b",
+          "card_id": {{ card "In Progress Issues by Type" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Releases" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "597847b",
+          "card_id": {{ card "Releases" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {
+        "column_settings": {
+          "[\"ref\",[\"field\",{{ field "tms_Release.name" }},null]]": {
+            "click_behavior": {
+              "type": "crossfilter",
+              "parameterMapping": {
+                "597847b": {
+                  "source": {
+                    "type": "column",
+                    "id": "name",
+                    "name": "Name"
+                  },
+                  "target": {
+                    "type": "parameter",
+                    "id": "597847b"
+                  },
+                  "id": "597847b"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "row": 4,
+      "col": 10,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Number of Developers" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "597847b",
+          "card_id": {{ card "Number of Developers" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "releaseName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "3390e64e",
+          "card_id": {{ card "Number of Developers" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "boardName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "8d5e8dae",
+          "card_id": {{ card "Number of Developers" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "statusChangedAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 14,
+      "col": 6,
+      "sizeX": 12,
+      "sizeY": 6,
+      "card_id": {{ card "Developers by Epic" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "3390e64e",
+          "card_id": {{ card "Developers by Epic" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "597847b",
+          "card_id": {{ card "Developers by Epic" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "8d5e8dae",
+          "card_id": {{ card "Developers by Epic" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskAssignment.assignedAt" }},
+              {
+                "join-alias": "Tms TaskAssignment"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    }
+  ],
+  "fields": [
+    {
+      "field": {{ field "tms_Release.name" }},
+      "type": "type/Category"
+    }
+  ]
+  "path": "/Faros CE/JIRA",
+  "priority": 9
+}
+

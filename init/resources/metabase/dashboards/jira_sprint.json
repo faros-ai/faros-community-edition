@@ -360,17 +360,15 @@
       }
     },
     {
-      "name": "Issue Activity",
+      "name": "Sprint Issue Activity",
       "description": null,
       "display": "table",
       "table_id": {{ table "tms_Task" }},
       "dataset_query": {
-        "type": "query",
         "query": {
           "source-table": {{ table "tms_Task" }},
           "joins": [
             {
-              "fields": "all",
               "source-table": {{ table "tms_Sprint" }},
               "condition": [
                 "=",
@@ -461,11 +459,34 @@
             ],
             "Jira"
           ]
-        }
+        },
+        "type": "query"
       },
       "visualization_settings": {
         "table.pivot_column": "description",
-        "table.cell_column": "points"
+        "table.cell_column": "points",
+        "table.column_formatting": [
+          {
+            "columns": [
+              "statusCategory"
+            ],
+            "type": "single",
+            "operator": "=",
+            "value": "Done",
+            "color": "#88BF4D",
+            "highlight_row": true
+          },
+          {
+            "columns": [
+              "statusCategory"
+            ],
+            "type": "single",
+            "operator": "=",
+            "value": "InProgress",
+            "color": "#509EE3",
+            "highlight_row": true
+          }
+        ]
       }
     },
     {
@@ -694,7 +715,7 @@
       }
     },
     {
-      "name": "Issues in Progress",
+      "name": "Sprint Issues in Progress",
       "description": null,
       "display": "table",
       "table_id": null,
@@ -714,17 +735,49 @@
               "widget-type": "category"
             }
           },
-          "query": "SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"points\" AS \"points\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeCategory\" AS \"typeCategory\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_Sprint\" ON \"tms_Task\".\"sprint\" = \"tms_Sprint\".\"id\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\" GROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\" AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<sprintName>>"
+          "query": "SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"points\" AS \"points\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeDetail\" AS \"typeDetail\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_Sprint\" ON \"tms_Task\".\"sprint\" = \"tms_Sprint\".\"id\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\" GROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\" AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<sprintName>>\nORDER BY \"tms_Task\".\"statusChangedAt\" DESC"
         },
         "type": "native"
       },
       "visualization_settings": {
         "table.pivot_column": "uid_2",
-        "table.cell_column": "points"
+        "table.cell_column": "points",
+        "table.column_formatting": [
+          {
+            "columns": [
+              "typeDetail"
+            ],
+            "type": "single",
+            "operator": "=",
+            "value": "Bug",
+            "color": "#EF8C8C",
+            "highlight_row": true
+          },
+          {
+            "columns": [
+              "typeDetail"
+            ],
+            "type": "single",
+            "operator": "=",
+            "value": "Story",
+            "color": "#88BF4D",
+            "highlight_row": true
+          },
+          {
+            "columns": [
+              "typeDetail"
+            ],
+            "type": "single",
+            "operator": "=",
+            "value": "Task",
+            "color": "#509EE3",
+            "highlight_row": true
+          }
+        ]
       }
     },
     {
-      "name": "Average Work In Progress",
+      "name": "Average Work In Progress in Sprint",
       "description": null,
       "display": "gauge",
       "table_id": null,
@@ -744,7 +797,7 @@
               "widget-type": "category"
             }
           },
-          "query": "SELECT avg(\"source\".\"count\") AS \"avg\"\nFROM (SELECT \"source\".\"assignee\" AS \"assignee\", count(*) AS \"count\" FROM (SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"points\" AS \"points\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeCategory\" AS \"typeCategory\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_Sprint\" ON \"tms_Task\".\"sprint\" = \"tms_Sprint\".\"id\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<sprintName>>) \"source\" GROUP BY \"source\".\"assignee\"\nORDER BY \"source\".\"assignee\" ASC) \"source\""
+          "query": "SELECT avg(\"source\".\"count\") AS \"avg\"\nFROM (SELECT \"source\".\"assignee\" AS \"assignee\", count(distinct \"uid\") AS \"count\" FROM (SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_Sprint\" ON \"tms_Task\".\"sprint\" = \"tms_Sprint\".\"id\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<sprintName>>) \"source\" GROUP BY \"source\".\"assignee\"\nORDER BY \"source\".\"assignee\" ASC) \"source\""
         },
         "type": "native"
       },
@@ -999,12 +1052,12 @@
       "col": 0,
       "sizeX": 18,
       "sizeY": 14,
-      "card_id": {{ card "Issue Activity" }},
+      "card_id": {{ card "Sprint Issue Activity" }},
       "series": [],
       "parameter_mappings": [
         {
           "parameter_id": "bb149580",
-          "card_id": {{ card "Issue Activity" }},
+          "card_id": {{ card "Sprint Issue Activity" }},
           "target": [
             "dimension",
             [
@@ -1119,12 +1172,12 @@
       "col": 0,
       "sizeX": 14,
       "sizeY": 4,
-      "card_id": {{ card "Issues in Progress" }},
+      "card_id": {{ card "Sprint Issues in Progress" }},
       "series": [],
       "parameter_mappings": [
         {
           "parameter_id": "bb149580",
-          "card_id": {{ card "Issues in Progress" }},
+          "card_id": {{ card "Sprint Issues in Progress" }},
           "target": [
             "dimension",
             [
@@ -1141,12 +1194,12 @@
       "col": 14,
       "sizeX": 4,
       "sizeY": 4,
-      "card_id": {{ card "Average Work In Progress" }},
+      "card_id": {{ card "Average Work In Progress in Sprint" }},
       "series": [],
       "parameter_mappings": [
         {
           "parameter_id": "bb149580",
-          "card_id": {{ card "Average Work In Progress" }},
+          "card_id": {{ card "Average Work In Progress in Sprint" }},
           "target": [
             "dimension",
             [

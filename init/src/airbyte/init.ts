@@ -231,11 +231,15 @@ export class AirbyteInit {
     }
   }
 
-  async updateFarosSourceVersions(concurrency?: number): Promise<void> {
+  async updateSelectSourceVersions(concurrency?: number): Promise<void> {
     const listResponse = await this.api.post('/source_definitions/list');
     const farosSourceDefs = (
       listResponse.data.sourceDefinitions as SourceDefinition[]
-    ).filter((sd) => sd.dockerRepository.startsWith('farosai/'));
+    ).filter(
+      (sd) =>
+        sd.dockerRepository.startsWith('farosai/') ||
+        sd.dockerRepository === 'airbyte/source-jira'
+    );
 
     const promises: Promise<void>[] = [];
     const limit = pLimit(concurrency || Number.POSITIVE_INFINITY);
@@ -246,8 +250,8 @@ export class AirbyteInit {
       );
       if (sourceDef.dockerImageTag !== version) {
         logger.info(
-          'Updating Faros %s source from %s to %s',
-          sourceDef.name,
+          'Updating %s source from %s to %s',
+          sourceDef.dockerRepository,
           sourceDef.dockerImageTag,
           version
         );
@@ -302,7 +306,7 @@ async function main(): Promise<void> {
     options.forceSetup
   );
   await airbyte.setupFarosDestinationDefinition();
-  await airbyte.updateFarosSourceVersions(options.airbyteApiCallsConcurrency);
+  await airbyte.updateSelectSourceVersions(options.airbyteApiCallsConcurrency);
   logger.info('Airbyte setup is complete');
 }
 

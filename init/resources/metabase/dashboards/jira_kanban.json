@@ -669,7 +669,7 @@
       "dataset_query": {
         "type": "native",
         "native": {
-          "query": "SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeDetail\" AS \"typeDetail\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nLEFT JOIN \"tms_TaskReleaseRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskReleaseRelationship\".\"task\"\nLEFT JOIN \"tms_Release\" ON \"tms_Release\".\"id\" = \"tms_TaskReleaseRelationship\".\"release\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<boardName>> AND <<statusChangedAt>> AND <<releaseName>>\nORDER BY \"tms_Task\".\"statusChangedAt\" DESC",
+          "query": "SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeDetail\" AS \"typeDetail\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nLEFT JOIN \"tms_TaskReleaseRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskReleaseRelationship\".\"task\"\nLEFT JOIN \"tms_Release\" ON \"tms_Release\".\"id\" = \"tms_TaskReleaseRelationship\".\"release\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<boardName>> AND <<statusChangedAt>> AND <<releaseName>>\nORDER BY \"tms_Task\".\"statusChangedAt\" DESC",
           "template-tags": {
             "boardName": {
               "id": "69aa1939-f031-26ec-b3b4-8f0db290e697",
@@ -755,6 +755,11 @@
             "color": "#88BF4D",
             "highlight_row": true
           }
+        ],
+        "table.column_widths": [
+          null,
+          null,
+          486
         ]
       }
     },
@@ -1687,15 +1692,6 @@
                 null
               ],
               "Jira"
-            ],
-            [
-              "=",
-              [
-                "field",
-                {{ field "tms_Task.statusCategory" }},
-                null
-              ],
-              "Done"
             ]
           ],
           "aggregation": [
@@ -2012,7 +2008,7 @@
     {
       "row": 4,
       "col": 0,
-      "sizeX": 10,
+      "sizeX": 11,
       "sizeY": 4,
       "card_id": {{ card "Work in Progress" }},
       "series": [],
@@ -2332,8 +2328,8 @@
     },
     {
       "row": 4,
-      "col": 10,
-      "sizeX": 4,
+      "col": 11,
+      "sizeX": 3,
       "sizeY": 4,
       "card_id": {{ card "Number of Developers" }},
       "series": [],

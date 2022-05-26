@@ -15,7 +15,7 @@
     source_specific_configs:
       jira:
         exclude_fields: []
-        use_board_ownership: false
+        use_board_ownership: true
       bitbucket:
         application_mapping: "{}"
       pagerduty:

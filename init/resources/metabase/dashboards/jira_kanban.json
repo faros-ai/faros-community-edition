@@ -2433,7 +2433,7 @@
       "field": {{ field "tms_Release.name" }},
       "type": "type/Category"
     }
-  ]
+  ],
   "path": "/Faros CE/JIRA",
   "priority": 9
 }

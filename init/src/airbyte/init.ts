@@ -194,7 +194,8 @@ export class AirbyteInit {
         );
       }
       throw new VError(
-        'Unable to determine latest image version of Faros Destination'
+        'Unable to determine latest image version of %s',
+        repository
       );
     }
     return version;

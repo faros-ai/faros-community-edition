@@ -552,7 +552,9 @@
       "display": "gauge",
       "table_id": null,
       "dataset_query": {
+        "type": "native",
         "native": {
+          "query": "SELECT avg(\"source\".\"count\") AS \"avg\"\nFROM (SELECT \"source\".\"assignee\" AS \"assignee\", count(distinct \"uid\") as count FROM (SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nLEFT JOIN \"tms_TaskReleaseRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskReleaseRelationship\".\"task\"\nLEFT JOIN \"tms_Release\" ON \"tms_Release\".\"id\" = \"tms_TaskReleaseRelationship\".\"release\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<boardName>> AND <<releaseName>> AND <<statusChangedAt>>) \"source\" GROUP BY \"source\".\"assignee\"\nORDER BY \"source\".\"assignee\" ASC) \"source\"",
           "template-tags": {
             "boardName": {
               "id": "e3d64aa0-4ff2-e46b-9ffd-7896455c15a8",
@@ -576,8 +578,7 @@
                 {{ field "tms_Task.statusChangedAt" }},
                 null
               ],
-              "widget-type": "date/relative",
-              "default": "past30days"
+              "widget-type": "date/relative"
             },
             "releaseName": {
               "id": "b856220e-7445-d334-77be-62b01bb7b4c6",
@@ -591,10 +592,8 @@
               ],
               "widget-type": "category"
             }
-          },
-          "query": "SELECT avg(\"source\".\"count\") AS \"avg\"\nFROM (SELECT \"source\".\"assignee\" AS \"assignee\", count(distinct \"uid\") as count FROM (SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nLEFT JOIN \"tms_TaskReleaseRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskReleaseRelationship\".\"task\"\nLEFT JOIN \"tms_Release\" ON \"tms_Release\".\"id\" = \"tms_TaskReleaseRelationship\".\"release\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<boardName>> AND <<releaseName>> AND <<statusChangedAt>>) \"source\" GROUP BY \"source\".\"assignee\"\nORDER BY \"source\".\"assignee\" ASC) \"source\""
-        },
-        "type": "native"
+          }
+        }
       },
       "visualization_settings": {
         "table.pivot_column": "avg",
@@ -667,9 +666,7 @@
       "display": "table",
       "table_id": null,
       "dataset_query": {
-        "type": "native",
         "native": {
-          "query": "SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeDetail\" AS \"typeDetail\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nLEFT JOIN \"tms_TaskReleaseRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskReleaseRelationship\".\"task\"\nLEFT JOIN \"tms_Release\" ON \"tms_Release\".\"id\" = \"tms_TaskReleaseRelationship\".\"release\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<boardName>> AND <<statusChangedAt>> AND <<releaseName>>\nORDER BY \"tms_Task\".\"statusChangedAt\" DESC",
           "template-tags": {
             "boardName": {
               "id": "69aa1939-f031-26ec-b3b4-8f0db290e697",
@@ -693,8 +690,7 @@
                 {{ field "tms_Task.statusChangedAt" }},
                 null
               ],
-              "widget-type": "date/relative",
-              "default": "past30days"
+              "widget-type": "date/relative"
             },
             "releaseName": {
               "id": "87e1a387-0ce8-dde1-64da-f53f7ce08fbb",
@@ -708,8 +704,10 @@
               ],
               "widget-type": "category"
             }
-          }
-        }
+          },
+          "query": "SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeDetail\" AS \"typeDetail\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nLEFT JOIN \"tms_TaskReleaseRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskReleaseRelationship\".\"task\"\nLEFT JOIN \"tms_Release\" ON \"tms_Release\".\"id\" = \"tms_TaskReleaseRelationship\".\"release\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<boardName>> AND <<statusChangedAt>> AND <<releaseName>>\nORDER BY \"tms_Task\".\"statusChangedAt\" DESC"
+        },
+        "type": "native"
       },
       "visualization_settings": {
         "table.pivot_column": "uid_2",
@@ -1487,9 +1485,7 @@
       "display": "scalar",
       "table_id": null,
       "dataset_query": {
-        "type": "native",
         "native": {
-          "query": "SELECT count(distinct \"source\".\"assignee\") FROM (SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeDetail\" AS \"typeDetail\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nLEFT JOIN \"tms_TaskReleaseRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskReleaseRelationship\".\"task\"\nLEFT JOIN \"tms_Release\" ON \"tms_Release\".\"id\" = \"tms_TaskReleaseRelationship\".\"release\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<boardName>> AND <<statusChangedAt>> AND <<releaseName>>\nORDER BY \"tms_Task\".\"statusChangedAt\" DESC) \"source\"",
           "template-tags": {
             "boardName": {
               "id": "69aa1939-f031-26ec-b3b4-8f0db290e697",
@@ -1513,8 +1509,7 @@
                 {{ field "tms_Task.statusChangedAt" }},
                 null
               ],
-              "widget-type": "date/relative",
-              "default": "past30days"
+              "widget-type": "date/relative"
             },
             "releaseName": {
               "id": "87e1a387-0ce8-dde1-64da-f53f7ce08fbb",
@@ -1528,8 +1523,10 @@
               ],
               "widget-type": "category"
             }
-          }
-        }
+          },
+          "query": "SELECT count(distinct \"source\".\"assignee\") FROM (SELECT \"tms_Task\".\"uid\" AS \"uid\", \"tms_User\".\"name\" AS \"assignee\", \"tms_Task\".\"name\" AS \"name\", \"tms_Task\".\"priority\" AS \"priority\", \"tms_Task\".\"createdAt\" AS \"createdAt\", \"tms_Task\".\"statusChangedAt\" AS \"statusChangedAt\", \"tms_Task\".\"typeDetail\" AS \"typeDetail\", \"tms_Task\".\"statusDetail\" AS \"statusDetail\"\nFROM \"tms_Task\"\nLEFT JOIN \"tms_TaskBoardRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskBoardRelationship\".\"task\"\nLEFT JOIN \"tms_TaskBoard\" ON \"tms_TaskBoard\".\"id\" = \"tms_TaskBoardRelationship\".\"board\" \nLEFT JOIN \"tms_TaskAssignment\" ON \"tms_Task\".\"id\" = \"tms_TaskAssignment\".\"task\"\nLEFT JOIN \"tms_TaskReleaseRelationship\" ON \"tms_Task\".\"id\" = \"tms_TaskReleaseRelationship\".\"task\"\nLEFT JOIN \"tms_Release\" ON \"tms_Release\".\"id\" = \"tms_TaskReleaseRelationship\".\"release\"\nINNER JOIN (SELECT \"tms_TaskAssignment\".\"task\", max(\"tms_TaskAssignment\".\"assignedAt\") AS \"lastAssignedAt\" FROM \"tms_TaskAssignment\"\nGROUP BY \"tms_TaskAssignment\".\"task\") \"deduped\" \nON \"tms_TaskAssignment\".\"task\" = \"deduped\".\"task\"\n   AND \"tms_TaskAssignment\".\"assignedAt\" = \"deduped\".\"lastAssignedAt\"\nLEFT JOIN \"tms_User\" ON \"tms_TaskAssignment\".\"assignee\" = \"tms_User\".\"id\"\nWHERE \"tms_Task\".\"source\" = 'Jira' AND \"tms_Task\".\"statusCategory\" = 'InProgress' AND <<boardName>> AND <<statusChangedAt>> AND <<releaseName>>\nORDER BY \"tms_Task\".\"statusChangedAt\" DESC) \"source\""
+        },
+        "type": "native"
       },
       "visualization_settings": {
         "table.pivot_column": "uid_2",
@@ -2426,8 +2423,8 @@
   ],
   "fields": [
     {
-      "field": {{ field "tms_Release.name" }},
-      "type": "type/Category"
+     "field": {{ field "tms_Release.name" }},
+     "type": "type/Category"
     }
   ],
   "path": "/Faros CE/JIRA",

@@ -2,7 +2,7 @@
   "name": "JIRA Sprint",
   "cards": [
     {
-      "name": "PointsInSprint",
+      "name": "Points In Sprint",
       "description": null,
       "display": "line",
       "table_id": null,
@@ -63,7 +63,7 @@
       }
     },
     {
-      "name": "DonePointsInSprint",
+      "name": "Done Points In Sprint",
       "description": null,
       "display": "area",
       "dataset_query": {
@@ -897,16 +897,16 @@
       "col": 0,
       "sizeX": 9,
       "sizeY": 8,
-      "card_id": {{ card "PointsInSprint" }},
+      "card_id": {{ card "Points In Sprint" }},
       "series": [
         {
-          "id": {{ card "DonePointsInSprint" }}
+          "id": {{ card "Done Points In Sprint" }}
         }
       ],
       "parameter_mappings": [
         {
           "parameter_id": "bb149580",
-          "card_id": {{ card "PointsInSprint" }},
+          "card_id": {{ card "Points In Sprint" }},
           "target": [
             "dimension",
             [
@@ -917,7 +917,7 @@
         },
         {
           "parameter_id": "bb149580",
-          "card_id": {{ card "DonePointsInSprint" }},
+          "card_id": {{ card "Done Points In Sprint" }},
           "target": [
             "dimension",
             [

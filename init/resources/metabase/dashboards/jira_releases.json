@@ -1,0 +1,800 @@
+{
+  "name": "JIRA Releases",
+  "cards": [
+    {
+      "name": "Done Issues by Epic by Release",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskReleaseRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskReleaseRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Release" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.release" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Release.id" }},
+                  {
+                    "join-alias": "Tms Release - Release"
+                  }
+                ]
+              ],
+              "alias": "Tms Release - Release"
+            }
+          ],
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "Done"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ],
+            [
+              "not-empty",
+              [
+                "field",
+                {{ field "tms_Release.id" }},
+                {
+                  "join-alias": "Tms Release - Release"
+                }
+              ]
+            ]
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "tms_Task.id" }},
+                null
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Release.releasedAt" }},
+              {
+                "temporal-unit": "day",
+                "join-alias": "Tms Release - Release"
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "source-field": {{ field "tms_Task.epic" }}
+              }
+            ]
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "field",
+                {{ field "tms_Release.releasedAt" }},
+                {
+                  "temporal-unit": "day",
+                  "join-alias": "Tms Release - Release"
+                }
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.y_axis.title_text": "",
+        "table.cell_column": "count",
+        "graph.x_axis.title_text": "Release",
+        "graph.y_axis.labels_enabled": false,
+        "graph.metrics": [
+          "count"
+        ],
+        "table.pivot_column": "name",
+        "series_settings": {
+          "count": {
+            "title": "Issues",
+            "color": "#88BF4D",
+            "line.missing": "zero"
+          },
+          "count_2": {
+            "display": "bar",
+            "title": "Developers"
+          },
+          "": {
+            "color": "#4C5773",
+            "title": "No Epic"
+          }
+        },
+        "graph.dimensions": [
+          "name",
+          "name_2"
+        ],
+        "stackable.stack_type": "stacked"
+      }
+    },
+    {
+      "name": "Done Issues by Release",
+      "description": null,
+      "display": "line",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskReleaseRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskReleaseRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Release" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.release" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Release.id" }},
+                  {
+                    "join-alias": "Tms Release - Release"
+                  }
+                ]
+              ],
+              "alias": "Tms Release - Release"
+            }
+          ],
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "Done"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ],
+            [
+              "not-empty",
+              [
+                "field",
+                {{ field "tms_Release.id" }},
+                {
+                  "join-alias": "Tms Release - Release"
+                }
+              ]
+            ]
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "tms_Task.id" }},
+                null
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Release.releasedAt" }},
+              {
+                "temporal-unit": "day",
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "field",
+                {{ field "tms_Release.releasedAt" }},
+                {
+                  "temporal-unit": "day",
+                  "join-alias": "Tms Release - Release"
+                }
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "name",
+        "table.cell_column": "count",
+        "graph.dimensions": [
+          "name"
+        ],
+        "series_settings": {
+          "count": {
+            "title": "Issues",
+            "color": "#88BF4D",
+            "line.missing": "zero"
+          },
+          "count_2": {
+            "display": "bar",
+            "title": "Developers"
+          }
+        },
+        "graph.y_axis.title_text": "",
+        "graph.y_axis.labels_enabled": false,
+        "graph.x_axis.title_text": "Release",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Developers by Release",
+      "description": null,
+      "display": "line",
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskAssignment" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskAssignment.task" }},
+                  {
+                    "join-alias": "Tms TaskAssignment"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskAssignment"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_User" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskAssignment.assignee" }},
+                  {
+                    "join-alias": "Tms TaskAssignment"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_User.id" }},
+                  {
+                    "join-alias": "Tms User - Assignee"
+                  }
+                ]
+              ],
+              "alias": "Tms User - Assignee"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskReleaseRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskReleaseRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Release" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskReleaseRelationship.release" }},
+                  {
+                    "join-alias": "Tms TaskReleaseRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Release.id" }},
+                  {
+                    "join-alias": "Tms Release - Release"
+                  }
+                ]
+              ],
+              "alias": "Tms Release - Release"
+            }
+          ],
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "Done"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ],
+            [
+              "not-empty",
+              [
+                "field",
+                {{ field "tms_Release.id" }},
+                {
+                  "join-alias": "Tms Release - Release"
+                }
+              ]
+            ]
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "tms_User.id" }},
+                {
+                  "join-alias": "Tms User - Assignee"
+                }
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Release.name" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Release.releasedAt" }},
+              {
+                "temporal-unit": "day",
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "field",
+                {{ field "tms_Release.releasedAt" }},
+                {
+                  "temporal-unit": "day",
+                  "join-alias": "Tms Release - Release"
+                }
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "name",
+        "table.cell_column": "count",
+        "graph.dimensions": [
+          "name"
+        ],
+        "series_settings": {
+          "count": {
+            "title": "Developers",
+            "color": "#A989C5",
+            "line.missing": "zero",
+            "display": "bar"
+          },
+          "count_2": {
+            "display": "bar",
+            "title": "Developers"
+          }
+        },
+        "graph.y_axis.title_text": "",
+        "graph.y_axis.labels_enabled": false,
+        "graph.x_axis.title_text": "Release",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Release End",
+      "slug": "release_end",
+      "id": "cf5dcaf1",
+      "type": "date/relative",
+      "sectionId": "date"
+    },
+    {
+      "name": "Board",
+      "slug": "board",
+      "id": "2276985d",
+      "type": "category"
+    }
+  ],
+  "layout": [
+    {
+      "row": 0,
+      "col": 9,
+      "sizeX": 9,
+      "sizeY": 9,
+      "card_id": {{ card "Done Issues by Epic by Release" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "2276985d",
+          "card_id": {{ card "Done Issues by Epic by Release" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "cf5dcaf1",
+          "card_id": {{ card "Done Issues by Epic by Release" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Release.releasedAt" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 9,
+      "sizeY": 9,
+      "card_id": {{ card "Done Issues by Release" }},
+      "series": [
+        {
+          "id": {{ card "Developers by Release" }}
+        }
+      ],
+      "parameter_mappings": [
+        {
+          "parameter_id": "2276985d",
+          "card_id": {{ card "Done Issues by Release" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "2276985d",
+          "card_id": {{ card "Developers by Release" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "cf5dcaf1",
+          "card_id": {{ card "Done Issues by Release" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Release.releasedAt" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "cf5dcaf1",
+          "card_id": {{ card "Developers by Release" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Release.releasedAt" }},
+              {
+                "join-alias": "Tms Release - Release"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {
+        "table.pivot_column": "name",
+        "table.cell_column": "count",
+        "graph.dimensions": [
+          "name"
+        ],
+        "series_settings": {
+          "count": {
+            "title": "Issues",
+            "color": "#88BF4D",
+            "line.missing": "zero",
+            "show_series_values": true
+          },
+          "count_2": {
+            "display": "bar",
+            "title": "Developers"
+          },
+          "Developers by Release": {
+            "color": "#A989C5",
+            "title": "Developers",
+            "display": "bar"
+          }
+        },
+        "graph.y_axis.title_text": "",
+        "graph.y_axis.labels_enabled": false,
+        "graph.x_axis.title_text": "Release",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    }
+  ],
+  "path": "/Faros CE/JIRAi",
+  "priority": 11
+}
+

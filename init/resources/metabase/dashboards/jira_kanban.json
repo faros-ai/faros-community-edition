@@ -1729,7 +1729,7 @@
           "name"
         ],
         "stackable.stack_type": "stacked",
-        "graph.y_axis.title_text": "Issues",
+        "graph.y_axis.title_text": "Developers",
         "graph.x_axis.title_text": "date",
         "graph.metrics": [
           "count"
@@ -2423,8 +2423,8 @@
   ],
   "fields": [
     {
-     "field": {{ field "tms_Release.name" }},
-     "type": "type/Category"
+      "field": {{ field "tms_Release.name" }},
+      "type": "type/Category"
     }
   ],
   "path": "/Faros CE/JIRA",

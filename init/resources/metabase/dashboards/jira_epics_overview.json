@@ -7,6 +7,7 @@
       "display": "bar",
       "table_id": {{ table "tms_Task" }},
       "dataset_query": {
+        "type": "query",
         "query": {
           "source-table": {{ table "tms_Task" }},
           "joins": [
@@ -76,7 +77,7 @@
             ],
             [
               "field",
-              {{ field "tms_Task.statusCategory" }},
+              {{ field "tms_Task.statusDetail" }},
               null
             ]
           ],
@@ -101,8 +102,7 @@
               "Jira"
             ]
           ]
-        },
-        "type": "query"
+        }
       },
       "visualization_settings": {
         "stackable.stack_type": "stacked",
@@ -931,7 +931,31 @@
           ]
         }
       ],
-      "visualization_settings": {}
+      "visualization_settings": {
+        "column_settings": {
+          "[\"ref\",[\"field\",{{ field "tms_Epic.name" }},null]]": {
+            "click_behavior": {
+              "targetId": {{ dashboard "JIRA Epic Detail" }},
+              "parameterMapping": {
+                "36ce6144": {
+                  "source": {
+                    "type": "column",
+                    "id": "name",
+                    "name": "Name"
+                  },
+                  "target": {
+                    "type": "parameter",
+                    "id": "36ce6144"
+                  },
+                  "id": "36ce6144"
+                }
+              },
+              "linkType": "dashboard",
+              "type": "link"
+            }
+          }
+        }
+      }
     },
     {
       "row": 0,

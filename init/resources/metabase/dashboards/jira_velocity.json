@@ -1,0 +1,686 @@
+{
+  "name": "JIRA Velocity",
+  "cards": [
+    {
+      "name": "Velocity by Sprint over Time",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "Done"
+            ],
+            [
+              "not-empty",
+              [
+                "field",
+                {{ field "tms_Task.sprint" }},
+                null
+              ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ]
+          ],
+          "aggregation": [
+            [
+              "sum",
+              [
+                "field",
+                {{ field "tms_Task.points" }},
+                null
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Sprint.name" }},
+              {
+                "source-field": {{ field "tms_Task.sprint" }}
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Sprint.endedAt" }},
+              {
+                "temporal-unit": "day",
+                "source-field": {{ field "tms_Task.sprint" }}
+              }
+            ]
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "field",
+                {{ field "tms_Sprint.endedAt" }},
+                {
+                  "temporal-unit": "day",
+                  "source-field": {{ field "tms_Task.sprint" }}
+                }
+              ]
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskProjectRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskProjectRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskProjectRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskProjectRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Project" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskProjectRelationship.project" }},
+                  {
+                    "join-alias": "Tms TaskProjectRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Project.id" }},
+                  {
+                    "join-alias": "Tms Project - Project"
+                  }
+                ]
+              ],
+              "alias": "Tms Project - Project"
+            }
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.y_axis.title_text": "Points",
+        "graph.show_values": false,
+        "stackable.stack_display": "bar",
+        "graph.x_axis.title_text": "Sprint",
+        "graph.y_axis.labels_enabled": false,
+        "graph.y_axis.auto_split": false,
+        "graph.metrics": [
+          "sum"
+        ],
+        "series_settings": {
+          "Bug": {
+            "color": "#F2A86F"
+          },
+          "Story": {
+            "color": "#88BF4D"
+          },
+          "Task": {
+            "color": "#509EE3"
+          },
+          "sum": {
+            "display": "line",
+            "line.missing": "zero",
+            "show_series_values": true,
+            "title": "Velocity"
+          },
+          "Developers by Sprint over Time": {
+            "color": "#A989C5",
+            "display": "bar",
+            "title": "Developers"
+          }
+        },
+        "graph.dimensions": [
+          "name"
+        ],
+        "stackable.stack_type": null
+      }
+    },
+    {
+      "name": "Developers by Sprint over Time",
+      "description": null,
+      "display": "line",
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "Done"
+            ],
+            [
+              "not-empty",
+              [
+                "field",
+                {{ field "tms_Task.sprint" }},
+                null
+              ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskAssignment" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskAssignment.task" }},
+                  {
+                    "join-alias": "Tms TaskAssignment"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskAssignment"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_User" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskAssignment.assignee" }},
+                  {
+                    "join-alias": "Tms TaskAssignment"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_User.id" }},
+                  {
+                    "join-alias": "Tms User - Assignee"
+                  }
+                ]
+              ],
+              "alias": "Tms User - Assignee"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskProjectRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskProjectRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskProjectRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskProjectRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Project" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskProjectRelationship.project" }},
+                  {
+                    "join-alias": "Tms TaskProjectRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Project.id" }},
+                  {
+                    "join-alias": "Tms Project - Project"
+                  }
+                ]
+              ],
+              "alias": "Tms Project - Project"
+            }
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "tms_User.id" }},
+                {
+                  "join-alias": "Tms User - Assignee"
+                }
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Sprint.name" }},
+              {
+                "source-field": {{ field "tms_Task.sprint" }}
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Sprint.endedAt" }},
+              {
+                "temporal-unit": "day",
+                "source-field": {{ field "tms_Task.sprint" }}
+              }
+            ]
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "field",
+                {{ field "tms_Sprint.endedAt" }},
+                {
+                  "temporal-unit": "day",
+                  "source-field": {{ field "tms_Task.sprint" }}
+                }
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "series_settings": {
+          "Bug": {
+            "color": "#F2A86F"
+          },
+          "Story": {
+            "color": "#88BF4D"
+          },
+          "Task": {
+            "color": "#509EE3"
+          },
+          "count": {
+            "color": "#A989C5",
+            "display": "bar"
+          }
+        },
+        "graph.x_axis.title_text": "Sprint",
+        "graph.y_axis.title_text": "Developers",
+        "graph.dimensions": [
+          "name"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Done Points by Epic by Sprint",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "Done"
+            ],
+            [
+              "not-empty",
+              [
+                "field",
+                {{ field "tms_Task.sprint" }},
+                null
+              ]
+            ]
+          ],
+          "aggregation": [
+            [
+              "sum",
+              [
+                "field",
+                {{ field "tms_Task.points" }},
+                null
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Sprint.name" }},
+              {
+                "source-field": {{ field "tms_Task.sprint" }}
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "source-field": {{ field "tms_Task.epic" }}
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Sprint.endedAt" }},
+              {
+                "temporal-unit": "day",
+                "source-field": {{ field "tms_Task.sprint" }}
+              }
+            ]
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "field",
+                {{ field "tms_Sprint.endedAt" }},
+                {
+                  "temporal-unit": "day",
+                  "source-field": {{ field "tms_Task.sprint" }}
+                }
+              ]
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskProjectRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskProjectRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskProjectRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskProjectRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_Project" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskProjectRelationship.project" }},
+                  {
+                    "join-alias": "Tms TaskProjectRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Project.id" }},
+                  {
+                    "join-alias": "Tms Project - Project"
+                  }
+                ]
+              ],
+              "alias": "Tms Project - Project"
+            }
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.y_axis.title_text": "Points",
+        "series_settings": {
+          "": {
+            "color": "#4C5773",
+            "title": "No Epic"
+          }
+        },
+        "graph.dimensions": [
+          "name",
+          "name_2"
+        ],
+        "graph.x_axis.title_text": "Sprint",
+        "graph.metrics": [
+          "sum"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Sprint End",
+      "slug": "sprint_end",
+      "id": "69c124cd",
+      "type": "date/relative",
+      "sectionId": "date",
+      "default": null
+    },
+    {
+      "name": "Project",
+      "slug": "project",
+      "id": "249c7c48",
+      "type": "category"
+    }
+  ],
+  "layout": [
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 9,
+      "sizeY": 8,
+      "card_id": {{ card "Velocity by Sprint over Time" }},
+      "series": [
+        {
+          "id": {{ card "Developers by Sprint over Time" }}
+        }
+      ],
+      "parameter_mappings": [
+        {
+          "parameter_id": "69c124cd",
+          "card_id": {{ card "Velocity by Sprint over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Sprint.endedAt" }},
+              {
+                "source-field": {{ field "tms_Task.sprint" }}
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "69c124cd",
+          "card_id": {{ card "Developers by Sprint over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Sprint.endedAt" }},
+              {
+                "source-field": {{ field "tms_Task.sprint" }}
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "249c7c48",
+          "card_id": {{ card "Velocity by Sprint over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Project.uid" }},
+              {
+                "join-alias": "Tms Project - Project"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "249c7c48",
+          "card_id": {{ card "Developers by Sprint over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Project.uid" }},
+              {
+                "join-alias": "Tms Project - Project"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {
+        "graph.y_axis.title_text": "Points",
+        "graph.show_values": false,
+        "stackable.stack_display": "bar",
+        "graph.x_axis.title_text": "Sprint",
+        "graph.y_axis.labels_enabled": false,
+        "graph.y_axis.auto_split": false,
+        "graph.metrics": [
+          "sum"
+        ],
+        "series_settings": {
+          "Bug": {
+            "color": "#F2A86F"
+          },
+          "Story": {
+            "color": "#88BF4D"
+          },
+          "Task": {
+            "color": "#509EE3"
+          },
+          "sum": {
+            "display": "line",
+            "line.missing": "zero",
+            "show_series_values": true,
+            "title": "Velocity"
+          },
+          "Developers by Sprint over Time": {
+            "color": "#A989C5",
+            "display": "bar",
+            "title": "Developers"
+          }
+        },
+        "graph.dimensions": [
+          "name"
+        ],
+        "stackable.stack_type": null
+      }
+    },
+    {
+      "row": 0,
+      "col": 9,
+      "sizeX": 9,
+      "sizeY": 8,
+      "card_id": {{ card "Done Points by Epic by Sprint" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "69c124cd",
+          "card_id": {{ card "Done Points by Epic by Sprint" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Sprint.endedAt" }},
+              {
+                "source-field": {{ field "tms_Task.sprint" }}
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "249c7c48",
+          "card_id": {{ card "Done Points by Epic by Sprint" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Project.uid" }},
+              {
+                "join-alias": "Tms Project - Project"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.y_axis.title_text": "Points",
+        "series_settings": {
+          "": {
+            "color": "#4C5773",
+            "title": "No Epic"
+          }
+        },
+        "graph.dimensions": [
+          "name",
+          "name_2"
+        ],
+        "graph.x_axis.title_text": "Sprint",
+        "graph.metrics": [
+          "sum"
+        ]
+      }
+    }
+  ],
+  "path": "/Faros CE/JIRA",
+  "priority": 10
+}
+

@@ -1,0 +1,1081 @@
+{
+  "name": "JIRA Epics Overview",
+  "cards": [
+    {
+      "name": "Issues / Points by Epic by Status",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "strategy": "right-join",
+              "source-table": {{ table "tms_Epic" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.epic" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Epic.id" }},
+                  {
+                    "join-alias": "Tms Epic - Epic"
+                  }
+                ]
+              ],
+              "alias": "Tms Epic - Epic"
+            }
+          ],
+          "expressions": {
+            "PointsImputed": [
+              "case",
+              [
+                [
+                  [
+                    "is-null",
+                    [
+                      "field",
+                      {{ field "tms_Task.points" }},
+                      null
+                    ]
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": [
+                  "field",
+                  {{ field "tms_Task.points" }},
+                  null
+                ]
+              }
+            ]
+          },
+          "aggregation": [
+            [
+              "sum",
+              [
+                "expression",
+                "PointsImputed"
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Task.statusDetail" }},
+              null
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "!=",
+              [
+                "field",
+                {{ field "tms_Task.typeDetail" }},
+                null
+              ],
+              "Epic"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "name",
+          "statusCategory"
+        ],
+        "series_settings": {
+          "Done": {
+            "color": "#A989C5"
+          },
+          "InProgress": {
+            "color": "#EF8C8C"
+          },
+          "Todo": {
+            "color": "#98D9D9"
+          }
+        },
+        "graph.y_axis.title_text": "Issues / Points",
+        "graph.x_axis.title_text": "Epic",
+        "graph.metrics": [
+          "sum"
+        ]
+      }
+    },
+    {
+      "name": "Developers by Epic over Time",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "strategy": "right-join",
+              "source-table": {{ table "tms_Epic" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.epic" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Epic.id" }},
+                  {
+                    "join-alias": "Tms Epic - Epic"
+                  }
+                ]
+              ],
+              "alias": "Tms Epic - Epic"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskAssignment" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskAssignment.task" }},
+                  {
+                    "join-alias": "Tms TaskAssignment"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskAssignment"
+            }
+          ],
+          "filter": [
+            "and",
+            [
+              "!=",
+              [
+                "field",
+                {{ field "tms_Task.typeDetail" }},
+                null
+              ],
+              "Epic"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ]
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "tms_TaskAssignment.assignee" }},
+                {
+                  "join-alias": "Tms TaskAssignment"
+                }
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_TaskAssignment.assignedAt" }},
+              {
+                "join-alias": "Tms TaskAssignment",
+                "temporal-unit": "week"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "assignedAt",
+          "name"
+        ],
+        "graph.x_axis.title_text": "date",
+        "graph.y_axis.title_text": "Developers",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Epics",
+      "description": null,
+      "display": "table",
+      "table_id": {{ table "tms_Epic" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Epic" }},
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Epic.source" }},
+                null
+              ],
+              "Jira"
+            ],
+            [
+              "not-empty",
+              [
+                "field",
+                {{ field "tms_Epic.name" }},
+                null
+              ]
+            ]
+          ],
+          "joins": [
+            {
+              "fields": [
+                [
+                  "field",
+                  {{ field "tms_Task.statusChangedAt" }},
+                  {
+                    "join-alias": "Tms Task"
+                  }
+                ]
+              ],
+              "source-table": {{ table "tms_Task" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Epic.uid" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Task.uid" }},
+                  {
+                    "join-alias": "Tms Task"
+                  }
+                ]
+              ],
+              "alias": "Tms Task"
+            }
+          ],
+          "fields": [
+            [
+              "field",
+              {{ field "tms_Epic.uid" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "tms_Epic.statusDetail" }},
+              null
+            ]
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "field",
+                {{ field "tms_Task.statusChangedAt" }},
+                {
+                  "join-alias": "Tms Task"
+                }
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.column_formatting": [
+          {
+            "columns": [],
+            "type": "single",
+            "operator": "=",
+            "value": "",
+            "color": "#509EE3",
+            "highlight_row": false
+          }
+        ],
+        "table.pivot_column": "statusDetail",
+        "table.cell_column": "statusChangedAt",
+        "column_settings": {
+          "[\"ref\",[\"field\",{{ field "tms_Task.statusChangedAt" }},null]]": {
+            "column_title": "StatusChangedAt"
+          }
+        }
+      }
+    },
+    {
+      "name": "Completion by Epic",
+      "description": null,
+      "display": "row",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "strategy": "right-join",
+              "source-table": {{ table "tms_Epic" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.epic" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Epic.id" }},
+                  {
+                    "join-alias": "Tms Epic - Epic"
+                  }
+                ]
+              ],
+              "alias": "Tms Epic - Epic"
+            }
+          ],
+          "expressions": {
+            "PointsImputed": [
+              "case",
+              [
+                [
+                  [
+                    "is-null",
+                    [
+                      "field",
+                      {{ field "tms_Task.points" }},
+                      null
+                    ]
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": [
+                  "field",
+                  {{ field "tms_Task.points" }},
+                  null
+                ]
+              }
+            ]
+          },
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "sum-where",
+                  [
+                    "expression",
+                    "PointsImputed"
+                  ],
+                  [
+                    "=",
+                    [
+                      "field",
+                      {{ field "tms_Task.statusCategory" }},
+                      null
+                    ],
+                    "Done"
+                  ]
+                ],
+                [
+                  "sum",
+                  [
+                    "expression",
+                    "PointsImputed"
+                  ]
+                ]
+              ],
+              {
+                "name": "Completion",
+                "display-name": "Completion"
+              }
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "!=",
+              [
+                "field",
+                {{ field "tms_Task.typeDetail" }},
+                null
+              ],
+              "Epic"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ]
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "field",
+                {{ field "tms_Epic.name" }},
+                {
+                  "join-alias": "Tms Epic - Epic"
+                }
+              ]
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "name"
+        ],
+        "series_settings": {
+          "Completion": {
+            "color": "#98D9D9"
+          }
+        },
+        "column_settings": {
+          "[\"name\",\"Completion\"]": {
+            "number_style": "percent"
+          }
+        },
+        "graph.metrics": [
+          "Completion"
+        ]
+      }
+    },
+    {
+      "name": "Assignments by Epic",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "strategy": "right-join",
+              "source-table": {{ table "tms_Epic" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.epic" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Epic.id" }},
+                  {
+                    "join-alias": "Tms Epic - Epic"
+                  }
+                ]
+              ],
+              "alias": "Tms Epic - Epic"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskAssignment" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskAssignment.task" }},
+                  {
+                    "join-alias": "Tms TaskAssignment"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskAssignment"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_User" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskAssignment.assignee" }},
+                  {
+                    "join-alias": "Tms TaskAssignment"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_User.id" }},
+                  {
+                    "join-alias": "Tms User - Assignee"
+                  }
+                ]
+              ],
+              "alias": "Tms User - Assignee"
+            }
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_User.name" }},
+              {
+                "join-alias": "Tms User - Assignee"
+              }
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "!=",
+              [
+                "field",
+                {{ field "tms_Task.typeDetail" }},
+                null
+              ],
+              "Epic"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ],
+            [
+              "not-empty",
+              [
+                "field",
+                {{ field "tms_User.name" }},
+                {
+                  "join-alias": "Tms User - Assignee"
+                }
+              ]
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "name",
+          "name_2"
+        ],
+        "series_settings": {
+          "Done": {
+            "color": "#A989C5"
+          },
+          "InProgress": {
+            "color": "#EF8C8C"
+          },
+          "Todo": {
+            "color": "#98D9D9"
+          }
+        },
+        "graph.y_axis.title_text": "Issues / Points",
+        "graph.x_axis.title_text": "Epic",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Done Issues / Points by Epic over Time",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "joins": [
+            {
+              "fields": "all",
+              "strategy": "right-join",
+              "source-table": {{ table "tms_Epic" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.epic" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_Epic.id" }},
+                  {
+                    "join-alias": "Tms Epic - Epic"
+                  }
+                ]
+              ],
+              "alias": "Tms Epic - Epic"
+            }
+          ],
+          "expressions": {
+            "PointsImputed": [
+              "case",
+              [
+                [
+                  [
+                    "is-null",
+                    [
+                      "field",
+                      {{ field "tms_Task.points" }},
+                      null
+                    ]
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": [
+                  "field",
+                  {{ field "tms_Task.points" }},
+                  null
+                ]
+              }
+            ]
+          },
+          "aggregation": [
+            [
+              "sum",
+              [
+                "expression",
+                "PointsImputed"
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Task.statusChangedAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "!=",
+              [
+                "field",
+                {{ field "tms_Task.typeDetail" }},
+                null
+              ],
+              "Epic"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.source" }},
+                null
+              ],
+              "Jira"
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusCategory" }},
+                null
+              ],
+              "Done"
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "statusChangedAt",
+          "name"
+        ],
+        "series_settings": {
+          "Done": {
+            "color": "#A989C5"
+          },
+          "InProgress": {
+            "color": "#EF8C8C"
+          },
+          "Todo": {
+            "color": "#98D9D9"
+          }
+        },
+        "graph.y_axis.title_text": "Points / Issues",
+        "graph.x_axis.title_text": "date",
+        "graph.metrics": [
+          "sum"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Epic Status",
+      "slug": "epic_status",
+      "id": "e8a5bb2d",
+      "type": "category",
+      "default": [
+        "In Progress"
+      ]
+    },
+    {
+      "name": "Epic",
+      "slug": "epic",
+      "id": "adf5017a",
+      "type": "category"
+    }
+  ],
+  "layout": [
+    {
+      "row": 4,
+      "col": 0,
+      "sizeX": 9,
+      "sizeY": 5,
+      "card_id": {{ card "Issues / Points by Epic by Status" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "adf5017a",
+          "card_id": {{ card "Issues / Points by Epic by Status" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "e8a5bb2d",
+          "card_id": {{ card "Issues / Points by Epic by Status" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Epic.statusDetail" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 9,
+      "col": 9,
+      "sizeX": 9,
+      "sizeY": 5,
+      "card_id": {{ card "Developers by Epic over Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "e8a5bb2d",
+          "card_id": {{ card "Developers by Epic over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Epic.statusDetail" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "adf5017a",
+          "card_id": {{ card "Developers by Epic over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 9,
+      "sizeY": 4,
+      "card_id": {{ card "Epics" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "e8a5bb2d",
+          "card_id": {{ card "Epics" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Epic.statusDetail" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "adf5017a",
+          "card_id": {{ card "Epics" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {
+        "column_settings": {
+          "[\"ref\",[\"field\",{{ field "tms_Epic.name" }},null]]": {
+            "click_behavior": {
+              "targetId": {{ dashboard "JIRA Epic Detail" }},
+              "parameterMapping": {
+                "36ce6144": {
+                  "source": {
+                    "type": "column",
+                    "id": "name",
+                    "name": "Name"
+                  },
+                  "target": {
+                    "type": "parameter",
+                    "id": "36ce6144"
+                  },
+                  "id": "36ce6144"
+                }
+              },
+              "linkType": "dashboard",
+              "type": "link"
+            }
+          }
+        }
+      }
+    },
+    {
+      "row": 0,
+      "col": 9,
+      "sizeX": 9,
+      "sizeY": 4,
+      "card_id": {{ card "Completion by Epic" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "e8a5bb2d",
+          "card_id": {{ card "Completion by Epic" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Epic.statusDetail" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "adf5017a",
+          "card_id": {{ card "Completion by Epic" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 9,
+      "sizeX": 9,
+      "sizeY": 5,
+      "card_id": {{ card "Assignments by Epic" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "e8a5bb2d",
+          "card_id": {{ card "Assignments by Epic" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Epic.statusDetail" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "adf5017a",
+          "card_id": {{ card "Assignments by Epic" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 9,
+      "col": 0,
+      "sizeX": 9,
+      "sizeY": 5,
+      "card_id": {{ card "Done Issues / Points by Epic over Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "e8a5bb2d",
+          "card_id": {{ card "Done Issues / Points by Epic over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Epic.statusDetail" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "adf5017a",
+          "card_id": {{ card "Done Issues / Points by Epic over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Epic.name" }},
+              {
+                "join-alias": "Tms Epic - Epic"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    }
+  ],
+  "path": "/Faros CE/JIRA",
+  "priority": 12
+}
+

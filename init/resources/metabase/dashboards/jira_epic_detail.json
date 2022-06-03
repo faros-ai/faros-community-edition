@@ -1242,9 +1242,10 @@
           "sum": {
             "color": "#88BF4D",
             "display": "area",
-            "line.missing": "zero",
+            "line.missing": "interpolate",
             "axis": "left",
-            "show_series_values": true
+            "show_series_values": true,
+            "line.interpolate": "linear"
           },
           "Cumulative Issues / Points over Time": {
             "color": "#EF8C8C",

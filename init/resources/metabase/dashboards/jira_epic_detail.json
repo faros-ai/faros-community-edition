@@ -1225,7 +1225,7 @@
         "graph.y_axis.title_text": "",
         "stackable.stack_display": "area",
         "graph.x_axis.title_text": "date",
-        "graph.y_axis.auto_split": true,
+        "graph.y_axis.auto_split": false,
         "graph.metrics": [
           "sum"
         ],
@@ -1240,13 +1240,25 @@
             "color": "#98D9D9"
           },
           "sum": {
-            "color": "#88BF4D"
+            "color": "#88BF4D",
+            "display": "area",
+            "line.missing": "interpolate",
+            "axis": "left",
+            "show_series_values": true,
+            "line.interpolate": "linear"
           },
           "Cumulative Issues / Points over Time": {
-            "color": "#EF8C8C"
+            "color": "#EF8C8C",
+            "display": "line",
+            "axis": "left",
+            "line.interpolate": "linear",
+            "show_series_values": true
           },
           "Developers over Time": {
-            "color": "#4C5773"
+            "color": "#4C5773",
+            "display": "line",
+            "axis": "right",
+            "line.interpolate": "linear"
           }
         },
         "graph.y_axis.auto_range": true,

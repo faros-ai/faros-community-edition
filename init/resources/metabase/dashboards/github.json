@@ -1083,6 +1083,17 @@
                 ],
                 "alias": "Vcs PullRequestReview"
               }
+            ],
+            "filter": [
+              "=",
+              [
+                "field",
+                {{ field "vcs_Organization.source" }},
+                {
+                  "join-alias": "Vcs Organization - Organization"
+                }
+              ],
+              "GitHub"
             ]
           },
           "aggregation": [
@@ -1098,18 +1109,6 @@
                 "base-type": "type/Float"
               }
             ]
-          ],
-          "filter": [
-            "time-interval",
-            [
-              "field",
-              "mergedAt",
-              {
-                "base-type": "type/DateTimeWithLocalTZ"
-              }
-            ],
-            -30,
-            "day"
           ]
         }
       },

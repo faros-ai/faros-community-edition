@@ -17,16 +17,16 @@ async function main(): Promise<void> {
     .requiredOption('--database <string>')
     .addOption(
       new Option('--export <dashboardId>')
-        .conflicts('import-one')
-        .conflicts('import-new')
+        .conflicts('importOne')
+        .conflicts('importNew')
     )
     .addOption(
       new Option('--import-one <filename>')
         .conflicts('export')
-        .conflicts('import-new')
+        .conflicts('importNew')
     )
     .addOption(
-      new Option('--import-new').conflicts('export').conflicts('import-one')
+      new Option('--import-new').conflicts('export').conflicts('importOne')
     )
     .addOption(new Option('--sync-schema'));
 

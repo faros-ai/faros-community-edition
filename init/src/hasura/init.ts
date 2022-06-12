@@ -322,7 +322,7 @@ export class HasuraInit {
       // The query collection from resources doesn't exist in the metadata.
       // Safely create a new query collection.
       this.logger.info(
-        'Creating query collection \'%s\'. %d queries added',
+        "Creating query collection '%s'. %d queries added",
         queryCollectionFromResources.name,
         queryCollectionFromResources.definition.queries.length
       );
@@ -350,7 +350,7 @@ export class HasuraInit {
 
       if (toAdd.length > 0) {
         this.logger.info(
-          'Updating query collection \'%s\'. %d queries added.',
+          "Updating query collection '%s'. %d queries added.",
           queryCollectionFromResources.name,
           toAdd.length
         );

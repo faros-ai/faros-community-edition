@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: n8n
+  labels:
+    app.kubernetes.io/name: n8n
+    app.kubernetes.io/instance: n8n
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: n8n
+      app.kubernetes.io/instance: n8n
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: n8n
+        app.kubernetes.io/instance: n8n
+    spec:
+      containers:
+        - name: n8n
+          image: n8nio/n8n:0.164.1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: N8N_PORT
+              value: "5678"
+            - name: DB_TYPE
+              value: "postgresdb"
+            - name: DB_POSTGRESDB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_HOST
+            - name: DB_POSTGRESDB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_PORT
+            - name: DB_POSTGRESDB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: N8N_DB_NAME
+            - name: DB_POSTGRESDB_SCHEMA
+              value: public
+            - name: DB_POSTGRESDB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_USER
+            - name: DB_POSTGRESDB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_PASSWORD
+            - name: N8N_PERSONALIZATION_ENABLED
+              value: "false"
+            - name: N8N_DIAGNOSTICS_ENABLED
+              value: "false"
+            - name: N8N_VERSION_NOTIFICATIONS_ENABLED
+              value: "false"
+          ports:
+            - name: http
+              containerPort: 5678
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http

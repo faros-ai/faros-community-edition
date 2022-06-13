@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airbyte-db
+  labels:
+    app.kubernetes.io/name: airbyte-db
+    app.kubernetes.io/component: database
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: airbyte-db
+      app.kubernetes.io/component: database
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: airbyte-db
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+        - name: airbyte-db-container
+          env:
+            - name: CONFIG_DATABASE_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: CONFIG_DATABASE_PASSWORD
+                  optional: true
+            - name: CONFIG_DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: CONFIG_DATABASE_URL
+                  optional: true
+            - name: CONFIG_DATABASE_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: CONFIG_DATABASE_USER
+                  optional: true
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: DATABASE_PASSWORD
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: DATABASE_URL
+            - name: DATABASE_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: DATABASE_USER
+            - name: POSTGRES_PASSWORD
+              value: ""
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: DATABASE_PASSWORD
+            - name: POSTGRES_USER
+              value: ""
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: DATABASE_USER
+            - name: POSTGRES_DB
+              $patch: delete

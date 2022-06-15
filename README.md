@@ -4,8 +4,8 @@
 
 Faros Community Edition (CE) is an open-source engineering operations platform that connects the dots between all your operational data sources for a single-pane view across the software development life cycle.
 
-![Metrics](img/metrics.png)
-
+![DORA Metrics](img/dora_metrics.png)
+![JIRA Metrics](img/jira_metrics.png)
 ## 🏁 Quickstart
 
 Follow our [🏁 Quickstart Guide](https://community.faros.ai/docs/quickstart) to connect your engineering systems and explore the metrics, all in a matter of minutes!

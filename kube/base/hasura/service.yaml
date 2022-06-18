@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: hasura
     app.kubernetes.io/component: service
 spec:
-  type:  ClusterIP
+  type: ClusterIP
   selector:
     app.kubernetes.io/name: hasura
   ports:

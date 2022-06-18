@@ -25,3 +25,43 @@ configMapGenerator:
     behavior: merge
     envs:
       - ./faros/config/.k8s.env
+replacements:
+  - source:
+      kind: ConfigMap
+      name: faros-config
+      fieldPath: data.HASURA_VERSION
+    targets:
+      - select:
+          kind: Deployment
+          name: hasura
+        fieldPaths:
+          - spec.template.spec.containers.[name=hasura].image
+        options:
+          delimiter: ":"
+          index: 1
+  - source:
+      kind: ConfigMap
+      name: faros-config
+      fieldPath: data.METABASE_VERSION
+    targets:
+      - select:
+          kind: Deployment
+          name: metabase
+        fieldPaths:
+          - spec.template.spec.containers.[name=metabase].image
+        options:
+          delimiter: ":"
+          index: 1
+  - source:
+      kind: ConfigMap
+      name: faros-config
+      fieldPath: data.N8N_VERSION
+    targets:
+      - select:
+          kind: Deployment
+          name: n8n
+        fieldPaths:
+          - spec.template.spec.containers.[name=n8n].image
+        options:
+          delimiter: ":"
+          index: 1

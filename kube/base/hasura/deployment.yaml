@@ -18,7 +18,9 @@ spec:
     spec:
       containers:
         - name: hasura
-          image: hasura/graphql-engine:v2.1.1
+          # This is being sourced from HASURA_VERSION env value from faros-config
+          # and replace by Kustomization using the "replacements" feature
+          image: hasura/graphql-engine:placeholder
           imagePullPolicy: IfNotPresent
           env:
             - name: FAROS_DB_USER

@@ -18,7 +18,9 @@ spec:
     spec:
       containers:
         - name: metabase
-          image: metabase/metabase:v0.41.6
+          # This is being sourced from METABASE_VERSION env value from faros-config
+          # and replace by Kustomization using the "replacements" feature
+          image: metabase/metabase:placeholder
           env:
             - name: MUID
               value: "1000"

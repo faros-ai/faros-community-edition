@@ -18,7 +18,9 @@ spec:
     spec:
       containers:
         - name: n8n
-          image: n8nio/n8n:0.164.1
+          # This is being sourced from N8N_VERSION env value from faros-config
+          # and replace by Kustomization using the "replacements" feature
+          image: n8nio/n8n:placeholder
           imagePullPolicy: IfNotPresent
           env:
             - name: N8N_PORT

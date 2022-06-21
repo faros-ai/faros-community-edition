@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: metabase
     app.kubernetes.io/component: service
 spec:
-  type:  ClusterIP
+  type: ClusterIP
   selector:
     app.kubernetes.io/name: metabase
   ports:

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  metabase
+  name: metabase
   labels:
     app.kubernetes.io/name: metabase
     app.kubernetes.io/component: analytics
@@ -33,7 +33,7 @@ spec:
                   key: METABASE_DB_NAME
             - name: MB_ANON_TRACKING_ENABLED
               value: "false"
-            - name: MB_DB_TYPE 
+            - name: MB_DB_TYPE
               value: "postgres"
             - name: MB_SEND_EMAIL_ON_FIRST_LOGIN_FROM_NEW_DEVICE
               value: "false"

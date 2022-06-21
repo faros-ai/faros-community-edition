@@ -7,10 +7,10 @@ We provide all required Kubernetes manifests for a full stack deployment in this
 Provided you have have access to a Kubernetes cluster and have configured access to it via `kubectl`, FarosCE can be deployed with the following command:
 
 ```base
-kustomize build --load-restrictor LoadRestrictionsNone https://github.com/saviogl/faros-community-edition/kube/base | kubectl apply -f -
+kustomize build --load-restrictor LoadRestrictionsNone https://github.com/faros-ai/faros-community-edition/kube/base | kubectl apply -f -
 ```
 
-Kustomize will load the deployment definition in this reposirotry over Github, build the manifests and pipe them over to `kubectl` for deployment in the configured cluster.
+Kustomize will load the deployment definition in this repository over Github, build the manifests and pipe them over to `kubectl` for deployment in the configured cluster.
 
 To access the deployed applications you can port forward onto the relevant services, for example:
 
@@ -29,16 +29,16 @@ kubectl port-forward svc/n8n 5678:80
 
 ### Using kustomization.yaml file
 
-For a more declaritve and GitOps friendly deployment approach you can create your own local `kustomization.yaml` file, put it under a source control system and reference the same path in the resources attribute.
+For a more declarative and GitOps friendly deployment approach you can create your own local `kustomization.yaml` file, put it under a source control system and reference the same path in the resources attribute.
 
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - https://github.com/saviogl/faros-community-edition/kube/base
+  - https://github.com/faros-ai/faros-community-edition/kube/base
 ```
 
-> This allow you to customize the Kubernetes resources objects in any way you want to meet whatever desired cluster requiremenets you might have
+> This allow you to customize the Kubernetes resources objects in any way you want to meet whatever desired cluster requirements you might have
 
 With this file available you can run the following command from the same path to build and apply the manifests:
 

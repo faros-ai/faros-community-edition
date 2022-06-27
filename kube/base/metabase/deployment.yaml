@@ -19,7 +19,7 @@ spec:
       containers:
         - name: metabase
           # This is being sourced from METABASE_VERSION env value from faros-config
-          # and replace by Kustomization using the "replacements" feature
+          # and replaced by Kustomization using the "replacements" feature
           image: metabase/metabase:placeholder
           env:
             - name: MUID

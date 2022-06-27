@@ -38,7 +38,7 @@ resources:
   - https://github.com/faros-ai/faros-community-edition/kube/base
 ```
 
-> This allow you to customize the Kubernetes resources objects in any way you want to meet whatever desired cluster requirements you might have
+> This allows you to customize the Kubernetes resources objects in any way you want to meet whatever desired cluster requirements you might have
 
 With this file available you can run the following command from the same path to build and apply the manifests:
 

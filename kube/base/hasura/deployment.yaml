@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hasura
+  labels:
+    app.kubernetes.io/name: hasura
+    app.kubernetes.io/component: api
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hasura
+      app.kubernetes.io/component: api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hasura
+        app.kubernetes.io/component: api
+    spec:
+      containers:
+        - name: hasura
+          # This is being sourced from HASURA_VERSION env value from faros-config
+          # and replaced by Kustomization using the "replacements" feature
+          image: hasura/graphql-engine:placeholder
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: FAROS_DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_DB_USER
+            - name: FAROS_DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_DB_PASSWORD
+            - name: FAROS_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_DB_HOST
+            - name: FAROS_DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_DB_PORT
+            - name: FAROS_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_DB_NAME
+            - name: FAROS_CONFIG_DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_USER
+            - name: FAROS_CONFIG_DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_PASSWORD
+            - name: FAROS_CONFIG_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_HOST
+            - name: FAROS_CONFIG_DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_PORT
+            - name: HASURA_GRAPHQL_ADMIN_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: HASURA_GRAPHQL_ADMIN_SECRET
+            - name: HASURA_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: HASURA_DB_NAME
+            - name: HASURA_GRAPHQL_DATABASE_URL
+              value: postgres://$(FAROS_DB_USER):$(FAROS_DB_PASSWORD)@$(FAROS_DB_HOST):$(FAROS_DB_PORT)/$(FAROS_DB_NAME)
+            - name: HASURA_GRAPHQL_DEV_MODE
+              value: "false"
+            - name: HASURA_GRAPHQL_ENABLED_LOG_TYPES
+              value: startup
+            - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+              value: "true"
+            - name: HASURA_GRAPHQL_ENABLE_TELEMETRY
+              value: "false"
+            - name: HASURA_GRAPHQL_METADATA_DATABASE_URL
+              value: postgres://$(FAROS_CONFIG_DB_USER):$(FAROS_CONFIG_DB_PASSWORD)@$(FAROS_CONFIG_DB_HOST):$(FAROS_CONFIG_DB_PORT)/$(HASURA_DB_NAME)
+          ports:
+            - containerPort: 8080
+              name: http

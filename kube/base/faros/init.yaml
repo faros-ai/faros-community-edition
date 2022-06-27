@@ -1,0 +1,126 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: faros-init
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: faros-init
+          image: farosai.docker.scarf.sh/farosai/faros-ce-init:latest
+          env:
+            - name: AIRBYTE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: AIRBYTE_URL
+            - name: AIRBYTE_FORCE_SETUP
+              value: "false"
+            - name: AIRBYTE_DESTINATION_HASURA_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: HASURA_URL
+            - name: FAROS_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_DB_HOST
+            - name: FAROS_DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_DB_PORT
+            - name: FAROS_DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_DB_PASSWORD
+            - name: FAROS_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_DB_NAME
+            - name: FAROS_DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_DB_USER
+            - name: FAROS_CONFIG_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_HOST
+            - name: FAROS_CONFIG_DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_PORT
+            - name: FAROS_CONFIG_DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_USER
+            - name: FAROS_CONFIG_DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_PASSWORD
+            - name: HASURA_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: HASURA_DB_NAME
+            - name: HASURA_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: HASURA_URL
+            - name: HASURA_GRAPHQL_ADMIN_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: HASURA_GRAPHQL_ADMIN_SECRET
+            - name: HASURA_GRAPHQL_DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: HASURA_GRAPHQL_DATABASE_URL
+                  optional: true
+            - name: METABASE_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: METABASE_DB_NAME
+            - name: METABASE_FAROS_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: METABASE_FAROS_DB_HOST
+            - name: METABASE_USE_SSL
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: METABASE_USE_SSL
+            - name: METABASE_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: METABASE_PASSWORD
+            - name: METABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: METABASE_URL
+            - name: METABASE_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: METABASE_USER
+            - name: N8N_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: N8N_DB_NAME

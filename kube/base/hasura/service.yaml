@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: hasura
+  labels:
+    app.kubernetes.io/name: hasura
+    app.kubernetes.io/component: service
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: hasura
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

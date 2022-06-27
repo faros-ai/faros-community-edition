@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metabase
+  labels:
+    app.kubernetes.io/name: metabase
+    app.kubernetes.io/component: analytics
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: metabase
+      app.kubernetes.io/component: analytics
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: metabase
+        app.kubernetes.io/component: analytics
+    spec:
+      containers:
+        - name: metabase
+          # This is being sourced from METABASE_VERSION env value from faros-config
+          # and replaced by Kustomization using the "replacements" feature
+          image: metabase/metabase:placeholder
+          env:
+            - name: MUID
+              value: "1000"
+            - name: MGID
+              value: "1000"
+            - name: MB_DB_DBNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: METABASE_DB_NAME
+            - name: MB_ANON_TRACKING_ENABLED
+              value: "false"
+            - name: MB_DB_TYPE
+              value: "postgres"
+            - name: MB_SEND_EMAIL_ON_FIRST_LOGIN_FROM_NEW_DEVICE
+              value: "false"
+            - name: MB_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_HOST
+            - name: MB_DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_PORT
+            - name: MB_PASSWORD_COMPLEXITY
+              value: weak
+            - name: MB_PASSWORD_LENGTH
+              value: "1"
+            - name: MB_DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_USER
+            - name: MB_DB_PASS
+              valueFrom:
+                configMapKeyRef:
+                  name: faros-config
+                  key: FAROS_CONFIG_DB_PASSWORD
+          ports:
+            - containerPort: 3000
+              name: http
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000

@@ -21,12 +21,26 @@ jobs:
           ignore: wait-for
         env:
           SHELLCHECK_OPTS: -s bash -e SC2162 -e SC2153
-
+    
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
           node-version: 17
 
+      - name: Check .env drift
+        run: |
+          result=$(cmp --silent .env kube/base/faros/config/.env; echo $?)
+          if [[ $result -ne 0 ]]; then
+            echo "####"
+            echo "# Drift detected on configuration"
+            echo "# Ensure that 'kube/base/faros/config/.env' is identical to '.env'"
+            echo "# Execute 'cp -f .env kube/base/faros/config/.env' to sync the files"
+            echo "####"
+            exit $result
+          else
+            echo "No drift detected"
+          fi
+          
       - name: Build
         run: npm ci --unsafe-perm
         working-directory: init

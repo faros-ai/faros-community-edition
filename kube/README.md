@@ -7,10 +7,10 @@ We provide all required Kubernetes manifests for a full stack deployment in this
 Provided you have have access to a Kubernetes cluster and have configured access to it via `kubectl`, FarosCE can be deployed with the following command:
 
 ```base
-kustomize build --load-restrictor LoadRestrictionsNone https://github.com/faros-ai/faros-community-edition/kube/base | kubectl apply -f -
+kubectl apply -k https://github.com/faros-ai/faros-community-edition/kube/base
 ```
 
-Kustomize will load the deployment definition in this repository over Github, build the manifests and pipe them over to `kubectl` for deployment in the configured cluster.
+Kustomize will load the deployment definition in this repository over Github, build the manifests and deploy in the configured cluster.
 
 To access the deployed applications you can port forward onto the relevant services, for example:
 
@@ -43,5 +43,13 @@ resources:
 With this file available you can run the following command from the same path to build and apply the manifests:
 
 ```yaml
-kustomize build --load-restrictor LoadRestrictionsNone . | kubectl apply -f -
+kubectl apply -k .
+```
+
+### Using local files
+
+You can clone the repository, and then run:
+
+```base
+kubectl apply -k kube/base
 ```

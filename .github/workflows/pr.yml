@@ -21,7 +21,7 @@ jobs:
           ignore: wait-for
         env:
           SHELLCHECK_OPTS: -s bash -e SC2162 -e SC2153
-    
+
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
@@ -40,7 +40,7 @@ jobs:
           else
             echo "No drift detected"
           fi
-          
+
       - name: Build
         run: npm ci --unsafe-perm
         working-directory: init

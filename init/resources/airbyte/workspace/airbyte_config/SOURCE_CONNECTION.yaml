@@ -1,12 +1,15 @@
 ---
 - name: "GitHub"
-  sourceDefinitionId: "0eba3d46-6b9f-48de-baf5-63632f5eca50"
+  sourceDefinitionId: "9bef3b40-e2c3-46c0-a792-54580f876d18"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
-  sourceId: "9351447a-a59d-4a2e-b13b-f179d6b33e4c"
+  sourceId: "5d9079ca-8173-406f-bfdb-41f19c62daff"
   configuration:
-    feed_cfg:
-      feed_name: "github-feed"
-      feed_path: "vcs/github-feed"
+    repository: ""
+    start_date: "2022-01-01T00:00:00Z"
+    credentials:
+      option_title: "PAT Credentials"
+      personal_access_token: ""
+    page_size_for_large_streams: 10
   tombstone: false
 - name: "Jira"
   sourceDefinitionId: "68e63de2-bb83-4c7e-93fa-a8a9051e3993"
@@ -14,9 +17,9 @@
   sourceId: "22852029-670c-4296-958e-c581fa76ae98"
   configuration:
     email: ""
-    domain: "my jira domain"
+    domain: ""
     projects: []
-    api_token: "my jira api token"
+    api_token: ""
     start_date: "2022-01-01T00:00:00Z"
     render_fields: true
     expand_issue_changelog: true
@@ -27,9 +30,9 @@
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
   sourceId: "59c74ca4-8cbb-4c65-8cb7-66bf771190fb"
   configuration:
-    groups: "a"
+    groups: ""
     api_url: ""
-    projects: " "
+    projects: ""
     start_date: "2022-01-01T00:00:00Z"
     private_token: ""
   tombstone: false

@@ -11,20 +11,6 @@
       personal_access_token: ""
     page_size_for_large_streams: 10
   tombstone: false
-- name: "Jira"
-  sourceDefinitionId: "68e63de2-bb83-4c7e-93fa-a8a9051e3993"
-  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
-  sourceId: "22852029-670c-4296-958e-c581fa76ae98"
-  configuration:
-    email: ""
-    domain: ""
-    projects: []
-    api_token: ""
-    start_date: "2022-01-01T00:00:00Z"
-    render_fields: true
-    expand_issue_changelog: true
-    enable_experimental_streams: true
-  tombstone: false
 - name: "GitLab"
   sourceDefinitionId: "5e6175e5-68e1-4c17-bff9-56103bbb0d80"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
@@ -55,6 +41,20 @@
     token: ""
     server_url: ""
     cutoff_days: 90
+  tombstone: false
+- name: "Jira"
+  sourceDefinitionId: "68e63de2-bb83-4c7e-93fa-a8a9051e3993"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "22852029-670c-4296-958e-c581fa76ae98"
+  configuration:
+    email: ""
+    domain: ""
+    projects: []
+    api_token: ""
+    start_date: "2022-01-01T00:00:00Z"
+    render_fields: true
+    expand_issue_changelog: true
+    enable_experimental_streams: true
   tombstone: false
 - name: "Buildkite"
   sourceDefinitionId: "431b2890-39cb-4138-bc30-7dccdd0b94e0"

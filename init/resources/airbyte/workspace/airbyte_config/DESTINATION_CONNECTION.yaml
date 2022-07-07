@@ -1,5 +1,5 @@
 ---
-- name: "My Faros Destination"
+- name: "Faros Destination"
   destinationDefinitionId: "6c6366b8-11f9-419a-8cdc-9209def71e1f"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"

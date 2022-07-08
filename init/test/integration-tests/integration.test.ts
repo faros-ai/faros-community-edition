@@ -31,7 +31,7 @@ describe('integration tests', () => {
     expect(await airbyteClient.checkDestinationConnection(destinationId)).toBe(
       true
     );
-  });
+  }, 60 * 1000);
 
   test(
     'verify writes in Hasura',

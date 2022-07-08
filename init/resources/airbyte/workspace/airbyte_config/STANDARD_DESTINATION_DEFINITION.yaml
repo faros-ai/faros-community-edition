@@ -2110,7 +2110,7 @@
 - destinationDefinitionId: "6c6366b8-11f9-419a-8cdc-9209def71e1f"
   name: "Faros Destination"
   dockerRepository: "farosai/airbyte-faros-destination"
-  dockerImageTag: "0.1.39"
+  dockerImageTag: "0.2.9"
   documentationUrl: "https://docs.faros.ai"
   spec:
     documentationUrl: "https://docs.faros.ai"
@@ -2164,9 +2164,15 @@
               segment_user_id:
                 type: "string"
                 title: "Segment User Id"
-                description: "The User Id with which to track events in Segment. If\
-                  \ not present, then reporting is disabled. See https://faros-ce.readme.io/docs/faq#statistics-we-collect\
+                format: "uuid"
+                description: "The User UUID with which to track events in Segment.\
+                  \ If not present, then reporting is disabled. See https://community.faros.ai/docs/telemetry\
                   \ for more details."
+              hasura_admin_secret:
+                type: "string"
+                title: "Hasura Admin Secret"
+                description: "The Hasura Admin Secret."
+                airbyte_secret: true
           - type: "object"
             title: "Cloud Edition"
             required:
@@ -2241,7 +2247,7 @@
                       description: "List of fields to exclude when saving tasks. Defaults\
                         \ to no exclusions."
                     truncate_limit:
-                      type: "number"
+                      type: "integer"
                       title: "Truncate Limit"
                       default: 10000
                       description: "Truncate the descriptions of projects, tasks,\
@@ -2253,15 +2259,132 @@
                       description: "Use Jira boards for assigning owners of tasks,\
                         \ or use projects."
                     additional_fields_array_limit:
-                      type: "number"
+                      type: "integer"
                       title: "Additional Fields Array Limit"
                       default: 50
                       description: "Truncates an additional field's array value to\
                         \ the given length."
-                order: 2
                 title: "Jira"
                 description: "Configuration options that apply to records generated\
                   \ by the Jira Source."
+              docker:
+                type: "object"
+                oneOf:
+                - type: "object"
+                  title: "Configuration"
+                  required:
+                  - "organization"
+                  properties:
+                    skip_tags:
+                      type: "array"
+                      items:
+                        type: "string"
+                      title: "Skip tags"
+                      description: "The images with the listed tags will be ignored\
+                        \ by the feed"
+                    label_prefix:
+                      type: "string"
+                      title: "Label Prefix"
+                      description: "Label prefix used to construct build key and commit\
+                        \ key for cicd_Artifact and cicd_ArtifactCommitAssociation\
+                        \ from labels. Every label key start with this prefix. If\
+                        \ the prefix is 'faros-', then the label keys will be 'faros-build-id',\
+                        \ 'faros-pipeline-id', etc."
+                    organization:
+                      type: "string"
+                      title: "Organization"
+                      default: "unknown-org"
+                      description: "Organization name to associate with image tags"
+                title: "Docker"
+                description: "Configuration options that apply to records generated\
+                  \ by the Docker Source."
+              backlog:
+                type: "object"
+                oneOf:
+                - type: "object"
+                  title: "Configuration"
+                  properties:
+                    max_description_length:
+                      type: "integer"
+                      title: "Max Description Length"
+                      default: 1000
+                      description: "Value to cut description to specific length"
+                title: "Backlog"
+                description: "Configuration options that apply to records generated\
+                  \ by the Backlog Source."
+              datadog:
+                type: "object"
+                oneOf:
+                - type: "object"
+                  title: "Configuration"
+                  properties:
+                    default_severity:
+                      type: "string"
+                      title: "Default Severity"
+                      pattern: "^(Sev[1-5])?(Custom)?$"
+                      examples:
+                      - "Sev1"
+                      - "Sev2"
+                      - "Sev3"
+                      - "Sev4"
+                      - "Sev5"
+                      - "Custom"
+                      description: "A default severity category if not present"
+                    application_mapping:
+                      type: "string"
+                      title: "Application Mapping"
+                      default: "{}"
+                      examples:
+                      - "{ \"Aion\": { \"name\": \"aion\", \"platform\": \"ECS\" }\
+                        \ }"
+                      multiline: true
+                      description: "JSON map of Datadog service(s) name, to compute\
+                        \ platform specific app name and platform name. Used to reference\
+                        \ compute_Application object, from an ims_Incident object."
+                title: "Datadog"
+                description: "Configuration options that apply to records generated\
+                  \ by the Datadog Source."
+              bamboohr:
+                type: "object"
+                oneOf:
+                - type: "object"
+                  title: "Configuration"
+                  properties:
+                    bootstrap_teams_from_managers:
+                      type: "boolean"
+                      title: "Bootstrap Teams From Managers"
+                      default: false
+                      description: "Assign employees to teams based off their managers."
+                title: "BambooHR"
+                description: "Configuration options that apply to records generated\
+                  \ by the BambooHR Source."
+              opsgenie:
+                type: "object"
+                oneOf:
+                - type: "object"
+                  title: "Configuration"
+                  properties:
+                    application_mapping:
+                      type: "string"
+                      title: "Application Mapping"
+                      default: "{}"
+                      examples:
+                      - "{ \"Aion\": { \"name\": \"aion\", \"platform\": \"ECS\" }\
+                        \ }"
+                      multiline: true
+                      description: "JSON map of OpsGenie service(s) name, to compute\
+                        \ a Faros Application and Platform name. Used to reference\
+                        \ compute_Application object, from an ims_Incident object.\
+                        \ If specified, and such service exists, the feed will write\
+                        \ a compute_Application object."
+                    max_description_length:
+                      type: "integer"
+                      title: "Max Description Length"
+                      default: 1000
+                      description: "Value to cut description to specific length"
+                title: "OpsGenie"
+                description: "Configuration options that apply to records generated\
+                  \ by the OpsGenie Source."
               bitbucket:
                 type: "object"
                 oneOf:
@@ -2276,10 +2399,9 @@
                       - "{ \"Aion\": { \"name\": \"aion\", \"platform\": \"ECS\" }\
                         \ }"
                       multiline: true
-                      description: "JSON map of StatusPage service(s) name, to compute\
+                      description: "JSON map of Bitbucket service(s) name, to compute\
                         \ platform specific app name and platform name. Used to reference\
                         \ compute_Application object, from an ims_Incident object."
-                order: 1
                 title: "Bitbucket"
                 description: "Configuration options that apply to records generated\
                   \ by the Bitbucket Source."
@@ -2312,7 +2434,6 @@
                       description: "JSON map of PagerDuty service(s) name, to compute\
                         \ platform specific app name and platform name. Used to reference\
                         \ compute_Application object, from an ims_Incident object."
-                order: 3
                 title: "PagerDuty"
                 description: "Configuration options that apply to records generated\
                   \ by the PagerDuty Source."
@@ -2333,7 +2454,6 @@
                       description: "JSON map of SquadCast service(s) name, to compute\
                         \ platform specific app name and platform name. Used to reference\
                         \ compute_Application object, from an ims_Incident object."
-                order: 4
                 title: "SquadCast"
                 description: "Configuration options that apply to records generated\
                   \ by the SquadCast Source."
@@ -2366,10 +2486,64 @@
                         \ compute_Application object, from an ims_Incident object.\
                         \ If specified, and such service exists, the feed will write\
                         \ a compute_Application object."
-                order: 6
                 title: "VictorOps"
                 description: "Configuration options that apply to records generated\
                   \ by the VictorOps Source."
+              servicenow:
+                type: "object"
+                oneOf:
+                - type: "object"
+                  title: "Configuration"
+                  properties:
+                    default_priority:
+                      type: "string"
+                      title: "Default Priority"
+                      pattern: "^(Critical|High|Medium|Low|Custom)$"
+                      examples:
+                      - "Critical"
+                      - "High"
+                      - "Medium"
+                      - "Low"
+                      - "Custom"
+                      description: "A default priority category if not present"
+                    default_severity:
+                      type: "string"
+                      title: "Default Severity"
+                      pattern: "^(Sev[1-5])?(Custom)?$"
+                      examples:
+                      - "Sev1"
+                      - "Sev2"
+                      - "Sev3"
+                      - "Sev4"
+                      - "Sev5"
+                      - "Custom"
+                      description: "A default severity category if not present"
+                    application_field:
+                      type: "string"
+                      title: "Application Field"
+                      default: "business_service"
+                      pattern: "^(business_service|cmdb_ci)$"
+                      examples:
+                      - "business_service"
+                      - "cmdb_ci"
+                      description: "Field name in a ServiceNow incident, to compute\
+                        \ a Faros Application name. The value of this field will be\
+                        \ used to look up the app/platform in the specified application\
+                        \ mapping"
+                    application_mapping:
+                      type: "string"
+                      title: "Application Mapping"
+                      default: "{}"
+                      examples:
+                      - "{ \"Aion\": { \"name\": \"aion\", \"platform\": \"ECS\" }\
+                        \ }"
+                      multiline: true
+                      description: "JSON map of ServiceNow service(s) name, to compute\
+                        \ platform specific app name and platform name. Used to reference\
+                        \ compute_Application object, from an ims_Incident object."
+                title: "ServiceNow"
+                description: "Configuration options that apply to records generated\
+                  \ by the ServiceNow Source."
               statuspage:
                 type: "object"
                 oneOf:
@@ -2384,13 +2558,71 @@
                       - "{ \"Aion\": { \"name\": \"aion\", \"platform\": \"ECS\" }\
                         \ }"
                       multiline: true
-                      description: "JSON map of StatusPage service(s) name, to compute\
+                      description: "JSON map of Statuspage service(s) name, to compute\
                         \ platform specific app name and platform name. Used to reference\
                         \ compute_Application object, from an ims_Incident object."
-                order: 5
-                title: "StatusPage"
+                title: "Statuspage"
                 description: "Configuration options that apply to records generated\
-                  \ by the StatusPage Source."
+                  \ by the Statuspage Source."
+              firehydrant:
+                type: "object"
+                oneOf:
+                - type: "object"
+                  title: "Configuration"
+                  properties:
+                    application_mapping:
+                      type: "string"
+                      title: "Application Mapping"
+                      default: "{}"
+                      examples:
+                      - "{ \"Aion\": { \"name\": \"aion\", \"platform\": \"ECS\" }\
+                        \ }"
+                      multiline: true
+                      description: "JSON map of FireHydrant service(s) name, to compute\
+                        \ platform specific app name and platform name. Used to reference\
+                        \ compute_Application object, from an ims_Incident object."
+                    max_description_length:
+                      type: "integer"
+                      title: "Max Description Length"
+                      default: 1000
+                      description: "Value to cut description to specific length"
+                title: "FireHydrant"
+                description: "Configuration options that apply to records generated\
+                  \ by the FireHydrant Source."
+              phabricator:
+                type: "object"
+                oneOf:
+                - type: "object"
+                  title: "Configuration"
+                  properties:
+                    max_description_length:
+                      type: "integer"
+                      title: "Max Description Length"
+                      default: 1000
+                      description: "Value to cut description to specific length"
+                title: "Phabricator"
+                description: "Configuration options that apply to records generated\
+                  \ by the Phabricator Source."
+              azurepipeline:
+                type: "object"
+                oneOf:
+                - type: "object"
+                  title: "Configuration"
+                  properties:
+                    application_mapping:
+                      type: "string"
+                      title: "Azure pipeline Application Mapping"
+                      default: "{}"
+                      examples:
+                      - "{ \"Aion\": { \"name\": \"aion\", \"platform\": \"ECS\" }\
+                        \ }"
+                      description: "JSON map of Azure Pipeline service(s) name, to\
+                        \ compute platform specific app name and platform name. Used\
+                        \ to reference compute_Application object, from an cicd_Deployment\
+                        \ object."
+                title: "Azure pipeline"
+                description: "Configuration options that apply to records generated\
+                  \ by the Azure pipeline Source."
               agileaccelerator:
                 type: "object"
                 oneOf:
@@ -2398,17 +2630,18 @@
                   title: "Configuration"
                   properties:
                     max_description_length:
-                      type: "number"
+                      type: "integer"
                       title: "Max Description Length"
                       default: 1000
                       description: "Value to cut description to specific length"
                     work_additional_fields:
                       type: "array"
+                      items:
+                        type: "string"
                       title: "Work Additional Fields"
                       default: []
                       description: "Fields to save to tms_Task's additionalFields\
                         \ variable"
-                order: 0
                 title: "AgileAccelerator"
                 description: "Configuration options that apply to records generated\
                   \ by the AgileAccelerator Source."

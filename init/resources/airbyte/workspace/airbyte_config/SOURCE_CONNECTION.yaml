@@ -1,48 +1,160 @@
 ---
-- name: "My GitHub Source"
+- name: "GitHub"
   sourceDefinitionId: "9bef3b40-e2c3-46c0-a792-54580f876d18"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
   sourceId: "5d9079ca-8173-406f-bfdb-41f19c62daff"
   configuration:
-    repository: "github/repo1 github/repo2"
+    repository: ""
     start_date: "2022-01-01T00:00:00Z"
     credentials:
       option_title: "PAT Credentials"
-      personal_access_token: "My Personal Access Token"
+      personal_access_token: ""
     page_size_for_large_streams: 10
   tombstone: false
-- name: "My Jira Source"
+- name: "GitLab"
+  sourceDefinitionId: "5e6175e5-68e1-4c17-bff9-56103bbb0d80"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "59c74ca4-8cbb-4c65-8cb7-66bf771190fb"
+  configuration:
+    groups: ""
+    api_url: ""
+    projects: ""
+    start_date: "2022-01-01T00:00:00Z"
+    private_token: ""
+  tombstone: false
+- name: "Bitbucket"
+  sourceDefinitionId: "51d2be20-0bdc-4532-b5a2-98a2ef91b23e"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "5a19e927-51a2-4d5f-9b26-b35aba0910e0"
+  configuration:
+    pagelen: 100
+    serverUrl: "https://api.bitbucket.org/2.0"
+    workspaces: []
+    cutoff_days: 90
+  tombstone: false
+- name: "Phabricator"
+  sourceDefinitionId: "63aa5e31-9490-4730-b2d4-14e42a4eb899"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "8e08224a-08da-4da4-95df-79639df68962"
+  configuration:
+    limit: 100
+    token: ""
+    server_url: ""
+    cutoff_days: 90
+  tombstone: false
+- name: "Jira"
   sourceDefinitionId: "68e63de2-bb83-4c7e-93fa-a8a9051e3993"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
   sourceId: "22852029-670c-4296-958e-c581fa76ae98"
   configuration:
-    email: "my jira email"
-    domain: "my jira domain"
-    projects:
-    - "KEY1"
-    - "KEY2"
-    api_token: "my jira api token"
+    email: ""
+    domain: ""
+    projects: []
+    api_token: ""
     start_date: "2022-01-01T00:00:00Z"
     render_fields: true
     expand_issue_changelog: true
     enable_experimental_streams: true
   tombstone: false
-- name: "My Jenkins Source"
+- name: "Buildkite"
+  sourceDefinitionId: "431b2890-39cb-4138-bc30-7dccdd0b94e0"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "407664f2-22b0-431d-bc36-b1be8a6aae96"
+  configuration:
+    token: ""
+    cutoff_days: 90
+    graphql_version: "v1"
+    rest_api_version: "v2"
+  tombstone: false
+- name: "CircleCI"
+  sourceDefinitionId: "6727d77e-5c06-4c28-817a-c1cacc18e106"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "81c73d90-cbff-465a-ab8d-8cde1be6e718"
+  configuration:
+    url: "https://circleci.com/api/v2"
+    token: ""
+    repo_names: []
+    cutoff_days: 90
+    reject_unauthorized: true
+  tombstone: false
+- name: "Harness"
+  sourceDefinitionId: "d8d05baf-bbda-49b3-9489-542e77cbd820"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "c78b0bb2-5fee-46f7-a043-63e498004776"
+  configuration:
+    api_key: ""
+    api_url: "https://app.harness.io"
+    page_size: 100
+    account_id: ""
+    cutoff_days: 90
+    deployment_timeout: 24
+  tombstone: false
+- name: "Jenkins"
   sourceDefinitionId: "4c4613d8-ffcd-4db8-a8f8-d325052aec11"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
   sourceId: "55b0325e-4bc7-49b4-b230-36c5a67df068"
   configuration:
-    user: "my jenkins userid"
-    token: "my jenkins token"
+    user: ""
+    token: ""
     pageSize: 10
-    server_url: "my jenkins url"
+    server_url: ""
     last100Builds: false
   tombstone: false
-- name: "My PagerDuty Source"
+- name: "Datadog"
+  sourceDefinitionId: "172cc5e1-9443-4f1b-a386-5a7813e05f45"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "7fc3063d-fb70-4cf7-bff3-69051b58e84c"
+  configuration:
+    api_key: ""
+    page_size: 100
+    application_key: ""
+  tombstone: false
+- name: "OpsGenie"
+  sourceDefinitionId: "1b22f335-f5bb-442d-a345-38b860baa41d"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "6749ef2f-5dc7-4e5f-ad5d-74aac6ef49da"
+  configuration:
+    api_key: ""
+    page_size: 10
+    cutoff_days: 90
+  tombstone: false
+- name: "PagerDuty"
   sourceDefinitionId: "aee89078-5c00-429e-90bf-cec0174dbb76"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
-  sourceId: "8b5b955e-7d8f-4b9c-88a0-0732efa9a395"
+  sourceId: "5ed7412c-72d3-46a9-bc40-0e362ad437c6"
   configuration:
-    token: "my pagerduty api key"
-    incidentLogEntriesOverview: true
+    token: ""
+    page_size: 25
+    cutoff_days: 90
+    incident_log_entries_overview: true
+  tombstone: false
+- name: "SquadCast"
+  sourceDefinitionId: "dcb04367-398c-4af9-831c-aef0ce4f8f32"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "4321e9f5-bb4d-4f6e-8625-0cb73d1cff16"
+  configuration:
+    token: ""
+    cutoff_days: 90
+    max_content_length: 20000
+  tombstone: false
+- name: "Statuspage"
+  sourceDefinitionId: "4b3cd0a4-4994-4616-af28-9871e28a8368"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "a778b201-49fe-43e4-a470-391b07115fab"
+  configuration:
+    api_key: ""
+    page_id: ""
+    cutoff_days: 90
+  tombstone: false
+- name: "VictorOps"
+  sourceDefinitionId: "8b3ac13b-f1b1-4644-bec2-e7b6be6d64c4"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "e1d032e0-3a8b-47dc-bac8-2786264b11f4"
+  configuration:
+    apiId: ""
+    apiKey: ""
+    pageLimit: 100
+    cutoff_days: 90
+    currentPhase: "triggered,acknowledged,resolved"
+    maxContentLength: 500000
   tombstone: false

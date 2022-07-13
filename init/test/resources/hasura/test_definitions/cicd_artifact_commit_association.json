@@ -1,0 +1,6 @@
+{
+    "endpoint": "cicd_artifact_commit_association",
+    "input": "cicd_artifact_commit_association_in.json",
+    "output": "cicd_artifact_commit_association_out.json",
+    "query": "cicd_artifact_commit_association.gql"
+}

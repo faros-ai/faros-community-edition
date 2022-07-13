@@ -1,0 +1,6 @@
+{
+  "endpoint": "compute_application",
+  "input": "compute_application_in.json",
+  "output": "compute_application_out.json",
+  "query": "compute_application.gql"
+}

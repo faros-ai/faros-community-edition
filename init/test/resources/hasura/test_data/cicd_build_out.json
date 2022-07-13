@@ -1,0 +1,24 @@
+{
+    "data": {
+      "cicd_Build": [
+        {
+          "createdAt": null,
+          "endedAt": null,
+          "id": "run_source1|run_organization1|run_pipeline1|run_id2",
+          "name": null,
+          "number": null,
+          "origin": "cicd_build_test",
+          "pipeline": "run_source1|run_organization1|run_pipeline1",
+          "startedAt": null,
+          "status": {
+            "detail": "B",
+            "category": "A"
+          },
+          "statusCategory": "A",
+          "statusDetail": "B",
+          "uid": "run_id2",
+          "url": null
+        }
+      ]
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "data": {
+      "cicd_ArtifactCommitAssociation": [
+        {
+          "artifact": "artifact_source1|artifact_organization1|artifact_repository1|artifact_id1",
+          "commit": "commit_source1|commit_organization1|commit_repository1|commit_sha1",
+          "id": "artifact_source1|artifact_organization1|artifact_repository1|artifact_id1|commit_source1|commit_organization1|commit_repository1|commit_sha1",
+          "origin": "cicd_artifact_commit_association_test"
+        }
+      ]
+    }
+}

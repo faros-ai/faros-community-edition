@@ -1,0 +1,12 @@
+{
+    "data": {
+      "cicd_ArtifactDeployment": [
+        {
+          "artifact": "artifact_source1|artifact_organization1|artifact_repository1|artifact_id1",
+          "deployment": "deploy_source1|deploy_id1",
+          "id": "artifact_source1|artifact_organization1|artifact_repository1|artifact_id1|deploy_source1|deploy_id1",
+          "origin": "cicd_artifact_deployment_test"
+        }
+      ]
+    }
+}

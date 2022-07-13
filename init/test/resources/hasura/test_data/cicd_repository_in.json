@@ -1,0 +1,6 @@
+{
+  "data_artifact_repository": "artifact_repository2",
+  "data_artifact_organization": "artifact_organization1",
+  "data_artifact_source": "artifact_source1",
+  "data_origin": "cicd_repository_test"
+}

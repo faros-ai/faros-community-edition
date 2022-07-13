@@ -1,0 +1,11 @@
+{
+    "data_artifact_repository": "artifact_repository1",
+    "data_commit_organization": "commit_organization1",
+    "data_artifact_id": "artifact_id1",
+    "data_commit_repository": "commit_repository1",
+    "data_artifact_organization": "artifact_organization1",
+    "data_commit_sha": "commit_sha1",
+    "data_commit_source": "commit_source1",
+    "data_artifact_source": "artifact_source1",
+    "data_origin": "cicd_artifact_commit_association_test"
+}

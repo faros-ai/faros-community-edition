@@ -1,0 +1,9 @@
+{
+  "data_artifact_id": "artifact_id1",
+  "data_artifact_organization": "artifact_organization1",
+  "data_artifact_repository": "artifact_repository1",
+  "data_artifact_source": "artifact_source1",
+  "data_deploy_id": "deploy_id1",
+  "data_deploy_source": "deploy_source1",
+  "data_origin": "cicd_artifact_deployment_test"
+}

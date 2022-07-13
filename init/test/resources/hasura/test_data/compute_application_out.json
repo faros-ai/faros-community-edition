@@ -1,0 +1,13 @@
+{
+    "data": {
+      "compute_Application": [
+        {
+          "id": "uid1",
+          "name": "name1",
+          "origin": "compute_application_test",
+          "platform": "platform1",
+          "uid": "uid1"
+        }
+      ]
+    }
+}

@@ -1,0 +1,6 @@
+{
+  "endpoint": "cicd_build_with_start_end",
+  "input": "cicd_build_with_start_end_in.json",
+  "output": "cicd_build_with_start_end_out.json",
+  "query": "cicd_build_with_start_end.gql"
+}

@@ -1,0 +1,15 @@
+{
+    "data": {
+      "cicd_Repository": [
+        {
+          "description": null,
+          "id": "artifact_source1|artifact_organization1|artifact_repository2",
+          "name": null,
+          "organization": "artifact_source1|artifact_organization1",
+          "origin": "cicd_repository_test",
+          "uid": "artifact_repository2",
+          "url": null
+        }
+      ]
+    }
+}

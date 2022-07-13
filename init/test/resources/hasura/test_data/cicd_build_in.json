@@ -1,0 +1,8 @@
+{
+  "data_run_source": "run_source1",
+  "data_run_pipeline": "run_pipeline1",
+  "data_run_organization": "run_organization1",
+  "run_status": {"category": "A", "detail": "B"},
+  "data_run_id": "run_id2",
+  "data_origin": "cicd_build_test"
+}

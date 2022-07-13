@@ -1,0 +1,6 @@
+{
+  "endpoint": "cicd_repository",
+  "input": "cicd_repository_in.json",
+  "output": "cicd_repository_out.json",
+  "query": "cicd_repository.gql"
+}

@@ -1,0 +1,8 @@
+query MyQuery {
+  cicd_ArtifactCommitAssociation(where: {origin: {_eq: "cicd_artifact_commit_association_test"}}) {
+    artifact
+    commit
+    id
+    origin
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "endpoint": "cicd_organization_from_run",
+  "input": "cicd_organization_from_run_in.json",
+  "output": "cicd_organization_from_run_out.json",
+  "query": "cicd_organization_from_run.gql"
+}

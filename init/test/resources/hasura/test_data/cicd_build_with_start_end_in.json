@@ -1,0 +1,10 @@
+{
+  "run_start_time": "2022-07-13T18:22:14Z",
+  "data_run_source": "run_source1",
+  "data_run_pipeline": "run_pipeline1",
+  "run_end_time": "2022-07-13T18:23:00Z",
+  "data_run_organization": "run_organization1",
+  "run_status": {"category": "A", "detail": "B"},
+  "data_run_id": "run_id3",
+  "data_origin": "cicd_build_with_start_end_test"
+}

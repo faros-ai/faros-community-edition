@@ -48,6 +48,18 @@ describe('hasura endpoint tests', () => {
     );
   });
 
+  test('check cicd_build Hasura endpoint', async () => {
+    await loadTestDefinition('cicd_build.json').then((test) =>
+      checkHasuraEndpoint(test)
+    );
+  });
+
+  test('check cicd_build_with_start_end Hasura endpoint', async () => {
+    await loadTestDefinition('cicd_build_with_start_end.json').then((test) =>
+      checkHasuraEndpoint(test)
+    );
+  });
+
   async function loadTestDefinition(
     testDefinitionFileName: string
   ): Promise<TestDefinition> {

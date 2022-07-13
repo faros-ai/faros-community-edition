@@ -1,0 +1,6 @@
+{
+  "endpoint": "cicd_build",
+  "input": "cicd_build_in.json",
+  "output": "cicd_build_out.json",
+  "query": "cicd_build.gql"
+}

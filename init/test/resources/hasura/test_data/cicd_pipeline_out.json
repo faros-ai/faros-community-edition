@@ -1,0 +1,15 @@
+{
+    "data": {
+      "cicd_Pipeline": [
+        {
+          "description": null,
+          "id": "run_source1|run_organization1|run_pipeline2",
+          "name": null,
+          "organization": "run_source1|run_organization1",
+          "origin": "cicd_pipeline_test",
+          "uid": "run_pipeline2",
+          "url": null
+        }
+      ]
+    }
+}

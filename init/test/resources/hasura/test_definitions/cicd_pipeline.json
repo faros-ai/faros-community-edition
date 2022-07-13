@@ -1,0 +1,6 @@
+{
+  "endpoint": "cicd_pipeline",
+  "input": "cicd_pipeline_in.json",
+  "output": "cicd_pipeline_out.json",
+  "query": "cicd_pipeline.gql"
+}

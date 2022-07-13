@@ -24,6 +24,12 @@ describe('hasura endpoint tests', () => {
     );
   });
 
+  test('check cicd_organization_from_run Hasura endpoint', async () => {
+    await loadTestDefinition('cicd_organization_from_run.json').then((test) =>
+      checkHasuraEndpoint(test)
+    );
+  });
+
   test('check cicd_artifact Hasura endpoint', async () => {
     await loadTestDefinition('cicd_artifact.json').then((test) =>
       checkHasuraEndpoint(test)
@@ -56,6 +62,24 @@ describe('hasura endpoint tests', () => {
 
   test('check cicd_build_with_start_end Hasura endpoint', async () => {
     await loadTestDefinition('cicd_build_with_start_end.json').then((test) =>
+      checkHasuraEndpoint(test)
+    );
+  });
+
+  test('check cicd_pipeline Hasura endpoint', async () => {
+    await loadTestDefinition('cicd_pipeline.json').then((test) =>
+      checkHasuraEndpoint(test)
+    );
+  });
+
+  test('check cicd_repository Hasura endpoint', async () => {
+    await loadTestDefinition('cicd_repository.json').then((test) =>
+      checkHasuraEndpoint(test)
+    );
+  });
+
+  test('check compute_application Hasura endpoint', async () => {
+    await loadTestDefinition('compute_application.json').then((test) =>
       checkHasuraEndpoint(test)
     );
   });

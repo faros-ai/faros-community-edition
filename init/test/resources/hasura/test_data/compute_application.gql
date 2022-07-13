@@ -1,0 +1,9 @@
+query MyQuery {
+  compute_Application(where: {origin: {_eq: "compute_application_test"}}) {
+    id
+    name
+    origin
+    platform
+    uid
+  }
+}

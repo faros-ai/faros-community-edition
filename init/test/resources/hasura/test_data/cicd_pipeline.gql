@@ -1,0 +1,11 @@
+query MyQuery {
+  cicd_Pipeline(where: {origin: {_eq: "cicd_pipeline_test"}}) {
+    description
+    id
+    name
+    organization
+    origin
+    uid
+    url
+  }
+}

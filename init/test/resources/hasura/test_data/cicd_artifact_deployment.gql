@@ -1,0 +1,8 @@
+query MyQuery {
+  cicd_ArtifactDeployment(where: {origin: {_eq: "cicd_artifact_deployment_test"}}) {
+    artifact
+    deployment
+    id
+    origin
+  }
+}

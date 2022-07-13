@@ -1,0 +1,13 @@
+query MyQuery {
+  cicd_Artifact(where: {origin: {_eq: "cicd_artifact_test"}}) {
+    build
+    id
+    name
+    origin
+    repository
+    tags
+    type
+    uid
+    url
+  }
+}

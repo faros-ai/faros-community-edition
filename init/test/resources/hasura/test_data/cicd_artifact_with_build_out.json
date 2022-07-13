@@ -1,0 +1,17 @@
+{
+    "data": {
+      "cicd_Artifact": [
+        {
+          "build": "run_source1|run_organization1|run_pipeline1|run_id1",
+          "id": "artifact_source1|artifact_organization1|artifact_repository1|artifact_id2",
+          "name": null,
+          "origin": "cicd_artifact_with_build_test",
+          "repository": "artifact_source1|artifact_organization1|artifact_repository1",
+          "tags": null,
+          "type": null,
+          "uid": "artifact_id2",
+          "url": null
+        }
+      ]
+    }
+}

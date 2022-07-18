@@ -10,11 +10,6 @@ services:
     extends:
       file: airbyte-services.yaml
       service: bootloader
-  airbyte-scheduler:
-    profiles: ["airbyte"]
-    extends:
-      file: airbyte-services.yaml
-      service: scheduler
   airbyte-worker:
     profiles: ["airbyte"]
     extends:

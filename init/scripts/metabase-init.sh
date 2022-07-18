@@ -50,7 +50,7 @@ then
   exit 1
 fi
 
-properties=$(curl -s $mb_url/api/session/properties)
+properties=$(curl -s "$mb_url"/api/session/properties)
 setup_token=$(jq -r '."setup-token"' <<< "$properties")
 has_user_setup=$(jq -r '."has-user-setup"' <<< "$properties")
 if [[ "$has_user_setup" == true ]]; then

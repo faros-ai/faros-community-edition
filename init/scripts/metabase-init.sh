@@ -50,8 +50,10 @@ then
   exit 1
 fi
 
-setup_token=$(curl -s "$mb_url"/api/session/properties | jq -r '."setup-token"')
-if [[ "$setup_token" == "null" ]]; then
+properties=$(curl -s $mb_url/api/session/properties)
+setup_token=$(jq -r '."setup-token"' <<< "$properties")
+has_user_setup=$(jq -r '."has-user-setup"' <<< "$properties")
+if [[ "$has_user_setup" == true ]]; then
   session_id=$(curl -s \
     -X POST \
     -H "Content-Type: application/json" \

@@ -47,7 +47,8 @@ services:
     restart: unless-stopped
   faros-init:
     profiles: ["default", "faros-init"]
-    image: ${FAROS_INIT_IMAGE?}
+    build: 
+      context: .
     # 3 retries on failure
     restart: on-failure:3
     environment:
@@ -107,6 +108,7 @@ services:
       context: ./metabase
       args:
         - METABASE_IMAGE=${METABASE_IMAGE}
+        - METABASE_VERSION=${METABASE_VERSION}
     container_name: metabase
     ports:
       - ${METABASE_PORT?}:3000

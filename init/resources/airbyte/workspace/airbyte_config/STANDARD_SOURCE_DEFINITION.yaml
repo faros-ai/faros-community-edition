@@ -521,6 +521,42 @@
     supportsNormalization: false
     supportsDBT: false
     supported_destination_sync_modes: []
+- sourceDefinitionId: "172cc5e1-9443-4f1b-a386-5a7813e05f45"
+  name: "Datadog"
+  dockerRepository: "farosai/airbyte-datadog-source"
+  dockerImageTag: "0.2.14"
+  documentationUrl: "https://github.com/faros-ai/airbyte-connectors/tree/main/sources/datadog-source"
+  spec:
+    documentationUrl: "https://docs.faros.ai"
+    connectionSpecification:
+      type: "object"
+      title: "Datadog Spec"
+      $schema: "http://json-schema.org/draft-07/schema#"
+      required:
+      - "api_key"
+      - "application_key"
+      properties:
+        api_key:
+          type: "string"
+          order: 0
+          title: "Datadog API Key"
+          airbyte_secret: true
+        page_size:
+          type: "integer"
+          order: 2
+          title: "Page Size"
+          default: 100
+          description: "used when retrieving paginated data from Datadog"
+        application_key:
+          type: "string"
+          order: 1
+          title: "Datadog Application Key"
+          description: "requires incident_read authorization scope"
+          airbyte_secret: true
+      additionalProperties: false
+    supportsNormalization: false
+    supportsDBT: false
+    supported_destination_sync_modes: []
 - sourceDefinitionId: "193bdcb8-1dd9-48d1-aade-91cadfd74f9b"
   name: "Paystack"
   dockerRepository: "airbyte/source-paystack"

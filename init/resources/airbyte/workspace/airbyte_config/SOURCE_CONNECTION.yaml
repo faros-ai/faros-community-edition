@@ -109,6 +109,15 @@
     page_size: 10
     cutoff_days: 90
   tombstone: false
+- name: "Datadog"
+  sourceDefinitionId: "172cc5e1-9443-4f1b-a386-5a7813e05f45"
+  workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
+  sourceId: "7fc3063d-fb70-4cf7-bff3-69051b58e84c"
+  configuration:
+    api_key: ""
+    page_size: 100
+    application_key: ""
+  tombstone: false
 - name: "PagerDuty"
   sourceDefinitionId: "aee89078-5c00-429e-90bf-cec0174dbb76"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"

@@ -28,6 +28,7 @@ describe('integration tests', () => {
   test(
     'check connection to the Faros destination',
     async () => {
+      console.log(`Checking connection of destination id ${destinationId}`);
       expect(
         await airbyteClient.checkDestinationConnection(destinationId)
       ).toBe(true);

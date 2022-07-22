@@ -10,11 +10,6 @@ services:
     extends:
       file: airbyte-services.yaml
       service: bootloader
-  airbyte-scheduler:
-    profiles: ["airbyte"]
-    extends:
-      file: airbyte-services.yaml
-      service: scheduler
   airbyte-worker:
     profiles: ["airbyte"]
     extends:
@@ -47,7 +42,8 @@ services:
     restart: unless-stopped
   faros-init:
     profiles: ["default", "faros-init"]
-    image: ${FAROS_INIT_IMAGE?}
+    build:
+      context: .
     # 3 retries on failure
     restart: on-failure:3
     environment:

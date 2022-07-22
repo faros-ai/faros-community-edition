@@ -42,8 +42,7 @@ services:
     restart: unless-stopped
   faros-init:
     profiles: ["default", "faros-init"]
-    build:
-      context: .
+    image: ${FAROS_INIT_IMAGE?}
     # 3 retries on failure
     restart: on-failure:3
     environment:

@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Pod
-metadata:
-  name: airbyte-bootloader
-  labels:
-    app.kubernetes.io/name: airbyte-bootloader
-    app.kubernetes.io/component: bootloader

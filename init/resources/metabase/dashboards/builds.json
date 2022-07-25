@@ -14,16 +14,6 @@
               "count"
             ]
           ],
-          "filter": [
-            "time-interval",
-            [
-              "field",
-              {{ field "cicd_Build.createdAt" }},
-              null
-            ],
-            -30,
-            "day"
-          ],
           "breakout": [
             [
               "field",
@@ -189,26 +179,13 @@
         "query": {
           "source-table": {{ table "cicd_Build" }},
           "filter": [
-            "and",
+            "!=",
             [
-              "!=",
-              [
-                "field",
-                {{ field "cicd_Build.statusCategory" }},
-                null
-              ],
-              "Success"
+              "field",
+              {{ field "cicd_Build.statusCategory" }},
+              null
             ],
-            [
-              "time-interval",
-              [
-                "field",
-                {{ field "cicd_Build.createdAt" }},
-                null
-              ],
-              -30,
-              "day"
-            ]
+            "Success" 
           ],
           "breakout": [
             [

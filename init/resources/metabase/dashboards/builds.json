@@ -14,16 +14,6 @@
               "count"
             ]
           ],
-          "filter": [
-            "time-interval",
-            [
-              "field",
-              {{ field "cicd_Build.createdAt" }},
-              null
-            ],
-            -30,
-            "day"
-          ],
           "breakout": [
             [
               "field",
@@ -101,8 +91,7 @@
                 {{ field "cicd_Build.createdAt" }},
                 null
               ],
-              "widget-type": "date/relative",
-              "default": "past30days"
+              "widget-type": "date/relative"
             },
             "pipelineName": {
               "id": "5ba685b5-d77e-1aec-e1af-2d9785f02791",
@@ -147,8 +136,7 @@
                 {{ field "cicd_Build.createdAt" }},
                 null
               ],
-              "widget-type": "date/relative",
-              "default": "past30days"
+              "widget-type": "date/relative"
             },
             "pipelineName": {
               "id": "5ba685b5-d77e-1aec-e1af-2d9785f02791",
@@ -191,26 +179,13 @@
         "query": {
           "source-table": {{ table "cicd_Build" }},
           "filter": [
-            "and",
+            "!=",
             [
-              "!=",
-              [
-                "field",
-                {{ field "cicd_Build.statusCategory" }},
-                null
-              ],
-              "Success"
+              "field",
+              {{ field "cicd_Build.statusCategory" }},
+              null
             ],
-            [
-              "time-interval",
-              [
-                "field",
-                {{ field "cicd_Build.createdAt" }},
-                null
-              ],
-              -30,
-              "day"
-            ]
+            "Success" 
           ],
           "breakout": [
             [
@@ -271,8 +246,7 @@
                 {{ field "cicd_Build.createdAt" }},
                 null
               ],
-              "widget-type": "date/relative",
-              "default": "past30days"
+              "widget-type": "date/relative"
             },
             "pipelineName": {
               "id": "9b68bcc7-1834-3002-2ec6-8a2f55fc0883",
@@ -321,8 +295,7 @@
                 {{ field "cicd_Build.createdAt" }},
                 null
               ],
-              "widget-type": "date/relative",
-              "default": "past30days"
+              "widget-type": "date/relative"
             }
           },
           "query": "SELECT avg(\"source\".\"count\") AS \"avg\"\nFROM (SELECT (CAST(date_trunc('week', CAST((CAST(\"cicd_Build\".\"createdAt\" AS timestamp) + (INTERVAL '1 day')) AS timestamp)) AS timestamp) + (INTERVAL '-1 day')) AS \"createdAt\", count(*) AS \"count\" FROM \"cicd_Build\"\nLEFT JOIN \"cicd_Pipeline\" ON \"cicd_Build\".\"pipeline\" = \"cicd_Pipeline\".\"id\"\nWHERE <<pipelineName>> AND <<createdAt>>\nGROUP BY (CAST(date_trunc('week', CAST((CAST(\"public\".\"cicd_Build\".\"createdAt\" AS timestamp) + (INTERVAL '1 day')) AS timestamp)) AS timestamp) + (INTERVAL '-1 day'))\nORDER BY (CAST(date_trunc('week', CAST((CAST(\"public\".\"cicd_Build\".\"createdAt\" AS timestamp) + (INTERVAL '1 day')) AS timestamp)) AS timestamp) + (INTERVAL '-1 day')) ASC) \"source\""

@@ -84,9 +84,15 @@ describe('hasura endpoint tests', () => {
     );
   });
 
+  test('XXX', async () => {
+    await loadTestDefinition('cicd_build_update.json').then((test) =>
+      checkHasuraEndpoint(test)
+    );
+  });
+
   async function loadTestDefinition(
     testDefinitionFileName: string
-  ): Promise<TestDefinition> {
+  ): Promise<TestDefinition | TestDefinition[]> {
     const directory = path.join(RESOURCES_DIR, 'hasura', 'test_definitions');
 
     return JSON.parse(
@@ -94,19 +100,21 @@ describe('hasura endpoint tests', () => {
     );
   }
 
-  async function checkHasuraEndpoint(test: TestDefinition) {
-    const directory = path.join(RESOURCES_DIR, 'hasura', 'test_data');
+  async function checkHasuraEndpoint(test: TestDefinition | TestDefinition[]) {
+    for (const t of [].concat(test)) {
+      const directory = path.join(RESOURCES_DIR, 'hasura', 'test_data');
 
-    const input = await fs.readFile(path.join(directory, test.input), 'utf8');
-    const expectedOutput = await fs.readFile(
-      path.join(directory, test.output),
-      'utf8'
-    );
-    const query = await fs.readFile(path.join(directory, test.query), 'utf8');
+      const input = await fs.readFile(path.join(directory, t.input), 'utf8');
+      const expectedOutput = await fs.readFile(
+        path.join(directory, t.output),
+        'utf8'
+      );
+      const query = await fs.readFile(path.join(directory, t.query), 'utf8');
 
-    await hasuraClient.hitEndpoint(test.endpoint, input);
-    const output = await hasuraClient.makeQuery(query);
+      await hasuraClient.hitEndpoint(t.endpoint, input);
+      const output = await hasuraClient.makeQuery(query);
 
-    expect(isEqual(output, JSON.parse(expectedOutput))).toBe(true);
+      expect(isEqual(output, JSON.parse(expectedOutput))).toBe(true);
+    }
   }
 });

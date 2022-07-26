@@ -84,12 +84,6 @@ describe('hasura endpoint tests', () => {
     );
   });
 
-  test('XXX', async () => {
-    await loadTestDefinition('cicd_build_update.json').then((test) =>
-      checkHasuraEndpoint(test)
-    );
-  });
-
   async function loadTestDefinition(
     testDefinitionFileName: string
   ): Promise<TestDefinition | TestDefinition[]> {

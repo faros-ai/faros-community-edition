@@ -23,7 +23,20 @@ mutation insert_tms_task(
       origin: $data_origin
       source: $data_task_source
     }
-    on_conflict: { constraint: tms_Task_pkey, update_columns: refreshedAt }
+    on_conflict: {
+      constraint: tms_Task_pkey, 
+      update_columns: [
+        createdAt
+        type
+        points
+        priority
+        status
+        statusChangelog
+        updatedAt
+        origin
+        refreshedAt
+      ] 
+    }
   ) {
     id
   }

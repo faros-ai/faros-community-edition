@@ -80,7 +80,13 @@ mutation insert_vcs_pull_request(
     }
     on_conflict: {
       constraint: vcs_PullRequest_pkey
-      update_columns: refreshedAt
+      update_columns: [
+        state
+        createdAt
+        mergedAt
+        origin
+        refreshedAt
+      ]
     }
   ) {
     id

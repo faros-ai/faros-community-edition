@@ -28,7 +28,10 @@ mutation insert_ims_incident_application_impact(
     }
     on_conflict: {
       constraint: ims_IncidentApplicationImpact_pkey
-      update_columns: refreshedAt
+      update_columns: [
+        origin
+        refreshedAt
+      ]
     }
   ) {
     id

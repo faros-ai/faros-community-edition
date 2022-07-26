@@ -59,6 +59,7 @@ mutation insert_cicd_deployment_with_build(
         env
         startedAt
         endedAt
+        origin
         refreshedAt
       ]
     }

@@ -31,7 +31,13 @@ mutation insert_cicd_Artifact(
       }
       origin: $data_origin
     }
-    on_conflict: {constraint: cicd_Artifact_pkey, update_columns: refreshedAt}
+    on_conflict: {
+      constraint: cicd_Artifact_pkey, 
+      update_columns: [
+        origin
+        refreshedAt
+      ]
+    }
   ) {
     id
   }

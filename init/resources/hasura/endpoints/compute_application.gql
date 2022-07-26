@@ -13,7 +13,12 @@ mutation insert_compute_Application_one(
     }
     on_conflict: {
       constraint: compute_Application_pkey
-      update_columns: refreshedAt
+      update_columns: [
+        name
+        platform
+        origin
+        refreshedAt
+      ]
     }
   ) {
     uid

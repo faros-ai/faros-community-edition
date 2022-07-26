@@ -28,6 +28,7 @@ mutation insert_cicd_deployment_with_start_end(
         startedAt
         endedAt
         refreshedAt
+        origin
       ]
     }
   ) {

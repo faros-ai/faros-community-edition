@@ -33,7 +33,14 @@ mutation insert_cicd_Build(
       status: $run_status
       origin: $data_origin
     }
-    on_conflict: {constraint: cicd_Build_pkey, update_columns: refreshedAt}
+    on_conflict: {
+      constraint: cicd_Build_pkey, 
+      update_columns: [
+        origin
+        refreshedAt
+        status
+      ]
+    }
   ) {
     id
   }

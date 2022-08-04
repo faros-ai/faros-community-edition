@@ -72,7 +72,10 @@ mutation insert_vcs_PullRequestCommit(
     }
     on_conflict: {
       constraint: vcs_PullRequestCommit_pkey
-      update_columns: refreshedAt
+      update_columns: [
+        origin
+        refreshedAt
+      ]
     }
   ) {
     id

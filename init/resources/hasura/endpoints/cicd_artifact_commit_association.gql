@@ -73,7 +73,10 @@ mutation insert_cicd_artifact_commit_association(
     }
     on_conflict: {
       constraint: cicd_ArtifactCommitAssociation_pkey
-      update_columns: refreshedAt
+      update_columns: [
+        origin
+        refreshedAt
+      ]
     }
   ) {
     id

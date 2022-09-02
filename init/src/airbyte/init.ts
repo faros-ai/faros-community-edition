@@ -239,7 +239,8 @@ export class AirbyteInit {
     ).filter(
       (sd) =>
         sd.dockerRepository.startsWith('farosai/') ||
-        sd.dockerRepository === 'airbyte/source-jira'
+        sd.dockerRepository === 'airbyte/source-jira' ||
+        sd.dockerRepository === 'airbyte/source-gitlab'
     );
 
     const promises: Promise<void>[] = [];

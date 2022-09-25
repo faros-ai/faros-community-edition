@@ -1,6 +1,5 @@
 import {program} from 'commander';
 import {VError} from 'verror';
-import {errorLog} from './utils';
 import {runGithub} from './github/run';
 import axios from 'axios';
 import {Airbyte} from './airbyte/airbyte-client';
@@ -9,7 +8,7 @@ import {runBitbucket} from './bitbucket/run';
 
 const DEFAULT_AIRBYTE_URL = 'http://localhost:8000';
 
-async function main(): Promise<void> {
+export async function main(): Promise<void> {
   program.option('--airbyte-url <string>', 'Airbyte URL', DEFAULT_AIRBYTE_URL);
   program.parse();
   const options = program.opts();
@@ -38,11 +37,4 @@ async function main(): Promise<void> {
     default:
       throw new VError('Not implemented');
   }
-}
-
-if (require.main === module) {
-  main().catch((err) => {
-    errorLog(err.message);
-    process.exit(1);
-  });
 }

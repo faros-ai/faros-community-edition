@@ -155,7 +155,7 @@ async function getRepos(
     .catch((err: string | undefined) => {
       throw new VError(err);
     });
-    return (data.values as ReadonlyArray<Repository>).map((repo) => {
-      return repo.full_name;
-    });
+  return (data.values as ReadonlyArray<Repository>).map((repo) => {
+    return repo.full_name;
+  });
 }

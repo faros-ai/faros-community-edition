@@ -1,20 +1,31 @@
 import retry from 'async-retry';
-import axios, {AxiosInstance} from 'axios';
+import {AxiosInstance} from 'axios';
+import ProgressBar from 'progress';
 import {VError} from 'verror';
+
+import {display, errorLog, sleep} from '../utils';
 
 export class Airbyte {
   constructor(private readonly api: AxiosInstance) {}
 
   async waitUntilHealthy(): Promise<void> {
+    display('Checking connection with Airbyte');
+
     await retry(
       async () => {
-        const response = await this.api.get('/health');
-        if (!(response.data.available ?? false)) {
-          throw new VError('Airbyte is not healthy yet');
-        }
+        await this.api
+          .get('/health')
+          .then((response) => {
+            if (!(response.data.available ?? false)) {
+              throw new VError('Airbyte is not healthy yet');
+            }
+          })
+          .catch((err) => {
+            throw new VError(err, 'Could not connect to Airbyte');
+          });
       },
       {
-        retries: 30,
+        retries: 5,
         minTimeout: 1000,
         maxTimeout: 1000,
       }
@@ -53,5 +64,34 @@ export class Airbyte {
         throw new VError(err);
       });
     return response.data.job.status;
+  }
+
+  async triggerAndTrackSync(connectionId: string): Promise<void> {
+    try {
+      display('Syncing');
+      const job = await this.triggerSync(connectionId);
+
+      const syncBar = new ProgressBar(':bar', {
+        total: 2,
+        complete: '.',
+        incomplete: ' ',
+      });
+
+      let val = 1;
+      while (true) {
+        syncBar.tick(val);
+        val *= -1;
+        const status = await this.getJobStatus(job);
+        if (status !== 'running') {
+          syncBar.terminate();
+          display('Syncing ' + status);
+          break;
+        }
+        await sleep(100);
+      }
+    } catch (error) {
+      errorLog('Sync failed', error);
+      return;
+    }
   }
 }

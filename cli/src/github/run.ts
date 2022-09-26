@@ -1,37 +1,76 @@
-import {Airbyte} from '../airbyte/airbyte-client';
-import {display, errorLog, sleep} from '../utils';
-import ProgressBar from 'progress';
 import {Octokit} from '@octokit/core';
-import {runMultiSelect, runPassword} from '../utils/prompts';
+import axios from 'axios';
+import {Command, Option} from 'commander';
+import ProgressBar from 'progress';
 import VError from 'verror';
+
+import {Airbyte} from '../airbyte/airbyte-client';
+import {display, errorLog, sleep, toStringList} from '../utils';
+import {runMultiSelect, runPassword} from '../utils/prompts';
 
 const GITHUB_SOURCE_ID = '5d9079ca-8173-406f-bfdb-41f19c62daff';
 const GITHUB_CONNECTION_ID = '6421df4e-0c5a-4666-a530-9c01de683518';
 const DEFAULT_CUTOFF_DAYS = 30;
 
-export async function runGithub(airbyte: Airbyte): Promise<void> {
-  const token = await runPassword({
-    name: 'token',
-    message: 'Personal Access Token?',
+interface GithubConfig {
+  readonly airbyte: Airbyte;
+  readonly token?: string;
+  readonly repoList?: ReadonlyArray<string>;
+}
+
+export function makeGithubCommand(): Command {
+  const cmd = new Command()
+    .name('github')
+    .option('--token <token>', 'Personal Access Token')
+    .addOption(
+      new Option(
+        '--repo-list <repo-list>',
+        'Comma-separated list of repos to sync'
+      ).argParser(toStringList)
+    );
+
+  cmd.action((options) => {
+    const airbyte = new Airbyte(
+      axios.create({
+        baseURL: `${options.airbyteUrl}/api/v1`,
+      })
+    );
+
+    runGithub({...options, airbyte});
   });
+
+  return cmd;
+}
+
+export async function runGithub(cfg: GithubConfig): Promise<void> {
+  await cfg.airbyte.waitUntilHealthy();
+
+  const token =
+    cfg.token ||
+    (await runPassword({
+      name: 'token',
+      message: 'Personal Access Token?',
+    }));
 
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - DEFAULT_CUTOFF_DAYS);
 
   try {
-    const repos = await runMultiSelect({
-      name: 'repos',
-      message: 'Pick your favorite repos',
-      limit: 10,
-      choices: await getRepos(token),
-    });
+    const repos =
+      cfg.repoList ||
+      (await runMultiSelect({
+        name: 'repos',
+        message: 'Pick your favorite repos',
+        limit: 10,
+        choices: await getRepos(token),
+      }));
 
     if (repos.length === 0) {
       return;
     }
 
     display('Setting up source');
-    await airbyte.setupSource({
+    await cfg.airbyte.setupSource({
       connectionConfiguration: {
         repository: repos.join(' '),
         start_date: startDate.toISOString().replace(/\.\d+/, ''),
@@ -51,32 +90,7 @@ export async function runGithub(airbyte: Airbyte): Promise<void> {
     return;
   }
 
-  try {
-    display('Syncing');
-    const job = await airbyte.triggerSync(GITHUB_CONNECTION_ID);
-
-    const syncBar = new ProgressBar(':bar', {
-      total: 2,
-      complete: '.',
-      incomplete: ' ',
-    });
-
-    let val = 1;
-    while (true) {
-      syncBar.tick(val);
-      val *= -1;
-      const status = await airbyte.getJobStatus(job);
-      if (status !== 'running') {
-        syncBar.terminate();
-        display('Syncing ' + status);
-        break;
-      }
-      await sleep(100);
-    }
-  } catch (error) {
-    errorLog('Sync failed', error);
-    return;
-  }
+  await cfg.airbyte.triggerAndTrackSync(GITHUB_CONNECTION_ID);
 }
 
 async function getRepos(token: string): Promise<ReadonlyArray<string>> {

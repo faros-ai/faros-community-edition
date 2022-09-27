@@ -2,11 +2,10 @@ import axios from 'axios';
 import {Bitbucket} from 'bitbucket';
 import {APIClient} from 'bitbucket/src/client/types';
 import {Command, Option} from 'commander';
-import ProgressBar from 'progress';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
-import {display, errorLog, sleep, toStringList} from '../utils';
+import {display, errorLog, parseIntegerPositive, sleep, toStringList} from '../utils';
 import {
   runInput,
   runMultiSelect,
@@ -25,6 +24,7 @@ interface BitbucketConfig {
   readonly token?: string;
   readonly workspace?: string;
   readonly repoList?: ReadonlyArray<string>;
+  readonly cutoffDays?: number;
 }
 
 export function makeBitbucketCommand(): Command {
@@ -39,6 +39,11 @@ export function makeBitbucketCommand(): Command {
         '--repo-list <repo-list>',
         'Comma-separated list of repos to sync'
       ).argParser(toStringList)
+    ).option(
+      '--cutoff-days <cutoff-days>',
+      'only fetch entities updated after this cutoff',
+      parseIntegerPositive,
+      DEFAULT_CUTOFF_DAYS
     );
 
   cmd.action((options) => {
@@ -136,7 +141,7 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
       connectionConfiguration: {
         workspaces: [workspaces],
         repositories,
-        cutoff_days: DEFAULT_CUTOFF_DAYS,
+        cutoff_days: cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
         username,
         password,
         token,

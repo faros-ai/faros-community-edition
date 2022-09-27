@@ -1,11 +1,15 @@
 import {Octokit} from '@octokit/core';
 import axios from 'axios';
 import {Command, Option} from 'commander';
-import ProgressBar from 'progress';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
-import {display, errorLog, sleep, toStringList} from '../utils';
+import {
+  display,
+  errorLog,
+  parseIntegerPositive,
+  toStringList,
+} from '../utils';
 import {runMultiSelect, runPassword} from '../utils/prompts';
 
 const GITHUB_SOURCE_ID = '5d9079ca-8173-406f-bfdb-41f19c62daff';
@@ -16,6 +20,7 @@ interface GithubConfig {
   readonly airbyte: Airbyte;
   readonly token?: string;
   readonly repoList?: ReadonlyArray<string>;
+  readonly cutoffDays?: number;
 }
 
 export function makeGithubCommand(): Command {
@@ -27,6 +32,12 @@ export function makeGithubCommand(): Command {
         '--repo-list <repo-list>',
         'Comma-separated list of repos to sync'
       ).argParser(toStringList)
+    )
+    .option(
+      '--cutoff-days <cutoff-days>',
+      'only fetch commits, issues and pull requests updated in the last number of days',
+      parseIntegerPositive,
+      DEFAULT_CUTOFF_DAYS
     );
 
   cmd.action((options) => {
@@ -53,7 +64,9 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
     }));
 
   const startDate = new Date();
-  startDate.setDate(startDate.getDate() - DEFAULT_CUTOFF_DAYS);
+  startDate.setDate(
+    startDate.getDate() - (cfg.cutoffDays || DEFAULT_CUTOFF_DAYS)
+  );
 
   try {
     const repos =

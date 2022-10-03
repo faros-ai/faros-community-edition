@@ -36,9 +36,13 @@ jobs:
             echo "No drift detected"
           fi
           
-      - name: Build
+      - name: Build (init scripts)
         run: npm ci --unsafe-perm
         working-directory: init
+
+      - name: Build (cli)
+        run: npm ci --unsafe-perm
+        working-directory: cli
 
       - name: Run unit tests
         run: npm run test:unit -- --coverage
@@ -89,9 +93,14 @@ jobs:
         run: |
           echo "DESTINATION_ID=$(cat ${{ github.workspace }}/init/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')" >> "$GITHUB_ENV"
           echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
-      - name: Run integration tests
+
+      - name: Run integration tests (init scripts)
         run: npm run test:integration -- --coverage
         working-directory: init
+
+      - name: Run integration tests (cli)
+        run: npm run test:integration -- --coverage
+        working-directory: cli
 
       - name: Stop services
         run: docker-compose down
@@ -106,6 +115,51 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  publish-cli-docker:
+    name: Publish CLI Docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Build and integration tests are run in the job above. So we just build and push if the above job is successful.
+    needs: publish-docker
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            farosai/faros-ce-cli
+          flavor: |
+            latest=auto
+          tags: |
+            type=sha,format=long,prefix=
+            type=raw,value=latest,enable=true
+
+      - name: Set up Docker QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Docker login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: cli/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}

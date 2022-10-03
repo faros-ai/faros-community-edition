@@ -95,6 +95,9 @@ jobs:
           echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
 
       - name: Run integration tests (init scripts)
+        env:
+          GITHUB_CLI_TEST_CFG: ${{ secrets.GITHUB_CLI_TEST_CFG }}
+          BITBUCKET_CLI_TEST_CFG: ${{ secrets.BITBUCKET_CLI_TEST_CFG }}
         run: npm run test:integration -- --coverage
         working-directory: init
 

@@ -66,7 +66,8 @@ describe('index', () => {
     2 * 60 * 1000
   );
 
-  test(
+  // Skip until the secret is available in GHA
+  test.skip(
     'bitbucket',
     async () => {
       const cli = await run([

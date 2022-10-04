@@ -5,7 +5,13 @@ import {Command, Option} from 'commander';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
-import {display, errorLog, parseIntegerPositive, sleep, toStringList} from '../utils';
+import {
+  display,
+  errorLog,
+  parseIntegerPositive,
+  sleep,
+  toStringList,
+} from '../utils';
 import {
   runInput,
   runMultiSelect,
@@ -39,7 +45,8 @@ export function makeBitbucketCommand(): Command {
         '--repo-list <repo-list>',
         'Comma-separated list of repos to sync'
       ).argParser(toStringList)
-    ).option(
+    )
+    .option(
       '--cutoff-days <cutoff-days>',
       'only fetch entities updated after this cutoff',
       parseIntegerPositive,

@@ -4,12 +4,7 @@ import {Command, Option} from 'commander';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
-import {
-  display,
-  errorLog,
-  parseIntegerPositive,
-  toStringList,
-} from '../utils';
+import {display, errorLog, parseIntegerPositive, toStringList} from '../utils';
 import {runMultiSelect, runPassword} from '../utils/prompts';
 
 const GITHUB_SOURCE_ID = '5d9079ca-8173-406f-bfdb-41f19c62daff';

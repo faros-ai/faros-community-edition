@@ -96,8 +96,7 @@ jobs:
 
       - name: Run integration tests (init scripts)
         env:
-          GITHUB_CLI_TEST_CFG: ${{ secrets.GITHUB_CLI_TEST_CFG }}
-          BITBUCKET_CLI_TEST_CFG: ${{ secrets.BITBUCKET_CLI_TEST_CFG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run test:integration -- --coverage
         working-directory: init
 

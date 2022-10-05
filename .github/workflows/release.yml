@@ -95,12 +95,12 @@ jobs:
           echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
 
       - name: Run integration tests (init scripts)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run test:integration -- --coverage
         working-directory: init
 
       - name: Run integration tests (cli)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run test:integration -- --coverage
         working-directory: cli
 

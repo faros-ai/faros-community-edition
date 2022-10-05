@@ -5,8 +5,45 @@ x-logging: &default-logging
     max-file: "5"
   driver: json-file
 services:
-  # hook in case we need to add init behavior
-  # every root service (no depends_on) should depend on init
+  faros-init:
+    profiles: ["default", "faros-init"]
+    image: ${FAROS_INIT_IMAGE?}
+    # 3 retries on failure
+    restart: on-failure:3
+    environment:
+      AIRBYTE_API_CALLS_CONCURRENCY: ${AIRBYTE_API_CALLS_CONCURRENCY:-}
+      AIRBYTE_DESTINATION_HASURA_URL: ${AIRBYTE_DESTINATION_HASURA_URL?}
+      AIRBYTE_FORCE_SETUP: ${FAROS_AIRBYTE_FORCE_SETUP:-false}
+      AIRBYTE_URL: ${AIRBYTE_URL?}
+      FAROS_EMAIL: ${FAROS_EMAIL}
+      HASURA_URL: ${HASURA_URL?}
+      LOG_LEVEL: ${FAROS_INIT_LOG_LEVEL:-info}
+      METABASE_FAROS_DB_HOST: ${METABASE_FAROS_DB_HOST?}
+      METABASE_PASSWORD: ${METABASE_PASSWORD?}
+      METABASE_URL: ${METABASE_URL?}
+      METABASE_USER: ${METABASE_USER?}
+      METABASE_USE_SSL: ${METABASE_USE_SSL?}
+      FAROS_DB_NAME: ${FAROS_DB_NAME?}
+      FAROS_DB_HOST: ${FAROS_DB_HOST?}
+      FAROS_DB_PORT: ${FAROS_DB_PORT?}
+      FAROS_DB_USER: ${FAROS_DB_USER?}
+      FAROS_DB_PASSWORD: ${FAROS_DB_PASSWORD?}
+      FAROS_CONFIG_DB_HOST: ${FAROS_CONFIG_DB_HOST?}
+      FAROS_CONFIG_DB_PORT: ${FAROS_CONFIG_DB_PORT?}
+      FAROS_CONFIG_DB_USER: ${FAROS_CONFIG_DB_USER?}
+      FAROS_CONFIG_DB_PASSWORD: ${FAROS_CONFIG_DB_PASSWORD?}
+      HASURA_GRAPHQL_DATABASE_URL: ${HASURA_GRAPHQL_DATABASE_URL:-}
+      HASURA_DB_NAME: ${HASURA_DB_NAME?}
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET?}
+      METABASE_DB_NAME: ${METABASE_DB_NAME?}
+      N8N_DB_NAME: ${N8N_DB_NAME?}
+    healthcheck:
+      test: ["CMD", "psql", "-d", "postgres://${FAROS_CONFIG_DB_USER?}:${FAROS_CONFIG_DB_PASSWORD?}@${FAROS_CONFIG_DB_HOST?}:${FAROS_CONFIG_DB_PORT?}/${N8N_DB_NAME?}", "-c", "SELECT 1"]
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+  # Airbyte
   init:
     profiles: ["airbyte"]
     image: airbyte/init:${VERSION}
@@ -176,44 +213,6 @@ services:
       - POSTGRES_USER=${DATABASE_USER}
     volumes:
       - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
-  faros-init:
-    profiles: ["default", "faros-init"]
-    image: ${FAROS_INIT_IMAGE?}
-    # 3 retries on failure
-    restart: on-failure:3
-    environment:
-      AIRBYTE_API_CALLS_CONCURRENCY: ${AIRBYTE_API_CALLS_CONCURRENCY:-}
-      AIRBYTE_DESTINATION_HASURA_URL: ${AIRBYTE_DESTINATION_HASURA_URL?}
-      AIRBYTE_FORCE_SETUP: ${FAROS_AIRBYTE_FORCE_SETUP:-false}
-      AIRBYTE_URL: ${AIRBYTE_URL?}
-      FAROS_EMAIL: ${FAROS_EMAIL}
-      HASURA_URL: ${HASURA_URL?}
-      LOG_LEVEL: ${FAROS_INIT_LOG_LEVEL:-info}
-      METABASE_FAROS_DB_HOST: ${METABASE_FAROS_DB_HOST?}
-      METABASE_PASSWORD: ${METABASE_PASSWORD?}
-      METABASE_URL: ${METABASE_URL?}
-      METABASE_USER: ${METABASE_USER?}
-      METABASE_USE_SSL: ${METABASE_USE_SSL?}
-      FAROS_DB_NAME: ${FAROS_DB_NAME?}
-      FAROS_DB_HOST: ${FAROS_DB_HOST?}
-      FAROS_DB_PORT: ${FAROS_DB_PORT?}
-      FAROS_DB_USER: ${FAROS_DB_USER?}
-      FAROS_DB_PASSWORD: ${FAROS_DB_PASSWORD?}
-      FAROS_CONFIG_DB_HOST: ${FAROS_CONFIG_DB_HOST?}
-      FAROS_CONFIG_DB_PORT: ${FAROS_CONFIG_DB_PORT?}
-      FAROS_CONFIG_DB_USER: ${FAROS_CONFIG_DB_USER?}
-      FAROS_CONFIG_DB_PASSWORD: ${FAROS_CONFIG_DB_PASSWORD?}
-      HASURA_GRAPHQL_DATABASE_URL: ${HASURA_GRAPHQL_DATABASE_URL:-}
-      HASURA_DB_NAME: ${HASURA_DB_NAME?}
-      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET?}
-      METABASE_DB_NAME: ${METABASE_DB_NAME?}
-      N8N_DB_NAME: ${N8N_DB_NAME?}
-    healthcheck:
-      test: ["CMD", "psql", "-d", "postgres://${FAROS_CONFIG_DB_USER?}:${FAROS_CONFIG_DB_PASSWORD?}@${FAROS_CONFIG_DB_HOST?}:${FAROS_CONFIG_DB_PORT?}/${N8N_DB_NAME?}", "-c", "SELECT 1"]
-      interval: 15s
-      timeout: 5s
-      start_period: 30s
-      retries: 5
   hasura:
     profiles: ["default"]
     image: hasura/graphql-engine:${HASURA_VERSION?}

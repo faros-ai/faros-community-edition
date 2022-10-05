@@ -43,7 +43,10 @@ services:
       timeout: 5s
       start_period: 30s
       retries: 5
+  
   # Airbyte
+  # Source: https://github.com/airbytehq/airbyte/blob/v0.39.37-alpha/docker-compose.yaml
+  #https://github.com/compose-spec/compose-spec/blob/master/spec.md#using-extensions-as-fragments
   init:
     profiles: ["airbyte"]
     image: airbyte/init:${VERSION}
@@ -213,6 +216,8 @@ services:
       - POSTGRES_USER=${DATABASE_USER}
     volumes:
       - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+  
+  # Other services
   hasura:
     profiles: ["default"]
     image: hasura/graphql-engine:${HASURA_VERSION?}

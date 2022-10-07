@@ -1,12 +1,20 @@
 import retry from 'async-retry';
-import {AxiosInstance} from 'axios';
+import axios, {AxiosInstance} from 'axios';
 import ProgressBar from 'progress';
 import {VError} from 'verror';
 
 import {display, errorLog, sleep} from '../utils';
 
 export class Airbyte {
-  constructor(private readonly api: AxiosInstance) {}
+  private readonly api: AxiosInstance;
+  private readonly airbyteUrl: string;
+
+  constructor(airbyteUrl: string) {
+    this.airbyteUrl=airbyteUrl.replace(/\/+$/, '');
+    this.api = axios.create({
+      baseURL: `${this.airbyteUrl}/api/v1`,
+    });
+  }
 
   async waitUntilHealthy(): Promise<void> {
     display('Checking connection with Airbyte');
@@ -84,14 +92,17 @@ export class Airbyte {
         const status = await this.getJobStatus(job);
         if (status !== 'running') {
           syncBar.terminate();
-          display('Syncing ' + status);
+          if (status !== 'succeeded') {
+            errorLog(`Sync ${status}. Please check the logs at: ${this.airbyteUrl}/connections/${connectionId}/status`);
+          } else {
+            display('Syncing succeeded');
+          }
           break;
         }
         await sleep(100);
       }
     } catch (error) {
-      errorLog('Sync failed', error);
-      return;
+      errorLog(`Sync failed. Please check the logs at: ${this.airbyteUrl}/connections/${connectionId}/status`, error);
     }
   }
 }

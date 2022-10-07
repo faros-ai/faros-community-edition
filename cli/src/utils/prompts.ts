@@ -64,3 +64,26 @@ export interface InputConfig {
 export function runInput(cfg: InputConfig): Promise<string> {
   return new (enquirer as any).Input(cfg).run();
 }
+
+export interface ListConfig {
+  name: string;
+  message: string;
+}
+
+export function runList(cfg: ListConfig): Promise<ReadonlyArray<string>> {
+  return new (enquirer as any).List(cfg).run();
+}
+
+export interface AutoCompleteConfig {
+  name: string;
+  message: string;
+  choices: ReadonlyArray<string>;
+  limit: number;
+  multiple?: boolean;
+}
+
+export function runAutoComplete(
+  cfg: AutoCompleteConfig
+): Promise<ReadonlyArray<string>> {
+  return new (enquirer as any).AutoComplete(cfg).run();
+}

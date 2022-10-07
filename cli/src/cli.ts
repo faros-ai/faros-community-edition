@@ -18,9 +18,7 @@ export async function main(): Promise<void> {
   // happy.
   program.command('pick-source', {isDefault: true}).action(async (options) => {
     const airbyte = new Airbyte(
-      axios.create({
-        baseURL: `${options.airbyteUrl}/api/v1`,
-      })
+      options.airbyteUrl
     );
 
     const source = await runSelect({

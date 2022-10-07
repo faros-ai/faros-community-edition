@@ -5,7 +5,7 @@ import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
 import {display, errorLog, parseIntegerPositive, toStringList} from '../utils';
-import {runMultiSelect, runPassword} from '../utils/prompts';
+import {runAutoComplete, runList, runMultiSelect, runPassword, runSelect} from '../utils/prompts';
 
 const GITHUB_SOURCE_ID = '5d9079ca-8173-406f-bfdb-41f19c62daff';
 const GITHUB_CONNECTION_ID = '6421df4e-0c5a-4666-a530-9c01de683518';
@@ -37,9 +37,7 @@ export function makeGithubCommand(): Command {
 
   cmd.action((options) => {
     const airbyte = new Airbyte(
-      axios.create({
-        baseURL: `${options.airbyteUrl}/api/v1`,
-      })
+      options.airbyteUrl
     );
 
     runGithub({...options, airbyte});
@@ -55,7 +53,7 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
     cfg.token ||
     (await runPassword({
       name: 'token',
-      message: 'Personal Access Token?',
+      message: 'Enter your Personal Access Token?',
     }));
 
   const startDate = new Date();
@@ -66,12 +64,7 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
   try {
     const repos =
       cfg.repoList ||
-      (await runMultiSelect({
-        name: 'repos',
-        message: 'Pick your favorite repos',
-        limit: 10,
-        choices: await getRepos(token),
-      }));
+      await promptForRepos(token);
 
     if (repos.length === 0) {
       return;
@@ -99,6 +92,36 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
   }
 
   await cfg.airbyte.triggerAndTrackSync(GITHUB_CONNECTION_ID);
+}
+
+async function promptForRepos(token: string): Promise<ReadonlyArray<string>> {
+  const reposPrompt = await runSelect({
+    name: 'reposPrompt',
+    message: 'How would you like to select your repos?',
+    choices: ['Select from a list of repos your token has access to', 'Autocomplete from a list of repos your token has access to', 'I\'ll enter them manually'],
+  });
+
+  switch (reposPrompt) {
+    case 'Select from a list of repos your token has access to': return await runMultiSelect({
+      name: 'repos',
+      message: 'Pick your favorite repos',
+      limit: 10,
+      choices: await getRepos(token),
+    });
+    case 'Autocomplete from a list of repos your token has access to': return await runAutoComplete({
+      name: 'repos',
+      message: 'Pick your favorite repos',
+      limit: 10,
+      choices: await getRepos(token),
+      multiple: true
+    });
+    case 'I\'ll enter them manually': return await runList({
+      name: 'repos',
+      message: 'Enter your favorite repos (comma-separated). E.g., faros-ai/faros-community-edition, faros-ai/airbyte-local-cli',
+    });
+  }
+
+  return [];
 }
 
 async function getRepos(token: string): Promise<ReadonlyArray<string>> {

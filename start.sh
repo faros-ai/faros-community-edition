@@ -67,7 +67,8 @@ main() {
 
   if ((run_cli)); then
     docker pull farosai/faros-ce-cli:latest
-    docker run --network host -it farosai/faros-ce-cli
+    AIRBYTE_URL=$(cat .env | grep "^WEBAPP_URL" | sed 's/^WEBAPP_URL=//')
+    docker run --network host -it farosai/faros-ce-cli pick-source --airbyte-url $AIRBYTE_URL
   fi
 }
 

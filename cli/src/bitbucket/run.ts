@@ -55,9 +55,7 @@ export function makeBitbucketCommand(): Command {
 
   cmd.action((options) => {
     const airbyte = new Airbyte(
-      axios.create({
-        baseURL: `${options.airbyteUrl}/api/v1`,
-      })
+      options.airbyteUrl
     );
 
     runBitbucket({...options, airbyte});

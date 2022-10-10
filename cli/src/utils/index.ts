@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import {promisify} from 'util';
 import VError from 'verror';
 
-export async function sleep(millis: number): Promise<void> {
+export function sleep(millis: number): Promise<void> {
   return promisify(setTimeout)(millis);
 }
 

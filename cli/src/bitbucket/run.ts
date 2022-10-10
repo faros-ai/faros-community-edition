@@ -1,17 +1,10 @@
-import axios from 'axios';
 import {Bitbucket} from 'bitbucket';
 import {APIClient} from 'bitbucket/src/client/types';
 import {Command, Option} from 'commander';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
-import {
-  display,
-  errorLog,
-  parseIntegerPositive,
-  sleep,
-  toStringList,
-} from '../utils';
+import {display, errorLog, parseIntegerPositive, toStringList} from '../utils';
 import {
   runInput,
   runMultiSelect,
@@ -53,12 +46,10 @@ export function makeBitbucketCommand(): Command {
       DEFAULT_CUTOFF_DAYS
     );
 
-  cmd.action((options) => {
-    const airbyte = new Airbyte(
-      options.airbyteUrl
-    );
+  cmd.action(async (options) => {
+    const airbyte = new Airbyte(options.airbyteUrl);
 
-    runBitbucket({...options, airbyte});
+    await runBitbucket({...options, airbyte});
   });
 
   return cmd;
@@ -110,7 +101,7 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
           cfg.password ||
           (await runPassword({
             name: 'token',
-            message: 'Personal Access Token?',
+            message: 'Enter your Personal Access Token',
           }));
         bitbucket = new Bitbucket({
           auth: {
@@ -124,7 +115,7 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
       cfg.workspace ||
       (await runSelect({
         name: 'workspaces',
-        message: 'Pick your favorite workspace',
+        message: 'Select your favorite workspace',
         choices: await getWorkspaces(bitbucket),
       }));
 
@@ -132,7 +123,7 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
       cfg.repoList ||
       (await runMultiSelect({
         name: 'repos',
-        message: 'Pick your favorite repos',
+        message: 'Select your favorite repos',
         limit: 10,
         choices: await getRepos(workspaces, bitbucket),
       }));

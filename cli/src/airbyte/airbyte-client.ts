@@ -10,7 +10,7 @@ export class Airbyte {
   private readonly airbyteUrl: string;
 
   constructor(airbyteUrl: string) {
-    this.airbyteUrl=airbyteUrl.replace(/\/+$/, '');
+    this.airbyteUrl = airbyteUrl.replace(/\/+$/, '');
     this.api = axios.create({
       baseURL: `${this.airbyteUrl}/api/v1`,
     });
@@ -86,23 +86,37 @@ export class Airbyte {
       });
 
       let val = 1;
-      while (true) {
+      let running = true;
+      while (running) {
         syncBar.tick(val);
         val *= -1;
         const status = await this.getJobStatus(job);
         if (status !== 'running') {
+          running = false;
           syncBar.terminate();
           if (status !== 'succeeded') {
-            errorLog(`Sync ${status}. Please check the logs at: ${this.airbyteUrl}/connections/${connectionId}/status`);
+            errorLog(
+              `Sync ${status}. Please check the logs: ${this.airbyteStatusUrl(
+                connectionId
+              )}`
+            );
           } else {
             display('Syncing succeeded');
           }
-          break;
         }
         await sleep(100);
       }
     } catch (error) {
-      errorLog(`Sync failed. Please check the logs at: ${this.airbyteUrl}/connections/${connectionId}/status`, error);
+      errorLog(
+        `Sync failed. Please check the logs: ${this.airbyteStatusUrl(
+          connectionId
+        )}`,
+        error
+      );
     }
+  }
+
+  private airbyteStatusUrl(connectionId: string): string {
+    return `${this.airbyteUrl}/connections/${connectionId}/status`;
   }
 }

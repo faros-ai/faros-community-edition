@@ -5,25 +5,6 @@
  */
 import enquirer from 'enquirer';
 
-export interface ConfirmConfig {
-  name: string;
-  message: string;
-}
-
-class CustomConfirm extends (enquirer as any).Confirm {
-  constructor(cfg: ConfirmConfig) {
-    super(cfg);
-  }
-
-  format(input: string): string {
-    return super.format(this.isTrue(input) ? 'yes' : 'no');
-  }
-}
-
-export function runConfirm(cfg: ConfirmConfig): Promise<boolean> {
-  return new CustomConfirm(cfg).run();
-}
-
 export interface SelectConfig {
   name: string;
   message: string;

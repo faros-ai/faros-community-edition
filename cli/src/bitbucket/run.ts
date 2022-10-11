@@ -4,7 +4,13 @@ import {Command, Option} from 'commander';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
-import {display, errorLog, parseIntegerPositive, toStringList} from '../utils';
+import {
+  display,
+  errorLog,
+  parseIntegerPositive,
+  terminalLink,
+  toStringList,
+} from '../utils';
 import {
   runInput,
   runMultiSelect,
@@ -97,6 +103,14 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
         });
         break;
       case 'Personal Access Token':
+        if (!cfg.password) {
+          display(
+            `Visit our ${await terminalLink(
+              'docs',
+              'https://community.faros.ai/docs/faros-essentials#api-token-requirements'
+            )} for token requirements`
+          );
+        }
         token =
           cfg.password ||
           (await runPassword({

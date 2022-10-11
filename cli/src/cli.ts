@@ -3,7 +3,7 @@ import {program} from 'commander';
 import {Airbyte} from './airbyte/airbyte-client';
 import {makeBitbucketCommand, runBitbucket} from './bitbucket/run';
 import {makeGithubCommand, runGithub} from './github/run';
-import {display} from './utils';
+import {display, terminalLink} from './utils';
 import {runSelect} from './utils/prompts';
 
 const DEFAULT_AIRBYTE_URL = 'http://localhost:8000';
@@ -44,9 +44,17 @@ export async function main(): Promise<void> {
       .option('--metabase-url <string>', 'Metabase URL', DEFAULT_METABASE_URL)
       .hook('postAction', async (thisCommand) => {
         display(
-          `Check out your metrics in Metabase: ${
+          `Check out your metrics in ${await terminalLink(
+            'Metabase',
             thisCommand.opts().metabaseUrl
-          }`
+          )}`
+        );
+        display(
+          'Default admin login credentials are admin@admin.com / admin. ' +
+            `To learn how to set them, visit ${await terminalLink(
+              'Setting Admin Credentials page',
+              'https://community.faros.ai/docs/setting-admin-credentials'
+            )}.`
         );
       });
   });

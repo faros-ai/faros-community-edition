@@ -3,7 +3,13 @@ import {Command, Option} from 'commander';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
-import {display, errorLog, parseIntegerPositive, toStringList} from '../utils';
+import {
+  display,
+  errorLog,
+  parseIntegerPositive,
+  terminalLink,
+  toStringList,
+} from '../utils';
 import {
   runAutoComplete,
   runList,
@@ -52,7 +58,14 @@ export function makeGithubCommand(): Command {
 
 export async function runGithub(cfg: GithubConfig): Promise<void> {
   await cfg.airbyte.waitUntilHealthy();
-
+  if (!cfg.token) {
+    display(
+      `Visit our ${await terminalLink(
+        'docs',
+        'https://community.faros.ai/docs/faros-essentials#api-token-requirements'
+      )} for token requirements`
+    );
+  }
   const token =
     cfg.token ||
     (await runPassword({

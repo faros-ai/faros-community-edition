@@ -2,6 +2,8 @@ import chalk from 'chalk';
 import {promisify} from 'util';
 import VError from 'verror';
 
+import dynamicImport from './dynamic-import';
+
 export function sleep(millis: number): Promise<void> {
   return promisify(setTimeout)(millis);
 }
@@ -53,4 +55,9 @@ export function parseIntegerPositive(value: string): number {
     throw new VError('Not positive: %s', value);
   }
   return parsedValue;
+}
+
+export async function terminalLink(text: string, url: string): Promise<string> {
+  const terminalLink = (await dynamicImport('terminal-link')).default;
+  return terminalLink(text, url);
 }

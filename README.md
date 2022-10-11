@@ -1,4 +1,4 @@
-# ![](img/faros.ico) Faros Community Edition
+# ![](img/faros.ico) Faros Community Edition (Dummy PR - DO NOT MERGE)
 
 [![GitHub Stars](https://img.shields.io/github/stars/faros-ai/faros-community-edition?style=social)](https://github.com/faros-ai/faros-community-edition/stargazers/) [![Community Slack](https://img.shields.io/badge/chat-Slack-%234a154b)](https://community.faros.ai/docs/slack) [![Release](https://github.com/faros-ai/faros-community-edition/actions/workflows/release.yml/badge.svg)](https://github.com/faros-ai/faros-community-edition/actions/workflows/release.yml) [![PR Cycle Time](https://img.shields.io/badge/dynamic/json?color=informational&label=PR%20Cycle%20Time&query=%24%5B0%5D.pr_cycle_time&suffix=%20days&url=https%3A%2F%2Fmetabase.faros-ce.onplural.sh%2Fapi%2Fpublic%2Fcard%2Fba76dbdf-a77b-4948-9efe-df29aa4667fc%2Fquery%2Fjson)](https://metabase.faros-ce.onplural.sh/public/dashboard/b2ab64dc-e343-45df-8f78-fb912306e12e?relative_date=past30days&repository=faros-community-edition)
 

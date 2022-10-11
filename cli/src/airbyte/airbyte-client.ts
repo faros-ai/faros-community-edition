@@ -3,7 +3,7 @@ import axios, {AxiosInstance} from 'axios';
 import ProgressBar from 'progress';
 import {VError} from 'verror';
 
-import {display, errorLog, sleep} from '../utils';
+import {display, errorLog, sleep, terminalLink} from '../utils';
 
 export class Airbyte {
   private readonly api: AxiosInstance;
@@ -96,8 +96,9 @@ export class Airbyte {
           syncBar.terminate();
           if (status !== 'succeeded') {
             errorLog(
-              `Sync ${status}. Please check the logs: ${this.airbyteStatusUrl(
-                connectionId
+              `Sync ${status}. Please check the ${await terminalLink(
+                'logs',
+                this.airbyteStatusUrl(connectionId)
               )}`
             );
           } else {
@@ -108,8 +109,9 @@ export class Airbyte {
       }
     } catch (error) {
       errorLog(
-        `Sync failed. Please check the logs: ${this.airbyteStatusUrl(
-          connectionId
+        `Sync failed. Please check the ${await terminalLink(
+          'logs',
+          this.airbyteStatusUrl(connectionId)
         )}`,
         error
       );

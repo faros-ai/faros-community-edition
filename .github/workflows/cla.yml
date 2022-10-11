@@ -2,7 +2,6 @@ name: "CLA Assistant"
 on:
   pull_request_target:
     types: [opened,closed,synchronize]
-
 jobs:
   CLAssistant:
     runs-on: ubuntu-latest

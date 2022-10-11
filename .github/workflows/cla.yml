@@ -31,7 +31,7 @@ jobs:
           remote-repository-name: cla
           create-file-commit-message: 'Creating/updating file for storing CLA Signatures'
           signed-commit-message: '$contributorName has signed the CLA in #$pullRequestNo'
-          custom-notsigned-prcomment: 'Thank you for your submission, we realy appreciate it. Faros can accept contrbutions only from authors who accepted and signed Contributor License Agreement ($pathToCLADocument). Please kindly read it and accept by posting the following comment on this PR: "I have read the CLA Document and I hereby sign the CLA"'
+          custom-notsigned-prcomment: 'Thank you for your submission, we realy appreciate it. Faros can accept contrbutions only from authors who accepted and signed [Contributor License Agreement](https://docs.faros.ai/docs/individual-cla). Please kindly read it and accept by posting the following comment on this PR:'
           custom-pr-sign-comment: 'I have read the CLA Document and I hereby sign the CLA'
           #custom-allsigned-prcomment: 'pull request comment when all contributors has signed, defaults to **CLA Assistant Lite bot** All Contributors have signed the CLA.'
           lock-pullrequest-aftermerge: true

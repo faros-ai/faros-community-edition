@@ -84,7 +84,7 @@ export class Airbyte {
 
       const syncBar = new ProgressBar(':bar', {
         total: 2,
-        complete: '.',
+        complete: process.env.FAROS_NO_EMOJI ? '.' : Emoji.PROGRESS,
         incomplete: ' ',
       });
 
@@ -109,7 +109,7 @@ export class Airbyte {
             display('Syncing succeeded %s', Emoji.SUCCESS);
           }
         }
-        await sleep(100);
+        await sleep(1000);
       }
     } catch (error) {
       errorLog(

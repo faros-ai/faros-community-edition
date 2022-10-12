@@ -161,7 +161,7 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
       sourceId: BITBUCKET_SOURCE_ID,
     });
   } catch (error) {
-    errorLog('Setup failed%s', Emoji.FAILURE, error);
+    errorLog('Setup failed %s', Emoji.FAILURE, error);
     return;
   }
 

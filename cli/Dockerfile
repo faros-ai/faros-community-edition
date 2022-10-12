@@ -3,7 +3,6 @@ FROM node:16-alpine
 WORKDIR /home/node/cli
 
 COPY .tsconfig.json package.json package-lock.json ./
-COPY resources ./resources
 COPY src ./src
 COPY bin ./bin
 RUN npm ci

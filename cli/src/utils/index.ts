@@ -5,10 +5,10 @@ import VError from 'verror';
 import dynamicImport from './dynamic-import';
 
 export enum Emoji {
-  SUCCESS = '🙌',
+  SUCCESS = '🎉',
   FAILURE = '😞',
   SETUP = '⚙️',
-  SYNC = '⬇️',
+  SYNC = '🔄',
   CHECK_CONNECTION = '🔍',
 }
 

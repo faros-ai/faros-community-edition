@@ -31,7 +31,6 @@ describe('index', () => {
         '1',
       ]);
       const lines = await CLI.readlines(cli.stdout);
-      console.log(JSON.stringify(lines));
       EXPECTED_OUTPUT_SUCCESS_SYNC.forEach((line) =>
         expect(lines).toContain(line)
       );

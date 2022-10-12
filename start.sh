@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eo pipefail
+
 email_prompt() {
   read -p "Please provide us with your email address: " EMAIL
   while true; do
@@ -16,28 +18,59 @@ email_prompt() {
   printf "Thank you! 🙏\n"
 }
 
-EMAIL_FILE=".faros-email"
-if [[ -f "$EMAIL_FILE" ]]; then
-    EMAIL=$(cat $EMAIL_FILE)
-else
-    printf "Hello 👋 Welcome to Faros Community Edition! 🤗\n\n"
-    printf "Want to stay up to date with the latest community news? (we won't spam you)\n"
-    email_prompt
-    echo "$EMAIL" > $EMAIL_FILE
-fi
+function setDefaults() {
+    detach=""
+}
 
-export FAROS_EMAIL=$EMAIL
+function parseFlags() {
+    while (($#)); do
+        case "$1" in
+            --run-cli)
+                run_cli=1
+                detach="--detach"
+                shift 1 ;;
+            *)
+                echo "Unrecognized arg: $1"
+                shift ;;
+        esac
+    done
+}
 
-# Ensure we're using the latest faros-init image
-export FAROS_INIT_IMAGE=farosai.docker.scarf.sh/farosai/faros-ce-init:latest
+main() {
+  setDefaults
+  parseFlags "$@"
 
-docker-compose pull faros-init
+  EMAIL_FILE=".faros-email"
+  if [[ -f "$EMAIL_FILE" ]]; then
+      EMAIL=$(cat $EMAIL_FILE)
+  else
+      printf "Hello 👋 Welcome to Faros Community Edition! 🤗\n\n"
+      printf "Want to stay up to date with the latest community news? (we won't spam you)\n"
+      email_prompt
+      echo "$EMAIL" > $EMAIL_FILE
+  fi
 
-if [[ $(uname -m 2> /dev/null) == 'arm64' ]]; then
-    # Use Metabase images built for Apple M1
-    METABASE_IMAGE="farosai.docker.scarf.sh/farosai/metabase-m1" \
-    docker-compose up --build --remove-orphans
-else
-    docker-compose up --build --remove-orphans
-fi
+  export FAROS_EMAIL=$EMAIL
 
+  # Ensure we're using the latest faros-init image
+  export FAROS_INIT_IMAGE=farosai.docker.scarf.sh/farosai/faros-ce-init:latest
+
+  docker-compose pull faros-init
+
+  if [[ $(uname -m 2> /dev/null) == 'arm64' ]]; then
+      # Use Metabase images built for Apple M1
+      METABASE_IMAGE="farosai.docker.scarf.sh/farosai/metabase-m1" \
+      docker-compose up --build --remove-orphans $detach
+  else
+      docker-compose up --build --remove-orphans $detach
+  fi
+
+  if ((run_cli)); then
+    docker pull farosai/faros-ce-cli:latest
+    AIRBYTE_URL=$(grep "^WEBAPP_URL" .env| sed 's/^WEBAPP_URL=//')
+    METABASE_PORT=$(grep "^METABASE_PORT" .env| sed 's/^METABASE_PORT=//')
+    docker run --network host -it farosai/faros-ce-cli pick-source --airbyte-url "$AIRBYTE_URL" --metabase-url "http://localhost:$METABASE_PORT"
+  fi
+}
+
+main "$@"; exit

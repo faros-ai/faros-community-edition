@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+const {main} = require('../lib/cli');
+const {errorLog} = require('../lib/utils');
+
+main().catch((err) => {
+    errorLog(err.message);
+    process.exit(1);
+});

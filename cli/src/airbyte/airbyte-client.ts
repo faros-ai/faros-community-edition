@@ -3,7 +3,7 @@ import axios, {AxiosInstance} from 'axios';
 import ProgressBar from 'progress';
 import {VError} from 'verror';
 
-import {display, errorLog, sleep, terminalLink} from '../utils';
+import {display, Emoji, errorLog, sleep, terminalLink} from '../utils';
 
 export class Airbyte {
   private readonly api: AxiosInstance;
@@ -17,7 +17,7 @@ export class Airbyte {
   }
 
   async waitUntilHealthy(): Promise<void> {
-    display('Checking connection with Airbyte');
+    display('Checking connection with Airbyte %s', Emoji.CHECK_CONNECTION);
 
     await retry(
       async () => {
@@ -41,6 +41,7 @@ export class Airbyte {
   }
 
   async setupSource(config: any): Promise<void> {
+    display('Setting up source %s', Emoji.SETUP);
     await this.api
       .post('/sources/check_connection_for_update', config)
       .catch((err) => {
@@ -50,6 +51,8 @@ export class Airbyte {
     await this.api.post('/sources/update', config).catch((err) => {
       throw new VError(err);
     });
+
+    display('Setup succeeded %s', Emoji.SUCCESS);
   }
 
   async triggerSync(connectionId: string): Promise<number> {
@@ -76,7 +79,7 @@ export class Airbyte {
 
   async triggerAndTrackSync(connectionId: string): Promise<void> {
     try {
-      display('Syncing');
+      display('Syncing %s', Emoji.SYNC);
       const job = await this.triggerSync(connectionId);
 
       const syncBar = new ProgressBar(':bar', {
@@ -96,23 +99,25 @@ export class Airbyte {
           syncBar.terminate();
           if (status !== 'succeeded') {
             errorLog(
-              `Sync ${status}. Please check the ${await terminalLink(
+              `Sync ${status}. %s Please check the ${await terminalLink(
                 'logs',
                 this.airbyteStatusUrl(connectionId)
-              )}`
+              )}`,
+              Emoji.FAILURE
             );
           } else {
-            display('Syncing succeeded');
+            display('Syncing succeeded %s', Emoji.SUCCESS);
           }
         }
         await sleep(100);
       }
     } catch (error) {
       errorLog(
-        `Sync failed. Please check the ${await terminalLink(
+        `Sync failed. %s Please check the ${await terminalLink(
           'logs',
           this.airbyteStatusUrl(connectionId)
         )}`,
+        Emoji.FAILURE,
         error
       );
     }

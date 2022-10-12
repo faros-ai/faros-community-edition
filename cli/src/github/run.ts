@@ -5,6 +5,7 @@ import VError from 'verror';
 import {Airbyte} from '../airbyte/airbyte-client';
 import {
   display,
+  Emoji,
   errorLog,
   parseIntegerPositive,
   terminalLink,
@@ -85,7 +86,6 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
       return;
     }
 
-    display('Setting up source');
     await cfg.airbyte.setupSource({
       connectionConfiguration: {
         repository: repos.join(' '),
@@ -99,10 +99,8 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
       name: 'GitHub',
       sourceId: GITHUB_SOURCE_ID,
     });
-
-    display('Setup succeeded');
   } catch (error) {
-    errorLog('Setup failed', error);
+    errorLog('Setup failed %s', Emoji.FAILURE, error);
     return;
   }
 

@@ -3,11 +3,11 @@ import path from 'path';
 import {CLI} from '../cli';
 
 const EXPECTED_OUTPUT_SUCCESS_SYNC = [
-  'Checking connection with Airbyte\n',
-  'Setting up source\n',
-  'Setup succeeded\n',
-  'Syncing\n',
-  'Syncing succeeded\n',
+  'Checking connection with Airbyte \n',
+  'Setting up source \n',
+  'Setup succeeded \n',
+  'Syncing \n',
+  'Syncing succeeded \n',
 ];
 
 describe('index', () => {
@@ -31,6 +31,7 @@ describe('index', () => {
         '1',
       ]);
       const lines = await CLI.readlines(cli.stdout);
+      console.log(JSON.stringify(lines));
       EXPECTED_OUTPUT_SUCCESS_SYNC.forEach((line) =>
         expect(lines).toContain(line)
       );
@@ -40,6 +41,11 @@ describe('index', () => {
   );
 
   function run(args: string[]): Promise<CLI> {
-    return CLI.runWith(args, {}, path.join(__dirname, '..', '..'), 'main');
+    return CLI.runWith(
+      args,
+      {env: {FAROS_NO_EMOJI: '1'}},
+      path.join(__dirname, '..', '..'),
+      'main'
+    );
   }
 });

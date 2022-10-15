@@ -66,7 +66,7 @@ main() {
 
   if ((run_cli)); then
     faros_init_exit=$(docker-compose ps faros-init --format json | grep -Eo '"ExitCode"[^,]*' | grep -Eo '[^:]*$')
-    if [ $faros_init_exit != 0 ]; then
+    if [ "$faros_init_exit" != 0 ]; then
       printf "an error occured during startup, exiting... \n"
       exit 1
     fi

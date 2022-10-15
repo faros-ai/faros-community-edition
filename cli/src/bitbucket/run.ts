@@ -138,7 +138,8 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
       cfg.repoList ||
       (await runMultiSelect({
         name: 'repos',
-        message: 'Select your favorite repos',
+        message:
+          'Select your favorite repos with SPACEBAR; press ENTER when done',
         limit: 10,
         choices: await getRepos(workspaces, bitbucket),
       }));

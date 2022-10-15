@@ -4,14 +4,13 @@ import VError from 'verror';
 
 import dynamicImport from './dynamic-import';
 
-
 export enum Emoji {
   SUCCESS = '🎉',
   FAILURE = '😞',
   SETUP = '⚙️',
   SYNC = '🔄',
   CHECK_CONNECTION = '🔍',
-  PROGRESS = '⏳'
+  PROGRESS = '⏳',
 }
 
 function processEmoji(...args: any[]): any[] {

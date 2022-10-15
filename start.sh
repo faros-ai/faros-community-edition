@@ -19,7 +19,7 @@ email_prompt() {
 }
 
 function setDefaults() {
-    detach=""
+  :
 }
 
 function parseFlags() {
@@ -27,7 +27,6 @@ function parseFlags() {
         case "$1" in
             --run-cli)
                 run_cli=1
-                detach="--detach"
                 shift 1 ;;
             *)
                 echo "Unrecognized arg: $1"
@@ -60,12 +59,17 @@ main() {
   if [[ $(uname -m 2> /dev/null) == 'arm64' ]]; then
       # Use Metabase images built for Apple M1
       METABASE_IMAGE="farosai.docker.scarf.sh/farosai/metabase-m1" \
-      docker-compose up --build --remove-orphans $detach
+      docker-compose up --build --remove-orphans --detach && docker-compose logs --follow faros-init
   else
-      docker-compose up --build --remove-orphans $detach
+      docker-compose up --build --remove-orphans --detach && docker-compose logs --follow faros-init
   fi
 
   if ((run_cli)); then
+    faros_init_exit=$(docker-compose ps faros-init --format json | grep -Eo '"ExitCode"[^,]*' | grep -Eo '[^:]*$')
+    if [ $faros_init_exit != 0 ]; then
+      printf "an error occured during startup, exiting... \n"
+      exit 1
+    fi
     docker pull farosai/faros-ce-cli:latest
     AIRBYTE_URL=$(grep "^WEBAPP_URL" .env| sed 's/^WEBAPP_URL=//')
     METABASE_PORT=$(grep "^METABASE_PORT" .env| sed 's/^METABASE_PORT=//')

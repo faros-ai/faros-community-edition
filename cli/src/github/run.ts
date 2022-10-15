@@ -122,14 +122,16 @@ async function promptForRepos(token: string): Promise<ReadonlyArray<string>> {
     case 'Select from a list of repos your token has access to':
       return await runMultiSelect({
         name: 'repos',
-        message: 'Pick your favorite repos with SPACEBAR; press ENTER when done',
+        message:
+          'Pick your favorite repos with SPACEBAR; press ENTER when done',
         limit: 10,
         choices: await getRepos(token),
       });
     case 'Autocomplete from a list of repos your token has access to':
       return await runAutoComplete({
         name: 'repos',
-        message: 'Select your favorite repos with SPACEBAR; press ENTER when done',
+        message:
+          'Select your favorite repos with SPACEBAR; press ENTER when done',
         limit: 10,
         choices: await getRepos(token),
         multiple: true,

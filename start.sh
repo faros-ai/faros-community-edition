@@ -67,7 +67,9 @@ main() {
   if ((run_cli)); then
     faros_init_exit=$(docker-compose ps faros-init --format json | grep -Eo '"ExitCode"[^,]*' | grep -Eo '[^:]*$')
     if [ "$faros_init_exit" != 0 ]; then
-      printf "an error occured during startup, exiting... \n"
+      printf "An error occured during the initialization of Faros CE.\n"
+      printf "For troubleshooting help, you can bring this log on our Slack workspace:\n"
+      printf "https://community.faros.ai/docs/slack \n"
       exit 1
     fi
     docker pull farosai/faros-ce-cli:latest

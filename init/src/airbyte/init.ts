@@ -240,6 +240,7 @@ export class AirbyteInit {
       (sd) =>
         sd.dockerRepository.startsWith('farosai/') ||
         sd.dockerRepository === 'airbyte/source-jira' ||
+        sd.dockerRepository === 'airbyte/source-github' ||
         sd.dockerRepository === 'airbyte/source-gitlab'
     );
 

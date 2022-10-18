@@ -18,10 +18,6 @@ email_prompt() {
   printf "Thank you! 🙏\n"
 }
 
-function setDefaults() {
-  :
-}
-
 function parseFlags() {
     while (($#)); do
         case "$1" in

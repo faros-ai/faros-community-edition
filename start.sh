@@ -54,19 +54,17 @@ main() {
   # Ensure we're using the latest faros-init image
   export FAROS_INIT_IMAGE=farosai.docker.scarf.sh/farosai/faros-ce-init:latest
 
-  docker-compose pull faros-init
-
   if [[ $(uname -m 2> /dev/null) == 'arm64' ]]; then
       # Use Metabase images built for Apple M1
       METABASE_IMAGE="farosai.docker.scarf.sh/farosai/metabase-m1" \
-      docker-compose up --build --remove-orphans --detach && docker-compose logs --follow faros-init
+      docker compose up --build --remove-orphans --detach && docker compose logs --follow faros-init
   else
-      docker-compose up --build --remove-orphans --detach && docker-compose logs --follow faros-init
+      docker compose up --build --remove-orphans --detach && docker compose logs --follow faros-init
   fi
 
   if ((run_cli)); then
-    faros_init_exit=$(docker-compose ps faros-init --format json | grep -Eo '"ExitCode"[^,]*' | grep -Eo '[^:]*$')
-    if [ "$faros_init_exit" != 0 ]; then
+    CONTAINER_EXIT_CODE=$(docker wait faros-community-edition-faros-init-1)
+    if [ "$CONTAINER_EXIT_CODE" != 0 ]; then
       printf "An error occured during the initialization of Faros CE.\n"
       printf "For troubleshooting help, you can bring this log on our Slack workspace:\n"
       printf "https://community.faros.ai/docs/slack \n"

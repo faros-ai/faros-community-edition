@@ -55,17 +55,17 @@ jobs:
 
       # In order to optimize for speed, we use the latest init image.
       - name: Start services
-        run: FAROS_EMAIL=integration.tests@faros.ai FAROS_INIT_IMAGE=farosai/faros-ce-init:latest docker-compose up --quiet-pull -d
+        run: FAROS_EMAIL=integration.tests@faros.ai FAROS_INIT_IMAGE=farosai/faros-ce-init:latest docker compose up --quiet-pull -d
 
       - name: Show logs
-        run: docker-compose logs --tail all
+        run: docker compose logs --tail all
 
       - name: Show services
-        run: docker-compose ps -a
+        run: docker compose ps -a
 
       - name: Wait for init to complete
         run: |
-          CONTAINER_EXIT_CODE=$(docker wait faros-community-edition_faros-init_1)
+          CONTAINER_EXIT_CODE=$(docker wait faros-community-edition-faros-init-1)
           echo "Faros init container exit code was ${CONTAINER_EXIT_CODE}"
           [[ $CONTAINER_EXIT_CODE -eq 0 ]]
 
@@ -85,6 +85,6 @@ jobs:
         working-directory: cli
 
       - name: Stop services
-        run: docker-compose down
+        run: docker compose down
 
 

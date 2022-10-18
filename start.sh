@@ -32,7 +32,6 @@ function parseFlags() {
 }
 
 main() {
-  setDefaults
   parseFlags "$@"
 
   EMAIL_FILE=".faros-email"

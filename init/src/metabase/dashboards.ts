@@ -535,7 +535,7 @@ export class Dashboards {
       dashboardIds[cfg.name] = id;
 
       if (cfg.bookmark) {
-        await this.metabase.dashboardBookmark(id)
+        await this.metabase.dashboardBookmark(id);
       }
     }
     this.logger.info('Created empty dashboards');

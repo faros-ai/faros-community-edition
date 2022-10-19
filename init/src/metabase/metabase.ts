@@ -412,5 +412,5 @@ export class Metabase {
     } catch (err) {
       throw wrapApiError(err, 'unable to bookmark dashboard: ' + id);
     }
-  }  
+  }
 }

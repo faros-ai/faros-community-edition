@@ -1271,7 +1271,7 @@
             ],
             [
               "field",
-              {{ field "tms_Task.status → category" }},
+              {{ field "tms_Task.statusCategory" }},
               null
             ]
           ],
@@ -1407,7 +1407,7 @@
       "visualization_settings": {
         "graph.dimensions": [
           "name",
-          "status → category"
+          "statusCategory"
         ],
         "graph.x_axis.title_text": "Repository",
         "graph.y_axis.title_text": "Bugs",

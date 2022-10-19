@@ -140,17 +140,6 @@
               ],
               "alias": "Vcs Organization - Organization"
             }
-          ],
-          "filter": [
-            "=",
-            [
-              "field",
-              {{ field "vcs_Organization.source" }},
-              {
-                "join-alias": "Vcs Organization - Organization"
-              }
-            ],
-            "GitHub"
           ]
         }
       },
@@ -180,17 +169,6 @@
                 {{ field "vcs_PullRequest.mergedAt" }},
                 null
               ]
-            ],
-            [
-              "=",
-              [
-                "field",
-                {{ field "vcs_Organization.source" }},
-                {
-                  "join-alias": "Vcs Organization - Organization"
-                }
-              ],
-              "GitHub"
             ]
           ],
           "aggregation": [
@@ -326,15 +304,6 @@
               ],
               "alias": "Tms TaskBoard - Board"
             }
-          ],
-          "filter": [
-            "=",
-            [
-              "field",
-              {{ field "tms_Task.source" }},
-              null
-            ],
-            "GitHub"
           ]
         },
         "type": "query"
@@ -380,15 +349,6 @@
                 null
               ],
               "closed"
-            ],
-            [
-              "=",
-              [
-                "field",
-                {{ field "tms_Task.source" }},
-                null
-              ],
-              "GitHub"
             ]
           ],
           "joins": [

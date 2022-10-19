@@ -1320,6 +1320,7 @@
     }
   ],
   "path": "/Faros CE/JIRA",
-  "priority": 13
+  "priority": 13,
+  "bookmark": true
 }
 

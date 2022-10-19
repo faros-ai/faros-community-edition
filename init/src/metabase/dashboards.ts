@@ -533,6 +533,10 @@ export class Dashboards {
       cards[cfg.name] = cfg.cards;
       collectionIds[cfg.name] = collectionId;
       dashboardIds[cfg.name] = id;
+
+      if (cfg.bookmark) {
+        await this.metabase.dashboardBookmark(id)
+      }
     }
     this.logger.info('Created empty dashboards');
 

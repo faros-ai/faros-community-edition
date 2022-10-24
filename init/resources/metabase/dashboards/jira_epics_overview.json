@@ -1076,6 +1076,7 @@
     }
   ],
   "path": "/Faros CE/JIRA",
-  "priority": 12
+  "priority": 12,
+  "bookmark": true
 }
 

@@ -404,4 +404,13 @@ export class Metabase {
       throw wrapApiError(err, 'unable to add card to dashboard: ' + id);
     }
   }
+
+  async dashboardBookmark(id: number): Promise<any> {
+    try {
+      const {data} = await this.api.post(`bookmark/dashboard/${id}`);
+      return data;
+    } catch (err) {
+      throw wrapApiError(err, 'unable to bookmark dashboard: ' + id);
+    }
+  }
 }

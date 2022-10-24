@@ -1,0 +1,2209 @@
+{
+  "name": "Git Dashboard",
+  "cards": [
+    {
+      "name": "PRs Merged",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "filter": [
+            "not-null",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.repository" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Organization" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Repository.organization" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Organization.id" }},
+                  {
+                    "join-alias": "Vcs Organization - Organization"
+                  }
+                ]
+              ],
+              "alias": "Vcs Organization - Organization"
+            }
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "stateDetail",
+        "table.cell_column": "count"
+      }
+    },
+    {
+      "name": "PRs Opened by Week",
+      "description": null,
+      "display": "line",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.repository" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Organization" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Repository.organization" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Organization.id" }},
+                  {
+                    "join-alias": "Vcs Organization - Organization"
+                  }
+                ]
+              ],
+              "alias": "Vcs Organization - Organization"
+            }
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "createdAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "PRs Merged by Week",
+      "description": null,
+      "display": "line",
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "filter": [
+            "and",
+            [
+              "not-null",
+              [
+                "field",
+                {{ field "vcs_PullRequest.mergedAt" }},
+                null
+              ]
+            ]
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.repository" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Organization" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Repository.organization" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Organization.id" }},
+                  {
+                    "join-alias": "Vcs Organization - Organization"
+                  }
+                ]
+              ],
+              "alias": "Vcs Organization - Organization"
+            }
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "mergedAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Issues Created by Week",
+      "description": null,
+      "display": "line",
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.createdAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            }
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "createdAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Issues Closed by Week",
+      "description": null,
+      "display": "line",
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "tms_Task" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_Task.updatedAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "tms_Task.statusDetail" }},
+                null
+              ],
+              "closed"
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoardRelationship"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "alias": "Tms TaskBoard - Board"
+            }
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "updatedAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "PR Cycle Time",
+      "description": null,
+      "display": "gauge",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT EXTRACT(epoch FROM (\nSELECT \n    justify_interval(\n      avg(\n        \"vcs_PullRequest\".\"mergedAt\" - \"vcs_PullRequest\".\"createdAt\"\n      )\n    ) as cycle_time \n  FROM \n    \"vcs_PullRequest\" \n  JOIN \"vcs_Repository\" ON \"vcs_PullRequest\".\"repository\" = \"vcs_Repository\".\"id\"\n  JOIN \"vcs_Organization\" ON \"vcs_Repository\".\"organization\" = \"vcs_Organization\".\"id\"\n  WHERE \"vcs_PullRequest\".\"mergedAt\" IS NOT NULL AND <<mergedAt>> AND <<repositoryName>>\n) / 3600 / 24)",
+          "template-tags": {
+            "mergedAt": {
+              "id": "6d632c6b-fb36-9c68-fe23-f392a44e8616",
+              "name": "mergedAt",
+              "display-name": "MergedAt",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "vcs_PullRequest.mergedAt" }},
+                null
+              ],
+              "widget-type": "date/relative"
+            },
+            "repositoryName": {
+              "id": "1015faef-9dfa-6ca0-af07-bb3698da351d",
+              "name": "repositoryName",
+              "display-name": "RepositoryName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "vcs_Repository.name" }},
+                null
+              ],
+              "widget-type": "category"
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 3,
+            "max": 10,
+            "color": "#ED6E6E",
+            "label": ""
+          },
+          {
+            "min": 1,
+            "max": 3,
+            "color": "#F9CF48",
+            "label": ""
+          },
+          {
+            "min": 0,
+            "max": 1,
+            "color": "#84BB4C",
+            "label": ""
+          }
+        ],
+        "column_settings": {
+          "[\"name\",\"date_part\"]": {
+            "suffix": " days"
+          }
+        }
+      }
+    },
+    {
+      "name": "Top 5 Contributors",
+      "description": null,
+      "display": "row",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_User.name" }},
+              {
+                "source-field": {{ field "vcs_PullRequest.author" }}
+              }
+            ]
+          ],
+          "limit": 5,
+          "order-by": [
+            [
+              "desc",
+              [
+                "aggregation",
+                0
+              ]
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.repository" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Organization" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Repository.organization" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Organization.id" }},
+                  {
+                    "join-alias": "Vcs Organization - Organization"
+                  }
+                ]
+              ],
+              "alias": "Vcs Organization - Organization"
+            }
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "name"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Reviews Distribution",
+      "description": null,
+      "display": "pie",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-query": {
+            "source-table": {{ table "vcs_PullRequest" }},
+            "expressions": {
+              "review": [
+                "case",
+                [
+                  [
+                    [
+                      "is-null",
+                      [
+                        "field",
+                        {{ field "vcs_PullRequestReview.id" }},
+                        {
+                          "join-alias": "Vcs PullRequestReview"
+                        }
+                      ]
+                    ],
+                    0
+                  ]
+                ],
+                {
+                  "default": 1
+                }
+              ]
+            },
+            "aggregation": [
+              [
+                "aggregation-options",
+                [
+                  "sum",
+                  [
+                    "expression",
+                    "review"
+                  ]
+                ],
+                {
+                  "name": "Review Count",
+                  "display-name": "Review Count"
+                }
+              ]
+            ],
+            "breakout": [
+              [
+                "field",
+                {{ field "vcs_PullRequest.uid" }},
+                null
+              ],
+              [
+                "field",
+                {{ field "vcs_PullRequest.mergedAt" }},
+                {
+                  "temporal-unit": "day"
+                }
+              ],
+              [
+                "field",
+                {{ field "vcs_Repository.name" }},
+                {
+                  "join-alias": "Vcs Repository - Repository"
+                }
+              ]
+            ],
+            "joins": [
+              {
+                "fields": "all",
+                "source-table": {{ table "vcs_Repository" }},
+                "condition": [
+                  "=",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.repository" }},
+                    null
+                  ],
+                  [
+                    "field",
+                    {{ field "vcs_Repository.id" }},
+                    {
+                      "join-alias": "Vcs Repository - Repository"
+                    }
+                  ]
+                ],
+                "alias": "Vcs Repository - Repository"
+              },
+              {
+                "fields": "all",
+                "source-table": {{ table "vcs_Organization" }},
+                "condition": [
+                  "=",
+                  [
+                    "field",
+                    {{ field "vcs_Repository.organization" }},
+                    {
+                      "join-alias": "Vcs Repository - Repository"
+                    }
+                  ],
+                  [
+                    "field",
+                    {{ field "vcs_Organization.id" }},
+                    {
+                      "join-alias": "Vcs Organization - Organization"
+                    }
+                  ]
+                ],
+                "alias": "Vcs Organization - Organization"
+              },
+              {
+                "fields": "all",
+                "source-table": {{ table "vcs_PullRequestReview" }},
+                "condition": [
+                  "=",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.id" }},
+                    null
+                  ],
+                  [
+                    "field",
+                    {{ field "vcs_PullRequestReview.pullRequest" }},
+                    {
+                      "join-alias": "Vcs PullRequestReview"
+                    }
+                  ]
+                ],
+                "alias": "Vcs PullRequestReview"
+              }
+            ]
+          },
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              "Review Count",
+              {
+                "base-type": "type/Float"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "pie.show_legend": true
+      }
+    },
+    {
+      "name": "Build Reliability",
+      "description": null,
+      "display": "gauge",
+      "table_id": {{ table "cicd_Build" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "cicd_Build" }},
+          "expressions": {
+            "isSuccess": [
+              "case",
+              [
+                [
+                  [
+                    "=",
+                    [
+                      "field",
+                      {{ field "cicd_Build.statusCategory" }},
+                      null
+                    ],
+                    "Success"
+                  ],
+                  1
+                ]
+              ],
+              {
+                "default": 0
+              }
+            ]
+          },
+          "aggregation": [
+            [
+              "avg",
+              [
+                "expression",
+                "isSuccess"
+              ]
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "cicd_BuildCommitAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_Build.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "cicd_BuildCommitAssociation.build" }},
+                  {
+                    "join-alias": "Cicd BuildCommitAssociation"
+                  }
+                ]
+              ],
+              "alias": "Cicd BuildCommitAssociation"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Commit" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_BuildCommitAssociation.commit" }},
+                  {
+                    "join-alias": "Cicd BuildCommitAssociation"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Commit.id" }},
+                  {
+                    "join-alias": "Vcs Commit - Commit"
+                  }
+                ]
+              ],
+              "alias": "Vcs Commit - Commit"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Commit.repository" }},
+                  {
+                    "join-alias": "Vcs Commit - Commit"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            }
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "gauge.segments": [
+          {
+            "min": 0.8,
+            "max": 0.95,
+            "color": "#ED6E6E",
+            "label": ""
+          },
+          {
+            "min": 0.95,
+            "max": 0.98,
+            "color": "#F9CF48",
+            "label": ""
+          },
+          {
+            "min": 0.98,
+            "max": 1,
+            "color": "#84BB4C",
+            "label": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "Average Build Time",
+      "description": null,
+      "display": "scalar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT EXTRACT(epoch FROM (\nSELECT \n    justify_interval(\n      avg(\n        \"cicd_Build\".\"endedAt\" - \"cicd_Build\".\"startedAt\"\n      )\n    ) as build_time \n  FROM \n    \"cicd_Build\" \n  LEFT JOIN \"cicd_BuildCommitAssociation\" ON \"cicd_Build\".\"id\" = \"cicd_BuildCommitAssociation\".\"build\"\n  LEFT JOIN \"vcs_Commit\" ON \"cicd_BuildCommitAssociation\".\"commit\" = \"vcs_Commit\".\"id\"\n  LEFT JOIN \"vcs_Repository\" ON \"vcs_Commit\".\"repository\" = \"vcs_Repository\".\"id\"\n  WHERE \n    \"cicd_Build\".\"createdAt\" IS NOT NULL AND <<createdAt>> AND <<repositoryName>>\n) / 60)",
+          "template-tags": {
+            "createdAt": {
+              "id": "c5b00e41-e212-a817-bc1a-4c2ff65db256",
+              "name": "createdAt",
+              "display-name": "CreatedAt",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "cicd_Build.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative"
+            },
+            "repositoryName": {
+              "id": "5ba685b5-d77e-1aec-e1af-2d9785f02791",
+              "name": "repositoryName",
+              "display-name": "RepositoryName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "vcs_Repository.name" }},
+                null
+              ],
+              "widget-type": "string/="
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "column_settings": {
+          "[\"name\",\"date_part\"]": {
+            "suffix": " min"
+          }
+        }
+      }
+    },
+    {
+      "name": "Builds per Week",
+      "description": null,
+      "display": "scalar",
+      "table_id": null,
+      "dataset_query": {
+        "native": {
+          "template-tags": {
+            "createdAt": {
+              "id": "ffb951ef-1a4f-a0ee-41c1-fb07a2b8c8bf",
+              "name": "createdAt",
+              "display-name": "Createdat",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "cicd_Build.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative"
+            },
+            "repositoryName": {
+              "id": "d1a99273-11a0-ba75-d5f0-fe51e7d7a3ca",
+              "name": "repositoryName",
+              "display-name": "RepositoryName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "vcs_Repository.name" }},
+                null
+              ],
+              "widget-type": "string/="
+            }
+          },
+          "query": "SELECT avg(\"source\".\"count\") AS \"avg\"\nFROM (SELECT (CAST(date_trunc('week', CAST((CAST(\"cicd_Build\".\"createdAt\" AS timestamp) + (INTERVAL '1 day')) AS timestamp)) AS timestamp) + (INTERVAL '-1 day')) AS \"createdAt\", count(*) AS \"count\" FROM \"cicd_Build\"\nLEFT JOIN \"cicd_BuildCommitAssociation\" ON \"cicd_Build\".\"id\" = \"cicd_BuildCommitAssociation\".\"build\"\nLEFT JOIN \"vcs_Commit\" ON \"cicd_BuildCommitAssociation\".\"commit\" = \"vcs_Commit\".\"id\"\nLEFT JOIN \"vcs_Repository\" ON \"vcs_Commit\".\"repository\" = \"vcs_Repository\".\"id\"\nWHERE <<repositoryName>> AND <<createdAt>>\nGROUP BY (CAST(date_trunc('week', CAST((CAST(\"public\".\"cicd_Build\".\"createdAt\" AS timestamp) + (INTERVAL '1 day')) AS timestamp)) AS timestamp) + (INTERVAL '-1 day'))\nORDER BY (CAST(date_trunc('week', CAST((CAST(\"public\".\"cicd_Build\".\"createdAt\" AS timestamp) + (INTERVAL '1 day')) AS timestamp)) AS timestamp) + (INTERVAL '-1 day')) ASC) \"source\""
+        },
+        "type": "native"
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "Builds by Status",
+      "description": null,
+      "display": "pie",
+      "table_id": {{ table "cicd_Build" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "cicd_Build" }},
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "cicd_Build.statusCategory" }},
+              null
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "cicd_BuildCommitAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_Build.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "cicd_BuildCommitAssociation.build" }},
+                  {
+                    "join-alias": "Cicd BuildCommitAssociation"
+                  }
+                ]
+              ],
+              "alias": "Cicd BuildCommitAssociation"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Commit" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_BuildCommitAssociation.commit" }},
+                  {
+                    "join-alias": "Cicd BuildCommitAssociation"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Commit.id" }},
+                  {
+                    "join-alias": "Vcs Commit - Commit"
+                  }
+                ]
+              ],
+              "alias": "Vcs Commit - Commit"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Commit.repository" }},
+                  {
+                    "join-alias": "Vcs Commit - Commit"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            }
+          ]
+        }
+      },
+      "visualization_settings": {
+        "pie.show_legend": true
+      }
+    },
+    {
+      "name": "Unsuccessful Pipelines by Repository",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "cicd_Build" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "cicd_Build" }},
+          "filter": [
+            "!=",
+            [
+              "field",
+              {{ field "cicd_Build.statusCategory" }},
+              null
+            ],
+            "Success"
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "join-alias": "Vcs Repository - Repository"
+              }
+            ],
+            [
+              "field",
+              {{ field "cicd_Build.name" }},
+              null
+            ]
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "aggregation",
+                0
+              ]
+            ]
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "cicd_BuildCommitAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_Build.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "cicd_BuildCommitAssociation.build" }},
+                  {
+                    "join-alias": "Cicd BuildCommitAssociation"
+                  }
+                ]
+              ],
+              "alias": "Cicd BuildCommitAssociation"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Commit" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_BuildCommitAssociation.commit" }},
+                  {
+                    "join-alias": "Cicd BuildCommitAssociation"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Commit.id" }},
+                  {
+                    "join-alias": "Vcs Commit - Commit"
+                  }
+                ]
+              ],
+              "alias": "Vcs Commit - Commit"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Commit.repository" }},
+                  {
+                    "join-alias": "Vcs Commit - Commit"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            }
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "name",
+          "name_2"
+        ],
+        "series_settings": {
+          "count": {
+            "color": "#EF8C8C"
+          }
+        },
+        "pie.show_legend": true,
+        "stackable.stack_type": "stacked",
+        "graph.x_axis.title_text": "Repository",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Average Build Time by Pipeline by Week",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT\n  EXTRACT (epoch FROM (justify_interval(\n    avg(\n      \"cicd_Build\".\"endedAt\" - \"cicd_Build\".\"startedAt\"\n    )\n  ))) / 60 as build_time,\n  \"cicd_Build\".\"name\",\n  DATE_TRUNC ('week', \"cicd_Build\".\"createdAt\") as week\n  FROM \n    \"cicd_Build\" \n  LEFT JOIN \"cicd_BuildCommitAssociation\" ON \"cicd_Build\".\"id\" = \"cicd_BuildCommitAssociation\".\"build\"\n  LEFT JOIN \"vcs_Commit\" ON \"cicd_BuildCommitAssociation\".\"commit\" = \"vcs_Commit\".\"id\"\n  LEFT JOIN \"vcs_Repository\" ON \"vcs_Commit\".\"repository\" = \"vcs_Repository\".\"id\"\n  WHERE \n    \"cicd_Build\".\"createdAt\" IS NOT NULL AND <<createdAt>> AND <<repositoryName>>\n  GROUP BY \"cicd_Build\".\"name\", week",
+          "template-tags": {
+            "createdAt": {
+              "id": "c5b00e41-e212-a817-bc1a-4c2ff65db256",
+              "name": "createdAt",
+              "display-name": "CreatedAt",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "cicd_Build.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative"
+            },
+            "repositoryName": {
+              "id": "5ba685b5-d77e-1aec-e1af-2d9785f02791",
+              "name": "repositoryName",
+              "display-name": "RepositoryName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "vcs_Repository.name" }},
+                null
+              ],
+              "widget-type": "string/="
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "graph.y_axis.title_text": "Build Time (min)",
+        "graph.dimensions": [
+          "week",
+          "name"
+        ],
+        "graph.x_axis.title_text": "Week",
+        "column_settings": {
+          "[\"name\",\"date_part\"]": {
+            "suffix": " seconds"
+          }
+        },
+        "graph.metrics": [
+          "build_time"
+        ]
+      }
+    },
+    {
+      "name": "Bugs by Repository",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "tms_Task" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ],
+            [
+              "field",
+              {{ field "tms_Task.statusCategory" }},
+              null
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "!=",
+              [
+                "field",
+                {{ field "tms_TaskBoard.source" }},
+                {
+                  "join-alias": "Tms TaskBoard - Board"
+                }
+              ],
+              "Jira"
+            ],
+            [
+              "or",
+              [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Label.name" }},
+                  {
+                    "join-alias": "Tms Label - Label"
+                  }
+                ],
+                "bug"
+              ],
+              [
+                "contains",
+                [
+                  "field",
+                  {{ field "tms_Task.name" }},
+                  null
+                ],
+                "bug",
+                {
+                  "case-sensitive": false
+                }
+              ]
+            ]
+          ],
+          "joins": [
+            {
+              "alias": "Tms TaskTag",
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskTag.task" }},
+                  {
+                    "join-alias": "Tms TaskTag"
+                  }
+                ]
+              ],
+              "fields": "all",
+              "source-table": {{ table "tms_TaskTag" }}
+            },
+            {
+              "alias": "Tms Label - Label",
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskTag.label" }},
+                  {
+                    "join-alias": "Tms TaskTag"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_Label.id" }},
+                  {
+                    "join-alias": "Tms Label - Label"
+                  }
+                ]
+              ],
+              "fields": "all",
+              "source-table": {{ table "tms_Label" }}
+            },
+            {
+              "alias": "Tms TaskBoardRelationship",
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_Task.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.task" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ]
+              ],
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoardRelationship" }}
+            },
+            {
+              "alias": "Tms TaskBoard - Board",
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "tms_TaskBoardRelationship.board" }},
+                  {
+                    "join-alias": "Tms TaskBoardRelationship"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "tms_TaskBoard.id" }},
+                  {
+                    "join-alias": "Tms TaskBoard - Board"
+                  }
+                ]
+              ],
+              "fields": "all",
+              "source-table": {{ table "tms_TaskBoard" }}
+            }
+          ],
+          "source-table": {{ table "tms_Task" }}
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "name",
+          "statusCategory"
+        ],
+        "graph.x_axis.title_text": "Repository",
+        "graph.y_axis.title_text": "Bugs",
+        "series_settings": {
+          "count": {
+            "color": "#EF8C8C"
+          },
+          "Done": {
+            "color": "#88BF4D"
+          },
+          "Todo": {
+            "color": "#EF8C8C"
+          }
+        },
+        "stackable.stack_type": "stacked",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Number of Releases by Repository",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "cicd_Release" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "cicd_Release" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "cicd_ReleaseTagAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_Release.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "cicd_ReleaseTagAssociation.release" }},
+                  {
+                    "join-alias": "Cicd ReleaseTagAssociation"
+                  }
+                ]
+              ],
+              "alias": "Cicd ReleaseTagAssociation"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Tag" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_ReleaseTagAssociation.tag" }},
+                  {
+                    "join-alias": "Cicd ReleaseTagAssociation"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Tag.id" }},
+                  {
+                    "join-alias": "Vcs Tag - Tag"
+                  }
+                ]
+              ],
+              "alias": "Vcs Tag - Tag"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_Repository" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_Tag.repository" }},
+                  {
+                    "join-alias": "Vcs Tag - Tag"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "vcs_Repository.id" }},
+                  {
+                    "join-alias": "Vcs Repository - Repository"
+                  }
+                ]
+              ],
+              "alias": "Vcs Repository - Repository"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_User" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "cicd_Release.author" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_User.id" }},
+                  {
+                    "join-alias": "Vcs User - Author"
+                  }
+                ]
+              ],
+              "alias": "Vcs User - Author"
+            }
+          ],
+          "aggregation": [
+            [
+              "distinct",
+              [
+                "field",
+                {{ field "cicd_Release.id" }},
+                null
+              ]
+            ]
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "join-alias": "Vcs Repository - Repository"
+              }
+            ],
+            [
+              "field",
+              {{ field "vcs_User.name" }},
+              {
+                "join-alias": "Vcs User - Author"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "name",
+          "name_2"
+        ],
+        "graph.x_axis.title_text": "Repository",
+        "graph.y_axis.title_text": "Number of Releases",
+        "series_settings": {
+          "count": {
+            "color": "#98D9D9"
+          }
+        },
+        "stackable.stack_type": "stacked",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Cumulative Build Time by Repository",
+      "description": null,
+      "display": "bar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT \n    EXTRACT(epoch FROM (justify_interval(\n      sum(\n        \"cicd_Build\".\"endedAt\" - \"cicd_Build\".\"startedAt\"\n      )\n    )) / 60) as build_time, \"vcs_Repository\".\"name\", \"cicd_Build\".\"name\" as pipeline_name\n  FROM \n    \"cicd_Build\" \n  LEFT JOIN \"cicd_BuildCommitAssociation\" ON \"cicd_Build\".\"id\" = \"cicd_BuildCommitAssociation\".\"build\"\n  LEFT JOIN \"vcs_Commit\" ON \"cicd_BuildCommitAssociation\".\"commit\" = \"vcs_Commit\".\"id\"\n  LEFT JOIN \"vcs_Repository\" ON \"vcs_Commit\".\"repository\" = \"vcs_Repository\".\"id\"\n  WHERE \n    \"cicd_Build\".\"createdAt\" IS NOT NULL AND <<createdAt>> AND <<repositoryName>>\n  GROUP BY \"vcs_Repository\".\"name\", \"cicd_Build\".\"name\"",
+          "template-tags": {
+            "createdAt": {
+              "id": "c5b00e41-e212-a817-bc1a-4c2ff65db256",
+              "name": "createdAt",
+              "display-name": "CreatedAt",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "cicd_Build.createdAt" }},
+                null
+              ],
+              "widget-type": "date/relative"
+            },
+            "repositoryName": {
+              "id": "5ba685b5-d77e-1aec-e1af-2d9785f02791",
+              "name": "repositoryName",
+              "display-name": "RepositoryName",
+              "type": "dimension",
+              "dimension": [
+                "field",
+                {{ field "vcs_Repository.name" }},
+                null
+              ],
+              "widget-type": "string/="
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "table.pivot_column": "build_time",
+        "table.cell_column": "name",
+        "graph.dimensions": [
+          "name",
+          "pipeline_name"
+        ],
+        "graph.y_axis.title_text": "Build Time (minutes)",
+        "graph.x_axis.title_text": "Repository",
+        "stackable.stack_type": "stacked",
+        "column_settings": {
+          "[\"name\",\"date_part\"]": {
+            "suffix": " min"
+          }
+        },
+        "graph.metrics": [
+          "build_time"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Relative Date",
+      "slug": "relative_date",
+      "id": "ea1a6ce3",
+      "type": "date/relative",
+      "sectionId": "date",
+      "default": "past30days"
+    },
+    {
+      "name": "Repository",
+      "slug": "repository",
+      "id": "81276e50",
+      "type": "string/=",
+      "sectionId": "string"
+    }
+  ],
+  "layout": [
+    {
+      "row": 0,
+      "col": 4,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "PRs Merged" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "PRs Merged" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "PRs Merged" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "join-alias": "Vcs Repository - Repository"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "sizeX": 8,
+      "sizeY": 4,
+      "card_id": {{ card "PRs Opened by Week" }},
+      "series": [
+        {
+          "id": {{ card "PRs Merged by Week" }}
+        },
+        {
+          "id": {{ card "Issues Created by Week" }}
+        },
+        {
+          "id": {{ card "Issues Closed by Week" }}
+        }
+      ],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "PRs Opened by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "PRs Merged by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Issues Created by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.createdAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Issues Closed by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.updatedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Issues Closed by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Issues Created by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "PRs Merged by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "join-alias": "Vcs Repository - Repository"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "PRs Opened by Week" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "join-alias": "Vcs Repository - Repository"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {
+        "graph.dimensions": [
+          "createdAt"
+        ],
+        "graph.x_axis.title_text": "Week",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "PR Cycle Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "PR Cycle Time" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "mergedAt"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "PR Cycle Time" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "repositoryName"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Top 5 Contributors" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Top 5 Contributors" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Top 5 Contributors" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "join-alias": "Vcs Repository - Repository"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 8,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Reviews Distribution" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Reviews Distribution" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "mergedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Reviews Distribution" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "name",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 8,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Build Reliability" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Build Reliability" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "join-alias": "Vcs Repository - Repository"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Build Reliability" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Build.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 8,
+      "col": 8,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Average Build Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Average Build Time" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "repositoryName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Average Build Time" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 8,
+      "col": 4,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Builds per Week" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Builds per Week" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "repositoryName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Builds per Week" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 12,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Builds by Status" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Builds by Status" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "join-alias": "Vcs Repository - Repository"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Builds by Status" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Build.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 12,
+      "col": 12,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Unsuccessful Pipelines by Repository" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Unsuccessful Pipelines by Repository" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "join-alias": "Vcs Repository - Repository"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Unsuccessful Pipelines by Repository" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Build.startedAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 12,
+      "col": 4,
+      "sizeX": 8,
+      "sizeY": 4,
+      "card_id": {{ card "Average Build Time by Pipeline by Week" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Average Build Time by Pipeline by Week" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "repositoryName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Average Build Time by Pipeline by Week" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 12,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Bugs by Repository" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Bugs by Repository" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_TaskBoard.name" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Bugs by Repository" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "tms_Task.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 12,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Number of Releases by Repository" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Number of Releases by Repository" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_Repository.name" }},
+              {
+                "join-alias": "Vcs Repository - Repository"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Number of Releases by Repository" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "cicd_Release.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 8,
+      "col": 12,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Cumulative Build Time by Repository" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "81276e50",
+          "card_id": {{ card "Cumulative Build Time by Repository" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "repositoryName"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "ea1a6ce3",
+          "card_id": {{ card "Cumulative Build Time by Repository" }},
+          "target": [
+            "dimension",
+            [
+              "template-tag",
+              "createdAt"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    }
+  ],
+  "path": "/Faros CE/Git",
+  "priority": 14,
+  "bookmark": true
+}
+

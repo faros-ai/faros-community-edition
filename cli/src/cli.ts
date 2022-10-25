@@ -3,6 +3,7 @@ import {program} from 'commander';
 import {Airbyte} from './airbyte/airbyte-client';
 import {makeBitbucketCommand, runBitbucket} from './bitbucket/run';
 import {makeGithubCommand, runGithub} from './github/run';
+import {makeJiraCommand, runJira} from './jira/run';
 import {display, terminalLink} from './utils';
 import {runSelect} from './utils/prompts';
 
@@ -12,6 +13,7 @@ const DEFAULT_METABASE_URL = 'http://localhost:3000';
 export async function main(): Promise<void> {
   program.addCommand(makeBitbucketCommand());
   program.addCommand(makeGithubCommand());
+  program.addCommand(makeJiraCommand());
 
   // Commander doesn't allow for empty subcommand names, even if the subcommand
   // is marked as default. Users can omit the subcommand below though, which is
@@ -21,20 +23,25 @@ export async function main(): Promise<void> {
     .command('pick-source', {isDefault: true, hidden: true})
     .action(async (options) => {
       const airbyte = new Airbyte(options.airbyteUrl);
-
-      const source = await runSelect({
-        name: 'source',
-        message: 'Select a source',
-        choices: ['bitbucket', 'github'],
-      });
-
-      switch (source) {
-        case 'bitbucket':
-          await runBitbucket({airbyte});
-          break;
-        case 'github':
-          await runGithub({airbyte});
-          break;
+      while (true) {
+        const source = await runSelect({
+          name: 'source',
+          message: 'Select a source',
+          choices: ['bitbucket', 'github', 'jira', 'I\'m done!'],
+        });
+        switch (source) {
+          case 'bitbucket':
+            await runBitbucket({airbyte});
+            break;
+          case 'github':
+            await runGithub({airbyte});
+            break;
+          case 'jira':
+            await runJira({airbyte});
+            break;
+          case 'I\'m done!':
+            return;
+        }
       }
     });
 

@@ -34,6 +34,7 @@
     "flat-cache": "^3.0.4",
     "fs-extra": "^10.0.0",
     "handlebars": "^4.7.7",
+    "jira.js": "^2.15.12",
     "latest-version": "^7.0.0",
     "lodash": "^4.17.21",
     "p-limit": "^3.1.0",

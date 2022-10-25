@@ -107,7 +107,7 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
   );
 
   try {
-    const projects = cfg.projectList || (await promptForProjects(token, jira));
+    const projects = cfg.projectList || (await promptForProjects(jira));
 
     if (projects.length === 0) {
       return;
@@ -135,7 +135,6 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
 }
 
 async function promptForProjects(
-  token: string,
   jira: Version3Client
 ): Promise<ReadonlyArray<string>> {
   const projectsPrompt = await runSelect({
@@ -155,7 +154,7 @@ async function promptForProjects(
         message:
           'Pick your favorite projects with SPACEBAR; press ENTER when done',
         limit: 10,
-        choices: await getProjects(token, jira),
+        choices: await getProjects(jira),
       });
     case 'Autocomplete from a list of project keys your token has access to':
       return await runAutoComplete({
@@ -163,7 +162,7 @@ async function promptForProjects(
         message:
           'Select your favorite projects with SPACEBAR; press ENTER when done',
         limit: 10,
-        choices: await getProjects(token, jira),
+        choices: await getProjects(jira),
         multiple: true,
       });
     case 'I\'ll enter the project keys manually':
@@ -171,7 +170,7 @@ async function promptForProjects(
         name: 'projects',
         message:
           'Enter your favorite projects keys (comma-separated). ' +
-          'E.g., faros-ai/faros-community-edition, faros-ai/airbyte-local-cli',
+          'E.g., FOO, BAR',
       });
   }
 
@@ -179,7 +178,6 @@ async function promptForProjects(
 }
 
 async function getProjects(
-  token: string,
   jira: Version3Client
 ): Promise<ReadonlyArray<string>> {
   const response = await jira.projects.getAllProjects().catch((err) => {

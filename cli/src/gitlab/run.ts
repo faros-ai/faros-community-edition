@@ -82,14 +82,15 @@ export async function runGitlab(cfg: GitLabConfig): Promise<void> {
       name: 'token',
       message: 'Enter your Personal Access Token',
     }));
-  
+
   const startDate = new Date();
   startDate.setDate(
     startDate.getDate() - (cfg.cutoffDays || DEFAULT_CUTOFF_DAYS)
   );
 
   try {
-    const projects = cfg.projectList || (await promptForProjects(token, api_url));
+    const projects =
+      cfg.projectList || (await promptForProjects(token, api_url));
 
     if (projects.length === 0) {
       return;
@@ -113,7 +114,10 @@ export async function runGitlab(cfg: GitLabConfig): Promise<void> {
   await cfg.airbyte.triggerAndTrackSync(GITLAB_CONNECTION_ID);
 }
 
-async function promptForProjects(token: string, api_url: string): Promise<ReadonlyArray<string>> {
+async function promptForProjects(
+  token: string,
+  api_url: string
+): Promise<ReadonlyArray<string>> {
   const projectsPrompt = await runSelect({
     name: 'projectsPrompt',
     message: 'How would you like to select your projects?',
@@ -154,13 +158,18 @@ async function promptForProjects(token: string, api_url: string): Promise<Readon
   return [];
 }
 
-async function getProjects(token: string, api_url: string): Promise<ReadonlyArray<string>> {
+async function getProjects(
+  token: string,
+  api_url: string
+): Promise<ReadonlyArray<string>> {
   const gitlab = new Gitlab({
     host: 'https://' + api_url,
     token,
   });
-  const response = await gitlab.Projects.all({membership: true}).catch((err) => {
-    throw new VError(err);
-  });
+  const response = await gitlab.Projects.all({membership: true}).catch(
+    (err) => {
+      throw new VError(err);
+    }
+  );
   return response.map((project) => project.path_with_namespace);
 }

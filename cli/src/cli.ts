@@ -1,9 +1,9 @@
 import {program} from 'commander';
 
 import {Airbyte} from './airbyte/airbyte-client';
+import {makeBitbucketCommand, runBitbucket} from './bitbucket/run';
 import {makeGithubCommand, runGithub} from './github/run';
 import {makeGitlabCommand, runGitlab} from './gitlab/run';
-import {makeBitbucketCommand, runBitbucket} from './bitbucket/run';
 import {makeJiraCommand, runJira} from './jira/run';
 import {display, terminalLink} from './utils';
 import {runSelect} from './utils/prompts';

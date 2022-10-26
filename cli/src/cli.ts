@@ -25,7 +25,7 @@ export async function main(): Promise<void> {
     .command('pick-source', {isDefault: true, hidden: true})
     .action(async (options) => {
       const airbyte = new Airbyte(options.airbyteUrl);
-      const done = false;
+      let done = false;
       while (!done) {
         const source = await runSelect({
           name: 'source',
@@ -46,7 +46,7 @@ export async function main(): Promise<void> {
             await runJira({airbyte});
             break;
           case 'I\'m done!':
-            return;
+            done = true;
         }
       }
     });

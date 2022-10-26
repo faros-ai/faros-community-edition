@@ -3,6 +3,7 @@ import {Command, Option} from 'commander';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
+import {wrapApiError} from '../cli';
 import {
   display,
   Emoji,
@@ -114,7 +115,7 @@ async function promptForRepos(token: string): Promise<ReadonlyArray<string>> {
     choices: [
       'Select from a list of repos your token has access to',
       'Autocomplete from a list of repos your token has access to',
-      'I\'ll enter them manually',
+      "I'll enter them manually",
     ],
   });
 
@@ -136,7 +137,7 @@ async function promptForRepos(token: string): Promise<ReadonlyArray<string>> {
         choices: await getRepos(token),
         multiple: true,
       });
-    case 'I\'ll enter them manually':
+    case "I'll enter them manually":
       return await runList({
         name: 'repos',
         message:
@@ -151,7 +152,7 @@ async function promptForRepos(token: string): Promise<ReadonlyArray<string>> {
 async function getRepos(token: string): Promise<ReadonlyArray<string>> {
   const octokit = new Octokit({auth: token});
   const response = await octokit.request('GET /user/repos', {}).catch((err) => {
-    throw new VError(err);
+    throw wrapApiError(err, 'Failed to get repos');
   });
   return response.data.map((repo) => repo.full_name);
 }

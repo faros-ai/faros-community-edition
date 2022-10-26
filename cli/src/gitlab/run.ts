@@ -3,6 +3,7 @@ import {Command, Option} from 'commander';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
+import {wrapApiError} from '../cli';
 import {
   display,
   Emoji,
@@ -124,7 +125,7 @@ async function promptForProjects(
     choices: [
       'Select from a list of projects your token has access to',
       'Autocomplete from a list of projects your token has access to',
-      'I\'ll enter them manually',
+      "I'll enter them manually",
     ],
   });
 
@@ -146,7 +147,7 @@ async function promptForProjects(
         choices: await getProjects(token, api_url),
         multiple: true,
       });
-    case 'I\'ll enter them manually':
+    case "I'll enter them manually":
       return await runList({
         name: 'projects',
         message:
@@ -169,7 +170,7 @@ async function getProjects(
   });
   const response = await gitlab.Projects.all({membership: true}).catch(
     (err) => {
-      throw new VError(err);
+      throw wrapApiError(err, 'Failed to get projects');
     }
   );
   return response.map((project) => project.path_with_namespace);

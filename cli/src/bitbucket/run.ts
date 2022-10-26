@@ -4,6 +4,7 @@ import {Command, Option} from 'commander';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
+import {wrapApiError} from '../cli';
 import {
   display,
   Emoji,
@@ -184,7 +185,7 @@ async function getWorkspaces(
   const {data} = await bitbucket.workspaces
     .getWorkspaces({})
     .catch((err: string | undefined) => {
-      throw new VError(err);
+      throw wrapApiError(err, 'Failed to get workspaces');
     });
 
   return (data.values as ReadonlyArray<Workspace>).map((workspace) => {
@@ -199,7 +200,7 @@ async function getRepos(
   const {data} = await bitbucket.repositories
     .list({workspace})
     .catch((err: string | undefined) => {
-      throw new VError(err);
+      throw wrapApiError(err, 'Failed to get repos');
     });
   return (data.values as ReadonlyArray<Repository>).map((repo) => {
     return repo.full_name;

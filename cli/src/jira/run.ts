@@ -3,6 +3,7 @@ import {Version3Client} from 'jira.js';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
+import {wrapApiError} from '../cli';
 import {
   display,
   Emoji,
@@ -214,7 +215,7 @@ async function getProjects(
   jira: Version3Client
 ): Promise<ReadonlyArray<string>> {
   const response = await jira.projects.getAllProjects().catch((err) => {
-    throw new VError(err);
+    throw wrapApiError(err, 'Failed to get projects');
   });
   return response.map((project) => project.key);
 }

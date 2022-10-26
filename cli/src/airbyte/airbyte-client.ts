@@ -3,6 +3,7 @@ import axios, {AxiosInstance} from 'axios';
 import ProgressBar from 'progress';
 import {VError} from 'verror';
 
+import {wrapApiError} from '../cli';
 import {display, Emoji, errorLog, sleep, terminalLink} from '../utils';
 
 export class Airbyte {
@@ -29,7 +30,7 @@ export class Airbyte {
             }
           })
           .catch((err) => {
-            throw new VError(err, 'Could not connect to Airbyte');
+            throw wrapApiError(err, 'Could not connect to Airbyte');
           });
       },
       {
@@ -45,11 +46,14 @@ export class Airbyte {
     await this.api
       .post('/sources/check_connection_for_update', config)
       .catch((err) => {
-        throw new VError(err);
+        throw wrapApiError(
+          err,
+          'Failed to call /sources/check_connection_for_update'
+        );
       });
 
     await this.api.post('/sources/update', config).catch((err) => {
-      throw new VError(err);
+      throw wrapApiError(err, 'Failed to call /sources/update');
     });
 
     display('Setup succeeded %s', Emoji.SUCCESS);
@@ -61,7 +65,7 @@ export class Airbyte {
         connectionId,
       })
       .catch((err) => {
-        throw new VError(err);
+        throw wrapApiError(err, 'Failed to call /connections/sync');
       });
     return response.data.job.id;
   }
@@ -72,7 +76,7 @@ export class Airbyte {
         id: job,
       })
       .catch((err) => {
-        throw new VError(err);
+        throw wrapApiError(err, ' Failed to call /jobs/get');
       });
     return response.data.job.status;
   }

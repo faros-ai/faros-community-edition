@@ -141,7 +141,7 @@ async function promptForProjects(
       return await runAutoComplete({
         name: 'projects',
         message:
-          'Select your favorite reprojectspos with SPACEBAR; press ENTER when done',
+          'Select your favorite projects with SPACEBAR; press ENTER when done',
         limit: 10,
         choices: await getProjects(token, api_url),
         multiple: true,
@@ -150,7 +150,7 @@ async function promptForProjects(
       return await runList({
         name: 'projects',
         message:
-          'Enter your favorite projects (comma-separated). ' +
+          'Enter your favorite projects with their group, comma-separated. ' +
           'E.g., airbyte.io/documentation, meltano/tap-gitlab',
       });
   }
@@ -162,8 +162,9 @@ async function getProjects(
   token: string,
   api_url: string
 ): Promise<ReadonlyArray<string>> {
+  const gitlab_url = new URL('https://' + api_url);
   const gitlab = new Gitlab({
-    host: 'https://' + api_url,
+    host: gitlab_url.href,
     token,
   });
   const response = await gitlab.Projects.all({membership: true}).catch(

@@ -89,10 +89,10 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
       name: 'token',
       message: 'Enter your Personal Access Token',
     }));
-
+  const jira_url = new URL('https://' + domain);
   const jira = new Version3Client({
     ...{telemetry: false},
-    host: 'https://' + domain,
+    host: jira_url.href,
     authentication: {
       basic: {
         email,
@@ -141,14 +141,14 @@ async function promptForProjects(
     name: 'projectPrompt',
     message: 'How would you like to select your projects?',
     choices: [
-      'Select from a list of project keys your token has access to',
-      'Autocomplete from a list of project keys your token has access to',
+      'Select from a list of projects your token has access to',
+      'Autocomplete from a list of projects your token has access to',
       'I\'ll enter the project keys manually',
     ],
   });
 
   switch (projectsPrompt) {
-    case 'Select from a list of project keys your token has access to':
+    case 'Select from a list of projects your token has access to':
       return await runMultiSelect({
         name: 'projects',
         message:
@@ -156,7 +156,7 @@ async function promptForProjects(
         limit: 10,
         choices: await getProjects(jira),
       });
-    case 'Autocomplete from a list of project keys your token has access to':
+    case 'Autocomplete from a list of projects your token has access to':
       return await runAutoComplete({
         name: 'projects',
         message:

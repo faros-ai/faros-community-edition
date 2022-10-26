@@ -37,7 +37,7 @@ function parseFlags() {
 main() {
   parseFlags "$@"
   EMAIL_FILE=".faros-email"
-  if [[ ! -z "$email_override" ]]; then
+  if [[ -n "$email_override" ]]; then
       EMAIL=$email_override
       echo "$email_override" > $EMAIL_FILE
   else

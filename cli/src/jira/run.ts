@@ -107,37 +107,39 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
   );
 
   try {
-    let done = false;
-    let projects;
+    let projects = cfg.projectList;
 
-    if (cfg.projectList) {
-      projects = cfg.projectList
-    } else {
+    if (!projects || projects.length === 0) {
       try {
-        if ((await getProjects(jira)).length == 0) {
-          throw new Error;
+        if ((await getProjects(jira)).length === 0) {
+          throw new VError('No projects found');
         }
       } catch (error) {
         errorLog('No projects found with those credentials %s', Emoji.FAILURE);
-        return
+        return;
       }
+      let done = false;
       while (!done) {
         projects = await promptForProjects(jira);
 
         if (projects.length === 0) {
-          display('Your selection was empty; remember to use the SPACEBAR to select!', Emoji.EMPTY);
+          display(
+            'Your selection was empty; remember to use the SPACEBAR to select!',
+            Emoji.EMPTY
+          );
           const tryAgainPrompt = await runSelect({
             name: 'tryAgainPrompt',
-            message: 'Do you want to try selecting again with the current credentials?',
-            choices: [
-              'Yes',
-              'No, let me start over',
-            ],
+            message:
+              // eslint-disable-next-line max-len
+              'Do you want to try selecting again with the current credentials?',
+            choices: ['Yes', 'No, let me start over'],
           });
 
           switch (tryAgainPrompt) {
-            case 'Yes': continue;
-            case 'No, let me start over': return;
+            case 'Yes':
+              continue;
+            case 'No, let me start over':
+              return;
           }
         }
         done = true;
@@ -174,7 +176,7 @@ async function promptForProjects(
     choices: [
       'Select from a list of projects your token has access to',
       'Autocomplete from a list of projects your token has access to',
-      'I\'ll enter the project keys manually',
+      "I'll enter the project keys manually",
     ],
   });
 
@@ -196,7 +198,7 @@ async function promptForProjects(
         choices: await getProjects(jira),
         multiple: true,
       });
-    case 'I\'ll enter the project keys manually':
+    case "I'll enter the project keys manually":
       return await runList({
         name: 'projects',
         message:

@@ -37,7 +37,7 @@ export async function main(): Promise<void> {
         const source = await runSelect({
           name: 'source',
           message: 'Select a source',
-          choices: ['GitHub', 'GitLab', 'Bitbucket', 'Jira', "I'm done!"],
+          choices: ['GitHub', 'GitLab', 'Bitbucket', 'Jira', 'I\'m done!'],
         });
         switch (source) {
           case 'GitHub':
@@ -52,7 +52,7 @@ export async function main(): Promise<void> {
           case 'Jira':
             await runJira({airbyte});
             break;
-          case "I'm done!":
+          case 'I\'m done!':
             done = true;
         }
       }

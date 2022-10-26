@@ -81,15 +81,48 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
   );
 
   try {
-    const repos = cfg.repoList || (await promptForRepos(token));
+    let repos = cfg.repoList;
 
-    if (repos.length === 0) {
-      return;
+    if (!repos || repos.length === 0) {
+      try {
+        if ((await getRepos(token)).length === 0) {
+          throw new VError('No repos found');
+        }
+      } catch (error) {
+        errorLog('No repos found with those credentials %s', Emoji.FAILURE);
+        return;
+      }
+      let done = false;
+      while (!done) {
+        repos = await promptForRepos(token);
+
+        if (repos.length === 0) {
+          display(
+            'Your selection was empty; remember to use the SPACEBAR to select!',
+            Emoji.EMPTY
+          );
+          const tryAgainPrompt = await runSelect({
+            name: 'tryAgainPrompt',
+            message:
+              // eslint-disable-next-line max-len
+              'Do you want to try selecting again with the current credentials?',
+            choices: ['Yes', 'No, let me start over'],
+          });
+
+          switch (tryAgainPrompt) {
+            case 'Yes':
+              continue;
+            case 'No, let me start over':
+              return;
+          }
+        }
+        done = true;
+      }
     }
 
     await cfg.airbyte.setupSource({
       connectionConfiguration: {
-        repository: repos.join(' '),
+        repository: repos?.join(' '),
         start_date: startDate.toISOString().replace(/\.\d+/, ''),
         credentials: {
           option_title: 'PAT Credentials',
@@ -115,7 +148,7 @@ async function promptForRepos(token: string): Promise<ReadonlyArray<string>> {
     choices: [
       'Select from a list of repos your token has access to',
       'Autocomplete from a list of repos your token has access to',
-      "I'll enter them manually",
+      'I\'ll enter them manually',
     ],
   });
 
@@ -137,7 +170,7 @@ async function promptForRepos(token: string): Promise<ReadonlyArray<string>> {
         choices: await getRepos(token),
         multiple: true,
       });
-    case "I'll enter them manually":
+    case 'I\'ll enter them manually':
       return await runList({
         name: 'repos',
         message:

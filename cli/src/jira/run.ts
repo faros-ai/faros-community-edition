@@ -177,7 +177,7 @@ async function promptForProjects(
     choices: [
       'Select from a list of projects your token has access to',
       'Autocomplete from a list of projects your token has access to',
-      "I'll enter the project keys manually",
+      'I\'ll enter the project keys manually',
     ],
   });
 
@@ -199,7 +199,7 @@ async function promptForProjects(
         choices: await getProjects(jira),
         multiple: true,
       });
-    case "I'll enter the project keys manually":
+    case 'I\'ll enter the project keys manually':
       return await runList({
         name: 'projects',
         message:

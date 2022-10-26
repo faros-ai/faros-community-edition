@@ -25,7 +25,8 @@ export async function main(): Promise<void> {
     .command('pick-source', {isDefault: true, hidden: true})
     .action(async (options) => {
       const airbyte = new Airbyte(options.airbyteUrl);
-      while (true) {
+      const done = false;
+      while (!done) {
         const source = await runSelect({
           name: 'source',
           message: 'Select a source',

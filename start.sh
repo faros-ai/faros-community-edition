@@ -24,6 +24,9 @@ function parseFlags() {
             --run-cli)
                 run_cli=1
                 shift 1 ;;
+            --email)
+                email_override=$2
+                shift 2 ;;
             *)
                 echo "Unrecognized arg: $1"
                 shift ;;
@@ -33,15 +36,19 @@ function parseFlags() {
 
 main() {
   parseFlags "$@"
-
   EMAIL_FILE=".faros-email"
-  if [[ -f "$EMAIL_FILE" ]]; then
-      EMAIL=$(cat $EMAIL_FILE)
+  if [[ ! -z "$email_override" ]]; then
+      EMAIL=$email_override
+      echo "$email_override" > $EMAIL_FILE
   else
-      printf "Hello 👋 Welcome to Faros Community Edition! 🤗\n\n"
-      printf "Want to stay up to date with the latest community news? (we won't spam you)\n"
-      email_prompt
-      echo "$EMAIL" > $EMAIL_FILE
+      if [[ -f "$EMAIL_FILE" ]]; then
+          EMAIL=$(cat $EMAIL_FILE)
+      else
+          printf "Hello 👋 Welcome to Faros Community Edition! 🤗\n\n"
+          printf "Want to stay up to date with the latest community news? (we won't spam you)\n"
+          email_prompt
+          echo "$EMAIL" > $EMAIL_FILE
+      fi
   fi
 
   export FAROS_EMAIL=$EMAIL

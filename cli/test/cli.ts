@@ -13,23 +13,21 @@ export class CLI {
 
   get stderr(): Readable {
     // `stderr` is always defined with the options in `runWith`.
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return this.cp.stderr!;
   }
 
   get stdout(): Readable {
     // `stdout` is always defined with the options in `runWith`.
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return this.cp.stdout!;
   }
 
   get stdin(): Writable {
     // `stdin` is always defined with the options in `runWith`.
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return this.cp.stdin!;
   }
 
   /** Waits for the child process to terminate and returns the exit code. */
+  // eslint-disable-next-line require-await
   async wait(): Promise<number> {
     return new Promise((ok) => {
       this.cp.on('exit', ok);
@@ -64,11 +62,12 @@ export class CLI {
    * will be deleted after the CLI command has returned. Otherwise, it is the
    * caller's responsibility to clean up their chosen home directory.
    */
+  // eslint-disable-next-line require-await
   static async runWith(
     args: string[],
-    opts: CLIOptions = {},
     feedPath: string,
-    feedName: string
+    feedName: string,
+    opts: CLIOptions = {}
   ): Promise<CLI> {
     const spawnOpts = {
       env: {

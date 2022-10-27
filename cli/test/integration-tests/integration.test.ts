@@ -39,11 +39,8 @@ describe('index', () => {
   );
 
   function run(args: string[]): Promise<CLI> {
-    return CLI.runWith(
-      args,
-      {env: {FAROS_NO_EMOJI: '1'}},
-      path.join(__dirname, '..', '..'),
-      'main'
-    );
+    return CLI.runWith(args, path.join(__dirname, '..', '..'), 'main', {
+      env: {FAROS_NO_EMOJI: '1'},
+    });
   }
 });

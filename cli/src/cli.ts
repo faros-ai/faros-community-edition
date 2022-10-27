@@ -18,6 +18,7 @@ export function wrapApiError(cause: unknown, msg: string): Error {
   return new VError(truncated, msg);
 }
 
+// eslint-disable-next-line require-await
 export async function main(): Promise<void> {
   program.addCommand(makeGithubCommand());
   program.addCommand(makeGitlabCommand());

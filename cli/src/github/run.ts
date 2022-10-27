@@ -80,9 +80,9 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
     startDate.getDate() - (cfg.cutoffDays || DEFAULT_CUTOFF_DAYS)
   );
 
-  try {
-    let repos = cfg.repoList;
+  let repos = cfg.repoList;
 
+  try {
     if (!repos || repos.length === 0) {
       try {
         if ((await getRepos(token)).length === 0) {
@@ -138,7 +138,11 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
     return;
   }
 
-  await cfg.airbyte.triggerAndTrackSync(GITHUB_CONNECTION_ID);
+  await cfg.airbyte.triggerAndTrackSync(
+    GITHUB_CONNECTION_ID,
+    cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
+    repos?.length || 0
+  );
 }
 
 async function promptForRepos(token: string): Promise<ReadonlyArray<string>> {

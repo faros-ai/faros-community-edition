@@ -32,8 +32,8 @@ export async function main(): Promise<void> {
           message: 'Select a source',
           choices: [
             'GitHub (Cloud)',
-            'GitLab Cloud / Server',
-            'Bitbucket Cloud / Server',
+            'GitLab (Cloud / Server)',
+            'Bitbucket (Cloud / Server)',
             'Jira (Cloud)',
             'I\'m done!',
           ],
@@ -42,10 +42,10 @@ export async function main(): Promise<void> {
           case 'GitHub (Cloud)':
             await runGithub({airbyte});
             break;
-          case 'GitLab Cloud / Server':
+          case 'GitLab (Cloud / Server)':
             await runGitlab({airbyte});
             break;
-          case 'Bitbucket Cloud / Server':
+          case 'Bitbucket (Cloud / Server)':
             await runBitbucket({airbyte});
             break;
           case 'Jira (Cloud)':

@@ -3,6 +3,7 @@ import {Command, Option} from 'commander';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
+import {wrapApiError} from '../cli';
 import {
   display,
   Emoji,
@@ -23,6 +24,7 @@ import {
 const GITLAB_SOURCE_ID = '59c74ca4-8cbb-4c65-8cb7-66bf771190fb';
 const GITLAB_CONNECTION_ID = 'cef1b90d-ab16-4645-a0e3-b81818b8ffc7';
 const DEFAULT_CUTOFF_DAYS = 30;
+const DEFAULT_API_URL = 'gitlab.com';
 
 interface GitLabConfig {
   readonly airbyte: Airbyte;
@@ -35,7 +37,7 @@ interface GitLabConfig {
 export function makeGitlabCommand(): Command {
   const cmd = new Command()
     .name('gitlab')
-    .option('--api-url <api-url>', 'API URL, e.g. gitlab.com')
+    .option('--api-url <api-url>', 'API URL, defaults to gitlab.com')
     .option('--token <token>', 'Personal Access Token')
     .addOption(
       new Option(
@@ -74,8 +76,9 @@ export async function runGitlab(cfg: GitLabConfig): Promise<void> {
     cfg.apiUrl ||
     (await runInput({
       name: 'api_url',
-      message: 'Enter the API URL (e.g. gitlab.com)',
-    }));
+      message: 'Enter the API URL (defaults to e.g. gitlab.com)',
+    })) ||
+    DEFAULT_API_URL;
   const token =
     cfg.token ||
     (await runPassword({
@@ -89,17 +92,49 @@ export async function runGitlab(cfg: GitLabConfig): Promise<void> {
   );
 
   try {
-    const projects =
-      cfg.projectList || (await promptForProjects(token, api_url));
+    let projects = cfg.projectList;
 
-    if (projects.length === 0) {
-      return;
+    if (!projects || projects.length === 0) {
+      try {
+        if ((await getProjects(token, api_url)).length === 0) {
+          throw new VError('No projects found');
+        }
+      } catch (error) {
+        errorLog('No projects found with those credentials %s', Emoji.FAILURE);
+        return;
+      }
+      let done = false;
+      while (!done) {
+        projects = await promptForProjects(token, api_url);
+
+        if (projects.length === 0) {
+          display(
+            'Your selection was empty; remember to use the SPACEBAR to select!',
+            Emoji.EMPTY
+          );
+          const tryAgainPrompt = await runSelect({
+            name: 'tryAgainPrompt',
+            message:
+              // eslint-disable-next-line max-len
+              'Do you want to try selecting again with the current credentials?',
+            choices: ['Yes', 'No, let me start over'],
+          });
+
+          switch (tryAgainPrompt) {
+            case 'Yes':
+              continue;
+            case 'No, let me start over':
+              return;
+          }
+        }
+        done = true;
+      }
     }
 
     await cfg.airbyte.setupSource({
       connectionConfiguration: {
         api_url,
-        projects: projects.join(' '),
+        projects: projects?.join(' '),
         start_date: startDate.toISOString().replace(/\.\d+/, ''),
         private_token: token,
       },
@@ -169,7 +204,7 @@ async function getProjects(
   });
   const response = await gitlab.Projects.all({membership: true}).catch(
     (err) => {
-      throw new VError(err);
+      throw wrapApiError(err, 'Failed to get projects');
     }
   );
   return response.map((project) => project.path_with_namespace);

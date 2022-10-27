@@ -1,4 +1,5 @@
 import {program} from 'commander';
+import {VError} from 'verror';
 
 import {Airbyte} from './airbyte/airbyte-client';
 import {makeBitbucketCommand, runBitbucket} from './bitbucket/run';
@@ -10,6 +11,12 @@ import {runSelect} from './utils/prompts';
 
 const DEFAULT_AIRBYTE_URL = 'http://localhost:8000';
 const DEFAULT_METABASE_URL = 'http://localhost:3000';
+
+export function wrapApiError(cause: unknown, msg: string): Error {
+  // Omit verbose axios error
+  const truncated = new VError((cause as Error).message);
+  return new VError(truncated, msg);
+}
 
 export async function main(): Promise<void> {
   program.addCommand(makeGithubCommand());

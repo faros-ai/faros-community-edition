@@ -3,6 +3,7 @@ import {Version3Client} from 'jira.js';
 import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
+import {wrapApiError} from '../cli';
 import {
   display,
   Emoji,
@@ -107,10 +108,43 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
   );
 
   try {
-    const projects = cfg.projectList || (await promptForProjects(jira));
+    let projects = cfg.projectList;
 
-    if (projects.length === 0) {
-      return;
+    if (!projects || projects.length === 0) {
+      try {
+        if ((await getProjects(jira)).length === 0) {
+          throw new VError('No projects found');
+        }
+      } catch (error) {
+        errorLog('No projects found with those credentials %s', Emoji.FAILURE);
+        return;
+      }
+      let done = false;
+      while (!done) {
+        projects = await promptForProjects(jira);
+
+        if (projects.length === 0) {
+          display(
+            'Your selection was empty; remember to use the SPACEBAR to select!',
+            Emoji.EMPTY
+          );
+          const tryAgainPrompt = await runSelect({
+            name: 'tryAgainPrompt',
+            message:
+              // eslint-disable-next-line max-len
+              'Do you want to try selecting again with the current credentials?',
+            choices: ['Yes', 'No, let me start over'],
+          });
+
+          switch (tryAgainPrompt) {
+            case 'Yes':
+              continue;
+            case 'No, let me start over':
+              return;
+          }
+        }
+        done = true;
+      }
     }
 
     await cfg.airbyte.setupSource({
@@ -169,7 +203,7 @@ async function promptForProjects(
       return await runList({
         name: 'projects',
         message:
-          'Enter your favorite projects keys (comma-separated). ' +
+          'Enter your favorite projects keys (comma-separated).' +
           'E.g., FOO, BAR',
       });
   }
@@ -181,7 +215,7 @@ async function getProjects(
   jira: Version3Client
 ): Promise<ReadonlyArray<string>> {
   const response = await jira.projects.getAllProjects().catch((err) => {
-    throw new VError(err);
+    throw wrapApiError(err, 'Failed to get projects');
   });
   return response.map((project) => project.key);
 }

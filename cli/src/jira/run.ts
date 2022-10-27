@@ -4,6 +4,7 @@ import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
 import {wrapApiError} from '../cli';
+import {Metabase} from '../metabase/metabase-client';
 import {
   display,
   Emoji,
@@ -170,6 +171,16 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
     cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
     projects?.length || 0
   );
+
+  try {
+    await Metabase.triggerSyncOnDefaultLocalCEInstance();
+  } catch (error) {
+    // main intent is to have filters immediately populated with values
+    // we do nothing on failure, basic functionalities are not impacted
+    // daily/hourly metabase db scans will eventually get us there
+    // assumes default login/password for now
+    // (CLI is invoked by `start.sh` for Faros essentials)
+  }
 }
 
 async function promptForProjects(

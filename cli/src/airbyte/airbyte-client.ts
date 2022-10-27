@@ -1,6 +1,6 @@
 import retry from 'async-retry';
 import axios, {AxiosInstance} from 'axios';
-import { ceil } from 'lodash';
+import {ceil} from 'lodash';
 import ProgressBar from 'progress';
 import {VError} from 'verror';
 

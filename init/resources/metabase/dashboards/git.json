@@ -1600,8 +1600,7 @@
       "name": "Repository",
       "slug": "repository",
       "id": "81276e50",
-      "type": "string/=",
-      "sectionId": "string"
+      "type": "category"
     }
   ],
   "layout": [
@@ -2200,6 +2199,16 @@
         }
       ],
       "visualization_settings": {}
+    }
+  ],
+  "fields": [
+    {
+      "field": {{ field "vcs_Repository.name" }},
+      "type": "type/Category"
+    },
+    {
+      "field": {{ field "tms_TaskBoard.name" }},
+      "type": "type/Category"
     }
   ],
   "path": "/Faros CE/Git",

@@ -66,9 +66,9 @@ export class CLI {
    */
   static async runWith(
     args: string[],
-    opts: CLIOptions = {},
     feedPath: string,
-    feedName: string
+    feedName: string,
+    opts: CLIOptions = {}
   ): Promise<CLI> {
     const spawnOpts = {
       env: {

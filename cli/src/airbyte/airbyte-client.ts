@@ -1,5 +1,6 @@
 import retry from 'async-retry';
 import axios, {AxiosInstance} from 'axios';
+import { ceil } from 'lodash';
 import ProgressBar from 'progress';
 import {VError} from 'verror';
 
@@ -93,7 +94,7 @@ export class Airbyte {
         entries,
         Emoji.SYNC
       );
-      const duration_lower = (entries * days) / 30;
+      const duration_lower = ceil(entries * days) / 30;
       const duration_upper = 2 * duration_lower;
       display(
         'Time to get that data is typically between %s and %s minutes %s',

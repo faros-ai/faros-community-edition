@@ -140,10 +140,10 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
       break;
   }
 
-  try {
-    const workspaces = cfg.workspace;
-    const repos = cfg.repoList;
+  const workspaces = cfg.workspace;
+  const repos = cfg.repoList;
 
+  try {
     if (!repos || repos.length === 0) {
       try {
         if ((await getWorkspaces(bitbucket)).length === 0) {
@@ -219,7 +219,11 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
     return;
   }
 
-  await cfg.airbyte.triggerAndTrackSync(BITBUCKET_CONNECTION_ID);
+  await cfg.airbyte.triggerAndTrackSync(
+    BITBUCKET_CONNECTION_ID,
+    cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
+    repos?.length || 0
+  );
 }
 
 interface Workspace {

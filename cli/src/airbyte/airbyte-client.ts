@@ -1,5 +1,6 @@
 import retry from 'async-retry';
 import axios, {AxiosInstance} from 'axios';
+import { ceil } from 'lodash';
 import ProgressBar from 'progress';
 import {VError} from 'verror';
 
@@ -81,9 +82,26 @@ export class Airbyte {
     return response.data.job.status;
   }
 
-  async triggerAndTrackSync(connectionId: string): Promise<void> {
+  async triggerAndTrackSync(
+    connectionId: string,
+    days: number,
+    entries: number
+  ): Promise<void> {
     try {
-      display('Syncing %s', Emoji.SYNC);
+      display(
+        'Syncing %s days of data for %s repos/projects %s',
+        days,
+        entries,
+        Emoji.SYNC
+      );
+      const duration_lower = ceil(entries * days) / 30;
+      const duration_upper = 2 * duration_lower;
+      display(
+        'Time to get that data is typically between %s and %s minutes %s',
+        duration_lower,
+        duration_upper,
+        Emoji.STOPWATCH
+      );
       const job = await this.triggerSync(connectionId);
 
       const syncBar = new ProgressBar(':bar', {

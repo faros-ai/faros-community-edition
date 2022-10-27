@@ -91,9 +91,9 @@ export async function runGitlab(cfg: GitLabConfig): Promise<void> {
     startDate.getDate() - (cfg.cutoffDays || DEFAULT_CUTOFF_DAYS)
   );
 
-  try {
-    let projects = cfg.projectList;
+  let projects = cfg.projectList;
 
+  try {
     if (!projects || projects.length === 0) {
       try {
         if ((await getProjects(token, api_url)).length === 0) {
@@ -146,7 +146,11 @@ export async function runGitlab(cfg: GitLabConfig): Promise<void> {
     return;
   }
 
-  await cfg.airbyte.triggerAndTrackSync(GITLAB_CONNECTION_ID);
+  await cfg.airbyte.triggerAndTrackSync(
+    GITLAB_CONNECTION_ID,
+    cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
+    projects?.length || 0
+  );
 }
 
 async function promptForProjects(

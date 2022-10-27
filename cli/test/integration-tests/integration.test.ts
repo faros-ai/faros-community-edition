@@ -6,7 +6,6 @@ const EXPECTED_OUTPUT_SUCCESS_SYNC = [
   'Checking connection with Airbyte \n',
   'Setting up source \n',
   'Setup succeeded \n',
-  'Syncing \n',
   'Syncing succeeded \n',
 ];
 

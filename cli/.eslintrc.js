@@ -96,7 +96,7 @@ module.exports = {
     'object-shorthand': ['error', 'always', {avoidQuotes: true}],
     'prefer-const': 'error',
     'radix': 'error',
-    'require-await': 'off',
+    'require-await': 'error',
     'simple-import-sort/imports': 'error',
   },
   overrides: [

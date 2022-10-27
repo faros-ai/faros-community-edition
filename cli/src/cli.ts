@@ -11,6 +11,7 @@ import {runSelect} from './utils/prompts';
 const DEFAULT_AIRBYTE_URL = 'http://localhost:8000';
 const DEFAULT_METABASE_URL = 'http://localhost:3000';
 
+// eslint-disable-next-line require-await
 export async function main(): Promise<void> {
   program.addCommand(makeGithubCommand());
   program.addCommand(makeGitlabCommand());

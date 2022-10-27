@@ -30,19 +30,25 @@ export async function main(): Promise<void> {
         const source = await runSelect({
           name: 'source',
           message: 'Select a source',
-          choices: ['GitHub', 'GitLab', 'Bitbucket', 'Jira', 'I\'m done!'],
+          choices: [
+            'GitHub (Cloud)',
+            'GitLab Cloud / Server',
+            'Bitbucket Cloud / Server',
+            'Jira (Cloud)',
+            'I\'m done!',
+          ],
         });
         switch (source) {
-          case 'GitHub':
+          case 'GitHub (Cloud)':
             await runGithub({airbyte});
             break;
-          case 'GitLab':
+          case 'GitLab Cloud / Server':
             await runGitlab({airbyte});
             break;
-          case 'Bitbucket':
+          case 'Bitbucket Cloud / Server':
             await runBitbucket({airbyte});
             break;
-          case 'Jira':
+          case 'Jira (Cloud)':
             await runJira({airbyte});
             break;
           case 'I\'m done!':

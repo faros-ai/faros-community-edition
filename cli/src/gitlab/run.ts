@@ -4,6 +4,7 @@ import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
 import {wrapApiError} from '../cli';
+import {Metabase} from '../metabase/metabase-client';
 import {
   display,
   Emoji,
@@ -28,6 +29,7 @@ const DEFAULT_API_URL = 'gitlab.com';
 
 interface GitLabConfig {
   readonly airbyte: Airbyte;
+  readonly metabase: Metabase;
   readonly apiUrl?: string;
   readonly token?: string;
   readonly projectList?: ReadonlyArray<string>;
@@ -55,8 +57,13 @@ export function makeGitlabCommand(): Command {
 
   cmd.action(async (options) => {
     const airbyte = new Airbyte(options.airbyteUrl);
+    const metabase = await Metabase.fromConfig({
+      url: options.metabaseUrl,
+      username: options.metabaseUsername,
+      password: options.metabasePassword,
+    });
 
-    await runGitlab({...options, airbyte});
+    await runGitlab({...options, airbyte, metabase});
   });
 
   return cmd;
@@ -151,6 +158,14 @@ export async function runGitlab(cfg: GitLabConfig): Promise<void> {
     cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
     projects?.length || 0
   );
+
+  try {
+    await cfg.metabase.forceSync();
+  } catch (error) {
+    // main intent is to have filters immediately populated with values
+    // we do nothing on failure, basic functionalities are not impacted
+    // daily/hourly metabase db scans will eventually get us there
+  }
 }
 
 async function promptForProjects(

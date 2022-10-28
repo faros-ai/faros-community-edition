@@ -6,11 +6,14 @@ import {makeBitbucketCommand, runBitbucket} from './bitbucket/run';
 import {makeGithubCommand, runGithub} from './github/run';
 import {makeGitlabCommand, runGitlab} from './gitlab/run';
 import {makeJiraCommand, runJira} from './jira/run';
+import {Metabase} from './metabase/metabase-client';
 import {display, terminalLink} from './utils';
 import {runSelect} from './utils/prompts';
 
 const DEFAULT_AIRBYTE_URL = 'http://localhost:8000';
 const DEFAULT_METABASE_URL = 'http://localhost:3000';
+const DEFAULT_METABASE_USER = 'admin@admin.com';
+const DEFAULT_METABASE_PASSWORD = 'admin';
 
 export function wrapApiError(cause: unknown, msg: string): Error {
   // Omit verbose axios error
@@ -33,6 +36,12 @@ export async function main(): Promise<void> {
     .command('pick-source', {isDefault: true, hidden: true})
     .action(async (options) => {
       const airbyte = new Airbyte(options.airbyteUrl);
+      const metabase = await Metabase.fromConfig({
+        url: options.metabaseUrl,
+        username: options.metabaseUsername,
+        password: options.metabasePassword,
+      });
+
       let done = false;
       while (!done) {
         const source = await runSelect({
@@ -48,16 +57,16 @@ export async function main(): Promise<void> {
         });
         switch (source) {
           case 'GitHub (Cloud)':
-            await runGithub({airbyte});
+            await runGithub({airbyte, metabase});
             break;
           case 'GitLab (Cloud / Server)':
-            await runGitlab({airbyte});
+            await runGitlab({airbyte, metabase});
             break;
           case 'Bitbucket (Cloud / Server)':
-            await runBitbucket({airbyte});
+            await runBitbucket({airbyte, metabase});
             break;
           case 'Jira (Cloud)':
-            await runJira({airbyte});
+            await runJira({airbyte, metabase});
             break;
           case 'I\'m done!':
             done = true;
@@ -69,6 +78,16 @@ export async function main(): Promise<void> {
     cmd.option('--airbyte-url <string>', 'Airbyte URL', DEFAULT_AIRBYTE_URL);
     cmd
       .option('--metabase-url <string>', 'Metabase URL', DEFAULT_METABASE_URL)
+      .option(
+        '--metabase-username <string>',
+        'Metabase username',
+        DEFAULT_METABASE_USER
+      )
+      .option(
+        '--metabase-password <string>',
+        'Metabase password',
+        DEFAULT_METABASE_PASSWORD
+      )
       .hook('postAction', async (thisCommand) => {
         display(
           `Check out your metrics in ${await terminalLink(

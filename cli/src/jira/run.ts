@@ -4,6 +4,7 @@ import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
 import {wrapApiError} from '../cli';
+import {Metabase} from '../metabase/metabase-client';
 import {
   display,
   Emoji,
@@ -27,6 +28,7 @@ const DEFAULT_CUTOFF_DAYS = 30;
 
 interface JiraConfig {
   readonly airbyte: Airbyte;
+  readonly metabase: Metabase;
   readonly email?: string;
   readonly token?: string;
   readonly domain?: string;
@@ -55,8 +57,13 @@ export function makeJiraCommand(): Command {
 
   cmd.action(async (options) => {
     const airbyte = new Airbyte(options.airbyteUrl);
+    const metabase = await Metabase.fromConfig({
+      url: options.metabaseUrl,
+      username: options.metabaseUsername,
+      password: options.metabasePassword,
+    });
 
-    await runJira({...options, airbyte});
+    await runJira({...options, airbyte, metabase});
   });
 
   return cmd;
@@ -171,6 +178,14 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
     cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
     projects?.length || 0
   );
+
+  try {
+    await cfg.metabase.forceSync();
+  } catch (error) {
+    // main intent is to have filters immediately populated with values
+    // we do nothing on failure, basic functionalities are not impacted
+    // daily/hourly metabase db scans will eventually get us there
+  }
 }
 
 async function promptForProjects(

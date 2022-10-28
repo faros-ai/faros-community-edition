@@ -4,6 +4,7 @@ import VError from 'verror';
 
 import {Airbyte} from '../airbyte/airbyte-client';
 import {wrapApiError} from '../cli';
+import {Metabase} from '../metabase/metabase-client';
 import {
   display,
   Emoji,
@@ -26,6 +27,7 @@ const DEFAULT_CUTOFF_DAYS = 30;
 
 interface GithubConfig {
   readonly airbyte: Airbyte;
+  readonly metabase: Metabase;
   readonly token?: string;
   readonly repoList?: ReadonlyArray<string>;
   readonly cutoffDays?: number;
@@ -51,8 +53,13 @@ export function makeGithubCommand(): Command {
 
   cmd.action(async (options) => {
     const airbyte = new Airbyte(options.airbyteUrl);
+    const metabase = await Metabase.fromConfig({
+      url: options.metabaseUrl,
+      username: options.metabaseUsername,
+      password: options.metabasePassword,
+    });
 
-    await runGithub({...options, airbyte});
+    await runGithub({...options, airbyte, metabase});
   });
 
   return cmd;
@@ -143,6 +150,14 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
     cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
     repos?.length || 0
   );
+
+  try {
+    await cfg.metabase.forceSync();
+  } catch (error) {
+    // main intent is to have filters immediately populated with values
+    // we do nothing on failure, basic functionalities are not impacted
+    // daily/hourly metabase db scans will eventually get us there
+  }
 }
 
 async function promptForRepos(token: string): Promise<ReadonlyArray<string>> {

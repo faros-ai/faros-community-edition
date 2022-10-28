@@ -161,6 +161,7 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
         domain,
         projects,
         start_date: startDate.toISOString().replace(/\.\d+/, ''),
+        render_fields: true,
         enable_experimental_streams: true,
         expand_issue_changelog: true,
       },

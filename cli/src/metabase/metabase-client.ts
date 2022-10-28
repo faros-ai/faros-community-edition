@@ -53,13 +53,4 @@ export class Metabase {
       throw wrapApiError(err, 'unable to trigger rescan');
     }
   }
-
-  static async triggerSyncOnDefaultLocalCEInstance(): Promise<any> {
-    const metabase = await Metabase.fromConfig({
-      url: 'http://localhost:3000',
-      username: 'admin@admin.com',
-      password: 'admin',
-    });
-    metabase.forceSync();
-  }
 }

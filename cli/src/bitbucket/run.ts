@@ -28,6 +28,7 @@ const DEFAULT_API_URL = 'https://api.bitbucket.org/2.0';
 
 interface BitbucketConfig {
   readonly airbyte: Airbyte;
+  readonly metabase: Metabase;
   readonly serverUrl?: string;
   readonly username?: string;
   readonly password?: string;
@@ -63,8 +64,12 @@ export function makeBitbucketCommand(): Command {
 
   cmd.action(async (options) => {
     const airbyte = new Airbyte(options.airbyteUrl);
-
-    await runBitbucket({...options, airbyte});
+    const metabase = await Metabase.fromConfig({
+      url: options.metabaseUrl,
+      username: options.metabaseUsername,
+      password: options.metabasePassword,
+    });
+    await runBitbucket({...options, airbyte, metabase});
   });
 
   return cmd;
@@ -227,13 +232,11 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
   );
 
   try {
-    await Metabase.triggerSyncOnDefaultLocalCEInstance();
+    await cfg.metabase.forceSync();
   } catch (error) {
     // main intent is to have filters immediately populated with values
     // we do nothing on failure, basic functionalities are not impacted
     // daily/hourly metabase db scans will eventually get us there
-    // assumes default login/password for now
-    // (CLI is invoked by `start.sh` for Faros essentials)
   }
 }
 

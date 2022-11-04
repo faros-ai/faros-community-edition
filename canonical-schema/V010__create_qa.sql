@@ -1,10 +1,9 @@
 -- qa models --
-create table
-  "qa_CodeQuality"(
-    id text generated always as(pkey("uid":: text)) stored primary key,
+create table "qa_CodeQuality" (
+    id text generated always as (pkey(uid)) stored primary key,
     origin text,
     "refreshedAt" timestamptz not null default now(),
-    "uid" text not null,
+    uid text not null,
     "bugs" jsonb,
     "branchCoverage" jsonb,
     "codeSmells" jsonb,
@@ -19,14 +18,11 @@ create table
     "pullRequest" text,
     "repository" text
   );
-create table
-  "qa_TestCase"(
-    id text generated always as(
-      pkey("source":: text, "uid":: text)
-    ) stored primary key,
+create table "qa_TestCase" (
+    id text generated always as (pkey(source, uid)) stored primary key,
     origin text,
     "refreshedAt" timestamptz not null default now(),
-    "uid" text not null,
+    uid text not null,
     "name" text,
     "description" text,
     "source" text,
@@ -36,17 +32,11 @@ create table
     "type" jsonb,
     "task" text
   );
-create table
-  "qa_TestCaseResult"(
-    id text generated always as(
-      pkey(
-        "testExecution":: text,
-        "uid":: text
-      )
-    ) stored primary key,
+create table"qa_TestCaseResult" (
+    id text generated always as (pkey("testExecution", uid)) stored primary key,
     origin text,
     "refreshedAt" timestamptz not null default now(),
-    "uid" text not null,
+    uid text not null,
     "description" text,
     "startedAt" timestamptz,
     "endedAt" timestamptz,
@@ -54,46 +44,31 @@ create table
     "testCase" text,
     "testExecution" text
   );
-create table
-  "qa_TestCaseStep"(
-    id text generated always as(
-      pkey(
-        "testCase":: text,
-        "uid":: text
-      )
-    ) stored primary key,
+create table "qa_TestCaseStep" (
+    id text generated always as (pkey("testCase", uid)) stored primary key,
     origin text,
     "refreshedAt" timestamptz not null default now(),
-    "uid" text not null,
+    uid text not null,
     "name" text,
     "description" text,
     "data" text,
     "result" text,
     "testCase" text
   );
-create table
-  "qa_TestCaseStepResult"(
-    id text generated always as(
-      pkey(
-        "testResult":: text,
-        "uid":: text
-      )
-    ) stored primary key,
+create table "qa_TestCaseStepResult" (
+  id text generated always as (pkey("testResult", uid)) stored primary key,
     origin text,
     "refreshedAt" timestamptz not null default now(),
-    "uid" text not null,
+    uid text not null,
     "status" jsonb,
     "testStep" text,
     "testResult" text
   );
-create table
-  "qa_TestExecution"(
-    id text generated always as(
-      pkey("source":: text, "uid":: text)
-    ) stored primary key,
+create table "qa_TestExecution" (
+    id text generated always as (pkey("source", uid)) stored primary key,
     origin text,
     "refreshedAt" timestamptz not null default now(),
-    "uid" text not null,
+    uid text not null,
     "name" text,
     "description" text,
     "source" text,
@@ -108,27 +83,18 @@ create table
     "task" text,
     "build" text
   );
-create table
-  "qa_TestExecutionCommitAssociation"(
-    id text generated always as(
-      pkey(
-        "commit":: text,
-        "testExecution":: text
-      )
-    ) stored primary key,
+create table "qa_TestExecutionCommitAssociation" (
+    id text generated always as (pkey("commit", "testExecution")) stored primary key,
     origin text,
     "refreshedAt" timestamptz not null default now(),
     "testExecution" text,
     "commit" text
   );
-create table
-  "qa_TestSuite"(
-    id text generated always as(
-      pkey("source":: text, "uid":: text)
-    ) stored primary key,
+create table "qa_TestSuite" (
+    id text generated always as (pkey("source", uid)) stored primary key,
     origin text,
     "refreshedAt" timestamptz not null default now(),
-    "uid" text not null,
+    uid text not null,
     "name" text,
     "description" text,
     "source" text,
@@ -136,27 +102,15 @@ create table
     "type" jsonb,
     "task" text
   );
-create table
-  "qa_TestSuiteTestCaseAssociation"(
-    id text generated always as(
-      pkey(
-        "testCase":: text,
-        "testSuite":: text
-      )
-    ) stored primary key,
+create table "qa_TestSuiteTestCaseAssociation" (
+    id text generated always as (pkey("testCase", "testSuite")) stored primary key,
     origin text,
     "refreshedAt" timestamptz not null default now(),
     "testSuite" text,
     "testCase" text
   );
-  create table
-  "tms_TaskTestCaseResultAssociation"(
-    id text generated always as(
-      pkey(
-        "defect":: text,
-        "testCaseResult":: text
-      )
-    ) stored primary key,
+create table "tms_TaskTestCaseResultAssociation" (
+    id text generated always as (pkey("defect", "testCaseResult")) stored primary key,
     origin text,
     "refreshedAt" timestamptz not null default now(),
     "defect" text,
@@ -225,42 +179,42 @@ create index "tms_TaskTestCaseResultAssociation_defect_idx" on "tms_TaskTestCase
 create index "tms_TaskTestCaseResultAssociation_testCaseResult_idx" on "tms_TaskTestCaseResultAssociation"("testCaseResult");
 
 -- expansion --
-alter table "qa_CodeQuality" add column "bugsValue" text generated always as(("bugs" ->> 'value'):: text) stored;
-alter table "qa_CodeQuality" add column "branchCoverageValue" text generated always as(("branchCoverage" ->> 'value'):: text) stored;
-alter table "qa_CodeQuality" add column "codeSmellsValue" text generated always as(("codeSmells" ->> 'value'):: text) stored;
-alter table "qa_CodeQuality" add column "complexityValue" text generated always as(("complexity" ->> 'value'):: text) stored;
-alter table "qa_CodeQuality" add column "coverageValue" text generated always as(("coverage" ->> 'value'):: text) stored;
-alter table "qa_CodeQuality" add column "duplicationsValue" text generated always as(("duplications" ->> 'value'):: text) stored;
-alter table "qa_CodeQuality" add column "duplicatedBlocksValue" text generated always as(("duplicatedBlocks" ->> 'value'):: text) stored;
-alter table "qa_CodeQuality" add column "lineCoverageValue" text generated always as(("lineCoverage" ->> 'value'):: text) stored;
-alter table "qa_CodeQuality" add column "securityHotspotsValue" text generated always as(("securityHotspots" ->> 'value'):: text) stored;
-alter table "qa_CodeQuality" add column "vulnerabilitiesValue" text generated always as(("vulnerabilities" ->> 'value'):: text) stored;
-alter table "qa_TestCase" add column "beforeDescription" text generated always as(("before" ->> 'description'):: text) stored;
-alter table "qa_TestCase" add column "beforeCondition" text generated always as(("before" ->> 'condition'):: text) stored;
-alter table "qa_TestCase" add column "afterDescription" text generated always as(("after" ->> 'description'):: text) stored;
-alter table "qa_TestCase" add column "afterCondition" text generated always as(("after" ->> 'condition'):: text) stored;
-alter table "qa_TestCase" add column "typeCategory" text generated always as(("type" ->> 'category'):: text) stored;
-alter table "qa_TestCase" add column "typeDetail" text generated always as(("type" ->> 'detail'):: text) stored;
-alter table "qa_TestCase" add column "typeCategory" text generated always as(("type" ->> 'category'):: text) stored;
-alter table "qa_TestCase" add column "typeDetail" text generated always as(("type" ->> 'detail'):: text) stored;
-alter table "qa_TestCaseResult" add column "statusCategory" text generated always as(("status" ->> 'category'):: text) stored;
-alter table "qa_TestCaseResult" add column "statusDetail" text generated always as(("status" ->> 'detail'):: text) stored;
-alter table "qa_TestCaseStepResult" add column "statusCategory" text generated always as(("status" ->> 'category'):: text) stored;
-alter table "qa_TestCaseStepResult" add column "statusDetail" text generated always as(("status" ->> 'detail'):: text) stored;
-alter table "qa_TestExecution" add column "statusCategory" text generated always as(("status" ->> 'category'):: text) stored;
-alter table "qa_TestExecution" add column "statusDetail" text generated always as(("status" ->> 'detail'):: text) stored;
+alter table "qa_CodeQuality" add column "bugsValue" text generated always as ("bugs" ->> 'value') stored;
+alter table "qa_CodeQuality" add column "branchCoverageValue" text generated always as ("branchCoverage" ->> 'value') stored;
+alter table "qa_CodeQuality" add column "codeSmellsValue" text generated always as ("codeSmells" ->> 'value') stored;
+alter table "qa_CodeQuality" add column "complexityValue" text generated always as ("complexity" ->> 'value') stored;
+alter table "qa_CodeQuality" add column "coverageValue" text generated always as ("coverage" ->> 'value') stored;
+alter table "qa_CodeQuality" add column "duplicationsValue" text generated always as ("duplications" ->> 'value') stored;
+alter table "qa_CodeQuality" add column "duplicatedBlocksValue" text generated always as ("duplicatedBlocks" ->> 'value') stored;
+alter table "qa_CodeQuality" add column "lineCoverageValue" text generated always as ("lineCoverage" ->> 'value') stored;
+alter table "qa_CodeQuality" add column "securityHotspotsValue" text generated always as ("securityHotspots" ->> 'value') stored;
+alter table "qa_CodeQuality" add column "vulnerabilitiesValue" text generated always as ("vulnerabilities" ->> 'value') stored;
+alter table "qa_TestCase" add column "beforeDescription" text generated always as ("before" ->> 'description') stored;
+alter table "qa_TestCase" add column "beforeCondition" text generated always as ("before" ->> 'condition') stored;
+alter table "qa_TestCase" add column "afterDescription" text generated always as ("after" ->> 'description') stored;
+alter table "qa_TestCase" add column "afterCondition" text generated always as ("after" ->> 'condition') stored;
+alter table "qa_TestCase" add column "typeCategory" text generated always as ("type" ->> 'category') stored;
+alter table "qa_TestCase" add column "typeDetail" text generated always as ("type" ->> 'detail') stored;
+alter table "qa_TestCase" add column "typeCategory" text generated always as ("type" ->> 'category') stored;
+alter table "qa_TestCase" add column "typeDetail" text generated always as ("type" ->> 'detail') stored;
+alter table "qa_TestCaseResult" add column "statusCategory" text generated always as ("status" ->> 'category') stored;
+alter table "qa_TestCaseResult" add column "statusDetail" text generated always as ("status" ->> 'detail') stored;
+alter table "qa_TestCaseStepResult" add column "statusCategory" text generated always as ("status" ->> 'category') stored;
+alter table "qa_TestCaseStepResult" add column "statusDetail" text generated always as ("status" ->> 'detail') stored;
+alter table "qa_TestExecution" add column "statusCategory" text generated always as ("status" ->> 'category') stored;
+alter table "qa_TestExecution" add column "statusDetail" text generated always as ("status" ->> 'detail') stored;
 alter table "qa_TestExecution" add column "testCaseResultsStatsFailure" integer generated always as (("testCaseResultsStats" -> 'failure')::integer) stored;
 alter table "qa_TestExecution" add column "testCaseResultsStatsSuccess" integer generated always as (("testCaseResultsStats" -> 'success')::integer) stored;
 alter table "qa_TestExecution" add column "testCaseResultsStatsSkipped" integer generated always as (("testCaseResultsStats" -> 'skipped')::integer) stored;
 alter table "qa_TestExecution" add column "testCaseResultsStatsUnknown" integer generated always as (("testCaseResultsStats" -> 'unknown')::integer) stored;
 alter table "qa_TestExecution" add column "testCaseResultsStatsCustom" integer generated always as (("testCaseResultsStats" -> 'custom')::integer) stored;
 alter table "qa_TestExecution" add column "testCaseResultsStatsTotal" integer generated always as (("testCaseResultsStats" -> 'total')::integer) stored;
-alter table "qa_TestExecution" add column "deviceInfoName" text generated always as (("deviceInfo" -> 'name')::text) stored;
-alter table "qa_TestExecution" add column "deviceInfoOs" text generated always as (("deviceInfo" -> 'os')::text) stored;
-alter table "qa_TestExecution" add column "deviceInfoBrowser" text generated always as (("deviceInfo" -> 'browser')::text) stored;
-alter table "qa_TestExecution" add column "deviceInfoType" text generated always as (("deviceInfo" -> 'type')::text) stored;
-alter table "qa_TestSuite" add column "typeCategory" text generated always as(("type" ->> 'category'):: text) stored;
-alter table "qa_TestSuite" add column "typeDetail" text generated always as(("type" ->> 'detail'):: text) stored;
+alter table "qa_TestExecution" add column "deviceInfoName" text generated always as ("deviceInfo" -> 'name') stored;
+alter table "qa_TestExecution" add column "deviceInfoOs" text generated always as ("deviceInfo" -> 'os') stored;
+alter table "qa_TestExecution" add column "deviceInfoBrowser" text generated always as ("deviceInfo" -> 'browser') stored;
+alter table "qa_TestExecution" add column "deviceInfoType" text generated always as ("deviceInfo" -> 'type') stored;
+alter table "qa_TestSuite" add column "typeCategory" text generated always as ("type" ->> 'category') stored;
+alter table "qa_TestSuite" add column "typeDetail" text generated always as ("type" ->> 'detail') stored;
 
 comment on column "qa_CodeQuality"."bugsValue" is 'generated';
 comment on column "qa_CodeQuality"."branchCoverageValue" is 'generated';

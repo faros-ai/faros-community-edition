@@ -149,6 +149,19 @@ create table
     "testSuite" text,
     "testCase" text
   );
+  create table
+  "tms_TaskTestCaseResultAssociation"(
+    id text generated always as(
+      pkey(
+        "defect":: text,
+        "testCaseResult":: text
+      )
+    ) stored primary key,
+    origin text,
+    "refreshedAt" timestamptz not null default now(),
+    "defect" text,
+    "testCaseResult" text
+  );
 
 -- foreign keys --
 alter table "qa_CodeQuality" add foreign key ("pullRequest") references "vcs_PullRequest"(id);
@@ -167,6 +180,8 @@ alter table "qa_TestExecutionCommitAssociation" add foreign key ("commit") refer
 alter table "qa_TestSuite" add foreign key ("task") references "tms_Task"(id);
 alter table "qa_TestSuiteTestCaseAssociation" add foreign key ("testSuite") references "qa_TestSuite"(id);
 alter table "qa_TestSuiteTestCaseAssociation" add foreign key ("testCase") references "qa_TestCase"(id);
+alter table "tms_TaskTestCaseResultAssociation" add foreign key ("defect") references "tms_Task"(id);
+alter table "tms_TaskTestCaseResultAssociation" add foreign key ("testCaseResult") references "qa_TestCaseResult"(id);
 
 -- indices --
 create index "qa_CodeQuality_origin_idx" on "qa_CodeQuality"("origin");
@@ -206,6 +221,8 @@ create index "qa_TestSuite_task_idx" on "qa_TestSuite"("task");
 create index "qa_TestSuiteTestCaseAssociation_origin_idx" on "qa_TestSuiteTestCaseAssociation"("origin");
 create index "qa_TestSuiteTestCaseAssociation_testSuite_idx" on "qa_TestSuiteTestCaseAssociation"("testSuite");
 create index "qa_TestSuiteTestCaseAssociation_testCase_idx" on "qa_TestSuiteTestCaseAssociation"("testCase");
+create index "tms_TaskTestCaseResultAssociation_defect_idx" on "tms_TaskTestCaseResultAssociation"("defect");
+create index "tms_TaskTestCaseResultAssociation_testCaseResult_idx" on "tms_TaskTestCaseResultAssociation"("testCaseResult");
 
 -- expansion --
 alter table "qa_CodeQuality" add column "bugsValue" text generated always as(("bugs" ->> 'value'):: text) stored;

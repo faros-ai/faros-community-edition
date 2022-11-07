@@ -137,6 +137,17 @@ alter table "qa_TestSuiteTestCaseAssociation" add foreign key ("testCase") refer
 alter table "tms_TaskTestCaseResultAssociation" add foreign key (defect) references "tms_Task"(id);
 alter table "tms_TaskTestCaseResultAssociation" add foreign key ("testCaseResult") references "qa_TestCaseResult"(id);
 
+comment on column "qa_CodeQuality".id is 'generated';
+comment on column "qa_TestCase".id is 'generated';
+comment on column "qa_TestCaseResult".id is 'generated';
+comment on column "qa_TestCaseStep".id is 'generated';
+comment on column "qa_TestCaseStepResult".id is 'generated';
+comment on column "qa_TestExecution".id is 'generated';
+comment on column "qa_TestExecutionCommitAssociation".id is 'generated';
+comment on column "qa_TestSuite".id is 'generated';
+comment on column "qa_TestSuiteTestCaseAssociation".id is 'generated';
+comment on column "tms_TaskTestCaseResultAssociation".id is 'generated';
+
 -- indices --
 create index "qa_CodeQuality_origin_idx" on "qa_CodeQuality"(origin);
 create index "qa_CodeQuality_uid_idx" on "qa_CodeQuality"(uid);

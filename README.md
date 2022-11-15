@@ -4,9 +4,20 @@
 
 Faros Community Edition (CE) is an open-source engineering operations platform that connects the dots between all your operational data sources for a single-pane view across the software development life cycle.
 
+For Git + Jira analytics in 10 minutes on your laptop, launch:
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/faros-ai/faros-community-edition/main/install.sh)" _ --source github
+```
+- ℹ️ Prerequisite: Docker Desktop + git + API Tokens for your systems.
+- ✅ The script explains what it will do and then pauses before it does it.
+- For more information, check our [🧡 Faros Essentials page](https://community.faros.ai/docs/faros-essentials).
+
+![GIT Metrics](img/git_metrics.png)
+![Build Metrics](img/build_metrics.png)
 ![DORA Metrics](img/dora_metrics.png)
 ![JIRA Metrics](img/jira_metrics.png)
-## 🏁 Quickstart
+
+## 🏁 In-depth Quickstart
 
 Follow our [🏁 Quickstart Guide](https://community.faros.ai/docs/quickstart) to connect your engineering systems and explore the metrics, all in a matter of minutes!
 

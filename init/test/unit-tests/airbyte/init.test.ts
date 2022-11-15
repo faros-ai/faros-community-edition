@@ -21,10 +21,14 @@ describe('airbyte', () => {
 
     const email = 'test@test.com';
     const userId = '35d3e578-aa0b-540c-b5d0-6bd33f231dfb';
+    const version = '123';
+    const source = 'test';
 
     process.env.FAROS_EMAIL = email;
+    process.env.FAROS_INIT_VERSION = version;
+    process.env.FAROS_START_SOURCE = source;
     const segmentUser = AirbyteInit.makeSegmentUser();
-    expect(segmentUser).toStrictEqual({userId, email});
+    expect(segmentUser).toStrictEqual({userId, email, version, source});
 
     await AirbyteInit.sendIdentityAndStartEvent(segmentUser, host);
     analyticsMock.done();
@@ -37,7 +41,7 @@ describe('airbyte', () => {
           context: expect.anything(),
           messageId: expect.anything(),
           timestamp: expect.anything(),
-          traits: {email},
+          traits: {email, version, source},
           type: 'identify',
           userId,
         },
@@ -62,7 +66,7 @@ describe('airbyte', () => {
     });
   });
 
-  test('send identity and start event even if email is not set', async () => {
+  test('send identity and start event even if email, version and source are not set', async () => {
     const host = 'http://test.test.com';
 
     const bodies = [];
@@ -77,8 +81,10 @@ describe('airbyte', () => {
     const email = 'anonymous@anonymous.me';
 
     delete process.env.FAROS_EMAIL;
+    delete process.env.FAROS_INIT_VERSION;
+    delete process.env.FAROS_START_SOURCE;
     const segmentUser = AirbyteInit.makeSegmentUser();
-    expect(segmentUser).toStrictEqual({userId: expect.anything(), email});
+    expect(segmentUser).toStrictEqual({userId: expect.anything(), email, version: '', source: ''});
 
     await AirbyteInit.sendIdentityAndStartEvent(segmentUser, host);
     analyticsMock.done();
@@ -91,7 +97,7 @@ describe('airbyte', () => {
           context: expect.anything(),
           messageId: expect.anything(),
           timestamp: expect.anything(),
-          traits: {email},
+          traits: {email, version: '', source: ''},
           type: 'identify',
           userId: expect.anything(),
         },

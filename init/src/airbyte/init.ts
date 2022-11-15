@@ -34,6 +34,8 @@ const UUID_NAMESPACE = 'bb229e18-eb5f-4309-a863-893cbec53758';
 interface SegmentUser {
   readonly userId: string;
   readonly email: string;
+  readonly version: string;
+  readonly source: string;
 }
 
 export class AirbyteInit {
@@ -60,18 +62,27 @@ export class AirbyteInit {
   }
 
   static makeSegmentUser(): SegmentUser {
+    const version = process.env.FAROS_INIT_VERSION || '';
+    const source = process.env.FAROS_START_SOURCE || '';
     const envEmail = process.env.FAROS_EMAIL;
     if (envEmail && envEmail !== undefined && envEmail !== '') {
       return {
         userId: uuidv5(envEmail, UUID_NAMESPACE),
         email: envEmail,
+        version,
+        source,
       };
     }
     const email = 'anonymous@anonymous.me';
     if (process.env.HOSTNAME) {
-      return {userId: uuidv5(process.env.HOSTNAME, UUID_NAMESPACE), email};
+      return {
+        userId: uuidv5(process.env.HOSTNAME, UUID_NAMESPACE),
+        email,
+        version,
+        source,
+      };
     }
-    return {userId: uuidv4(), email};
+    return {userId: uuidv4(), email, version, source};
   }
 
   static sendIdentityAndStartEvent(
@@ -87,7 +98,11 @@ export class AirbyteInit {
         .identify(
           {
             userId: segmentUser.userId,
-            traits: {email: segmentUser.email},
+            traits: {
+              email: segmentUser.email,
+              version: segmentUser.version,
+              source: segmentUser.source,
+            },
           },
           callback
         )

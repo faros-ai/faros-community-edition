@@ -55,7 +55,12 @@ main() {
   fi
 
   export FAROS_EMAIL=$EMAIL
-  export FAROS_START_SOURCE=$source
+
+  if [[ -n "$source" ]]; then
+    SOURCE=$source
+  else SOURCE="unknown"
+  fi
+  export FAROS_START_SOURCE=$SOURCE
 
   # Ensure we're using the latest faros-init image
   export FAROS_INIT_IMAGE=farosai.docker.scarf.sh/farosai/faros-ce-init:latest

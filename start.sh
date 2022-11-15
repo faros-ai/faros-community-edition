@@ -27,6 +27,9 @@ function parseFlags() {
             --email)
                 email_override=$2
                 shift 2 ;;
+            --source)
+                source=$2
+                shift 2 ;;
             *)
                 echo "Unrecognized arg: $1"
                 shift ;;
@@ -53,9 +56,18 @@ main() {
 
   export FAROS_EMAIL=$EMAIL
 
+  if [[ -n "$source" ]]; then
+    SOURCE=$source
+  else SOURCE="unknown"
+  fi
+  export FAROS_START_SOURCE=$SOURCE
+
   # Ensure we're using the latest faros-init image
   export FAROS_INIT_IMAGE=farosai.docker.scarf.sh/farosai/faros-ce-init:latest
   docker compose pull faros-init
+  # docker image ls appears to be sorted by creation date
+  VERSION=$(docker image ls -q $FAROS_INIT_IMAGE | head -n 1)
+  export FAROS_INIT_VERSION=$VERSION
 
   if [[ $(uname -m 2> /dev/null) == 'arm64' ]]; then
       # Use Metabase images built for Apple M1

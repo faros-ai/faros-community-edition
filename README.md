@@ -8,6 +8,7 @@ For Git + Jira analytics in 10 minutes on your laptop, launch:
 ```shell
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/faros-ai/faros-community-edition/main/install.sh)" _ --source github
 ```
+![Install Flow](img/install_flow.gif)
 - ℹ️ Prerequisite: Docker Desktop + git + API Tokens for your systems.
 - ✅ The script explains what it will do and then pauses before it does it.
 - For more information, check our [🧡 Faros Essentials page](https://community.faros.ai/docs/faros-essentials).

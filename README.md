@@ -2,25 +2,9 @@
 
 [![GitHub Stars](https://img.shields.io/github/stars/faros-ai/faros-community-edition?style=social)](https://github.com/faros-ai/faros-community-edition/stargazers/) [![Community Slack](https://img.shields.io/badge/chat-Slack-%234a154b)](https://community.faros.ai/docs/slack) [![Release](https://github.com/faros-ai/faros-community-edition/actions/workflows/release.yml/badge.svg)](https://github.com/faros-ai/faros-community-edition/actions/workflows/release.yml) [![PR Cycle Time](https://img.shields.io/badge/dynamic/json?color=informational&label=PR%20Cycle%20Time&query=%24%5B0%5D.pr_cycle_time&suffix=%20days&url=https%3A%2F%2Fmetabase.faros-ce.onplural.sh%2Fapi%2Fpublic%2Fcard%2Fba76dbdf-a77b-4948-9efe-df29aa4667fc%2Fquery%2Fjson)](https://metabase.faros-ce.onplural.sh/public/dashboard/b2ab64dc-e343-45df-8f78-fb912306e12e?relative_date=past30days&repository=faros-community-edition)
 
-Faros Community Edition (CE) is an open-source engineering operations platform that connects the dots between all your operational data sources for a single-pane view across the software development life cycle.
-
-For Git + Jira analytics in 10 minutes on your laptop, launch:
-```shell
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/faros-ai/faros-community-edition/main/install.sh)" _ --source github
-```
-![Install Flow](img/install_flow.gif)
-- ℹ️ Prerequisite: Docker Desktop + git + API Tokens for your systems.
-- ✅ The script explains what it will do and then pauses before it does it.
-- For more information, check our [🧡 Faros Essentials page](https://community.faros.ai/docs/faros-essentials).
-
-![Git Metrics](img/git_metrics.png)
-![Build Metrics](img/build_metrics.png)
 ![DORA Metrics](img/dora_metrics.png)
-![Jira Metrics](img/jira_metrics.png)
 
-## 🏁 In-depth Quickstart
-
-Follow our [🏁 Quickstart Guide](https://community.faros.ai/docs/quickstart) to connect your engineering systems and explore the metrics, all while learning about Airbyte, Metabase, Hasura and n8n!
+Faros Community Edition (CE) is an open-source engineering operations platform that connects the dots between all your operational data sources for a single-pane view across the software development life cycle.
 
 ## ✨ Features
 
@@ -31,7 +15,19 @@ Follow our [🏁 Quickstart Guide](https://community.faros.ai/docs/quickstart) t
 - **Extensibility and shareability**: Build and share custom metrics and dashboards
 - **Container-based deployment**: Run on your laptop, private or public cloud, with no external dependencies
 
-## ℹ️ Components
+## 🏁 One-liner to get Git + Jira analytics on your laptop in 10 minutes
+
+Requires Docker Desktop and git. Open your favorite terminal and run the install script:
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/faros-ai/faros-community-edition/main/install.sh)" _ --source github_readme
+```
+For more info about the script see [🧡 Faros Essentials](https://community.faros.ai/docs/faros-essentials).
+
+![Install Flow](img/install_flow.gif)
+
+For a step by step instructions follow our [🏁 Quickstart Guide](https://community.faros.ai/docs/quickstart) to connect your engineering systems and explore the metrics, all while learning about Airbyte, Metabase, Hasura and n8n!
+
+## ⚙️ System Components
 
 ![Architecture](img/architecture.png)
 

@@ -240,11 +240,7 @@ services:
       HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://${FAROS_CONFIG_DB_USER?}:${FAROS_CONFIG_DB_PASSWORD?}@${FAROS_CONFIG_DB_HOST?}:${FAROS_CONFIG_DB_PORT?}/${HASURA_DB_NAME?}
   metabase:
     profiles: ["default"]
-    build:
-      context: ./metabase
-      args:
-        - METABASE_IMAGE=${METABASE_IMAGE}
-        - METABASE_VERSION=${METABASE_VERSION}
+    image: ${METABASE_IMAGE}:${METABASE_VERSION}
     container_name: metabase
     ports:
       - ${METABASE_PORT?}:3000

@@ -23,6 +23,8 @@ Requires Docker Desktop and git. Open your favorite terminal and run the install
 ```
 For more info about the script see [🧡 Faros Essentials](https://community.faros.ai/docs/faros-essentials).
 
+![Install Flow](img/install_flow.gif)
+
 For a step by step instructions follow our [🏁 Quickstart Guide](https://community.faros.ai/docs/quickstart) to connect your engineering systems and explore the metrics, all while learning about Airbyte, Metabase, Hasura and n8n!
 
 ## ℹ️ Components

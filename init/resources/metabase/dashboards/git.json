@@ -304,6 +304,17 @@
               ],
               "alias": "Tms TaskBoard - Board"
             }
+          ],
+          "filter": [
+            "!=",
+            [
+              "field",
+              {{ field "tms_TaskBoard.source" }},
+              {
+                "join-alias": "Tms TaskBoard - Board"
+              }
+            ],
+            "Jira"
           ]
         },
         "type": "query"
@@ -349,6 +360,17 @@
                 null
               ],
               "closed"
+            ],
+            [
+              "!=",
+              [
+                "field",
+                {{ field "tms_TaskBoard.source" }},
+                {
+                  "join-alias": "Tms TaskBoard - Board"
+                }
+              ],
+              "Jira"
             ]
           ],
           "joins": [

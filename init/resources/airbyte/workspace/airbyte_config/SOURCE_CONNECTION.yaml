@@ -78,7 +78,7 @@
     reject_unauthorized: true
   tombstone: false
 - name: "Harness"
-  sourceDefinitionId: "d8d05baf-bbda-49b3-9489-542e77cbd820"
+  sourceDefinitionId: "6fe89830-d04d-401b-aad6-6552ffa5c4af"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
   sourceId: "c78b0bb2-5fee-46f7-a043-63e498004776"
   configuration:
@@ -90,7 +90,7 @@
     deployment_timeout: 24
   tombstone: false
 - name: "Jenkins"
-  sourceDefinitionId: "4c4613d8-ffcd-4db8-a8f8-d325052aec11"
+  sourceDefinitionId: "d6f73702-d7a0-4e95-9758-b0fb1af0bfba"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
   sourceId: "55b0325e-4bc7-49b4-b230-36c5a67df068"
   configuration:
@@ -119,7 +119,7 @@
     application_key: ""
   tombstone: false
 - name: "PagerDuty"
-  sourceDefinitionId: "aee89078-5c00-429e-90bf-cec0174dbb76"
+  sourceDefinitionId: "2817b3f0-04e4-4c7a-9f32-7a5e8a83db95"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
   sourceId: "5ed7412c-72d3-46a9-bc40-0e362ad437c6"
   configuration:
@@ -147,7 +147,7 @@
     cutoff_days: 90
   tombstone: false
 - name: "VictorOps"
-  sourceDefinitionId: "8b3ac13b-f1b1-4644-bec2-e7b6be6d64c4"
+  sourceDefinitionId: "7e20ce3e-d820-4327-ad7a-88f3927fd97a"
   workspaceId: "b740a9b4-048b-4500-b41b-038e14a3f2d5"
   sourceId: "e1d032e0-3a8b-47dc-bac8-2786264b11f4"
   configuration:

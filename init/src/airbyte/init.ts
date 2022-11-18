@@ -247,16 +247,23 @@ export class AirbyteInit {
     }
   }
 
+  /**
+   * we update the sources we use in the CLI
+   *
+   * we do NOT update the other sources at startup
+   * those will use the version specified in the airbyte config
+   * and the binaries will be downloaded when source config is saved
+   */
   async updateSelectSourceVersions(concurrency?: number): Promise<void> {
     const listResponse = await this.api.post('/source_definitions/list');
     const farosSourceDefs = (
       listResponse.data.sourceDefinitions as SourceDefinition[]
     ).filter(
       (sd) =>
-        sd.dockerRepository.startsWith('farosai/') ||
         sd.dockerRepository === 'airbyte/source-jira' ||
         sd.dockerRepository === 'airbyte/source-github' ||
-        sd.dockerRepository === 'airbyte/source-gitlab'
+        sd.dockerRepository === 'airbyte/source-gitlab' ||
+        sd.dockerRepository === 'farosai/airbyte-bitbucket-source'
     );
 
     const promises: Promise<void>[] = [];

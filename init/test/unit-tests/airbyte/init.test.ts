@@ -66,7 +66,7 @@ describe('airbyte', () => {
     });
   });
 
-  test('send identity and start event even if email, version and source are not set', async () => {
+  test('send identity and start event with no traits', async () => {
     const host = 'http://test.test.com';
 
     const bodies = [];
@@ -84,7 +84,12 @@ describe('airbyte', () => {
     delete process.env.FAROS_INIT_VERSION;
     delete process.env.FAROS_START_SOURCE;
     const segmentUser = AirbyteInit.makeSegmentUser();
-    expect(segmentUser).toStrictEqual({userId: expect.anything(), email, version: '', source: ''});
+    expect(segmentUser).toStrictEqual({
+      userId: expect.anything(),
+      email,
+      version: '',
+      source: '',
+    });
 
     await AirbyteInit.sendIdentityAndStartEvent(segmentUser, host);
     analyticsMock.done();

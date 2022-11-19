@@ -44,6 +44,9 @@ function parseFlags() {
 }
 
 main() {
+    # For consistency when running start on running containers
+    docker compose down
+
     parseFlags "$@"
     EMAIL_FILE=".faros-email"
     if [[ -n "$email_override" ]]; then

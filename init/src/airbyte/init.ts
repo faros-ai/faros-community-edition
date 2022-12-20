@@ -253,6 +253,9 @@ export class AirbyteInit {
    * we do NOT update the other sources at startup
    * those will use the version specified in the airbyte config
    * and the binaries will be downloaded when source config is saved
+   *
+   * 12/20/22: we temporarily stop updating the Jira source after issues
+   * introduced by https://github.com/airbytehq/airbyte/pull/20128
    */
   async updateSelectSourceVersions(concurrency?: number): Promise<void> {
     const listResponse = await this.api.post('/source_definitions/list');
@@ -260,7 +263,6 @@ export class AirbyteInit {
       listResponse.data.sourceDefinitions as SourceDefinition[]
     ).filter(
       (sd) =>
-        sd.dockerRepository === 'airbyte/source-jira' ||
         sd.dockerRepository === 'airbyte/source-github' ||
         sd.dockerRepository === 'airbyte/source-gitlab' ||
         sd.dockerRepository === 'farosai/airbyte-bitbucket-source'

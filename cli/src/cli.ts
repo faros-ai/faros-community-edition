@@ -102,6 +102,15 @@ export async function main(): Promise<void> {
               'https://community.faros.ai/docs/setting-admin-credentials'
             )}.`
         );
+        display(
+          `Configure sync schedule in ${await terminalLink(
+            'Airbyte',
+            thisCommand.opts().airbyteUrl
+          )}`
+        );
+        display(
+          'You can run this CLI again with ./run_cli.sh'
+        );
       });
   });
 

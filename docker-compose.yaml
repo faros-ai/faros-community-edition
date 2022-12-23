@@ -15,7 +15,7 @@ services:
       AIRBYTE_DESTINATION_HASURA_URL: ${AIRBYTE_DESTINATION_HASURA_URL?}
       AIRBYTE_FORCE_SETUP: ${FAROS_AIRBYTE_FORCE_SETUP:-false}
       AIRBYTE_URL: ${AIRBYTE_URL?}
-      FAROS_EMAIL: ${FAROS_EMAIL}
+      FAROS_EMAIL: ${FAROS_EMAIL:-}
       FAROS_INIT_VERSION: ${FAROS_INIT_VERSION:-}
       FAROS_START_SOURCE: ${FAROS_START_SOURCE:-}
       HASURA_URL: ${HASURA_URL?}
@@ -41,9 +41,9 @@ services:
       N8N_DB_NAME: ${N8N_DB_NAME?}
     healthcheck:
       test: ["CMD", "psql", "-d", "postgres://${FAROS_CONFIG_DB_USER?}:${FAROS_CONFIG_DB_PASSWORD?}@${FAROS_CONFIG_DB_HOST?}:${FAROS_CONFIG_DB_PORT?}/${N8N_DB_NAME?}", "-c", "SELECT 1"]
-      interval: 15s
-      timeout: 5s
-      start_period: 30s
+      interval: 5s
+      timeout: 2s
+      start_period: 10s
       retries: 5
   
   # Airbyte

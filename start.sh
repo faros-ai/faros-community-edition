@@ -47,7 +47,7 @@ main() {
     RUNNING=$(docker compose ps -q --status=running | wc -l)
     if [ "$RUNNING" -gt 0 ]; then
         printf "Faros CE is still running. \n"
-        printf "You can stop it with the stop.sh command. \n"
+        printf "You can stop it with the ./stop.sh command. \n"
         exit 1
     fi
 

@@ -23,7 +23,7 @@ import {
 } from '../utils/prompts';
 
 const JIRA_SOURCE_ID = '22852029-670c-4296-958e-c581fa76ae98';
-const JIRA_CONNECTION_ID = '577ceecf-a92a-4785-b385-c41112d7f537';
+export const JIRA_CONNECTION_ID = '577ceecf-a92a-4785-b385-c41112d7f537';
 const DEFAULT_CUTOFF_DAYS = 30;
 
 interface JiraConfig {

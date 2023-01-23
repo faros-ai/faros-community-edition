@@ -22,7 +22,7 @@ import {
 } from '../utils/prompts';
 
 const GITHUB_SOURCE_ID = '5d9079ca-8173-406f-bfdb-41f19c62daff';
-const GITHUB_CONNECTION_ID = '6421df4e-0c5a-4666-a530-9c01de683518';
+export const GITHUB_CONNECTION_ID = '6421df4e-0c5a-4666-a530-9c01de683518';
 const DEFAULT_CUTOFF_DAYS = 30;
 
 interface GithubConfig {

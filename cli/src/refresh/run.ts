@@ -32,33 +32,31 @@ export function makeRefreshCommand(): Command {
 
 export async function runRefresh(cfg: RefreshConfig): Promise<void> {
   await cfg.airbyte.waitUntilHealthy();
-  let work = false;
+  const work = [];
 
   if (await cfg.airbyte.isActiveConnection(GITHUB_CONNECTION_ID)) {
     display('refreshing GitHub');
-    work = true;
-    await cfg.airbyte.refresh(GITHUB_CONNECTION_ID);
+    work.push(cfg.airbyte.refresh(GITHUB_CONNECTION_ID, 'GitHub'));
   }
 
   if (await cfg.airbyte.isActiveConnection(GITLAB_CONNECTION_ID)) {
     display('refreshing GitLab');
-    work = true;
-    await cfg.airbyte.refresh(GITLAB_CONNECTION_ID);
+    work.push(cfg.airbyte.refresh(GITLAB_CONNECTION_ID, 'GitLab'));
   }
 
   if (await cfg.airbyte.isActiveConnection(BITBUCKET_CONNECTION_ID)) {
     display('refreshing Bitbucket');
-    work = true;
-    await cfg.airbyte.refresh(BITBUCKET_CONNECTION_ID);
+    work.push(cfg.airbyte.refresh(BITBUCKET_CONNECTION_ID, 'Bitbucket'));
   }
 
   if (await cfg.airbyte.isActiveConnection(JIRA_CONNECTION_ID)) {
     display('refreshing Jira');
-    work = true;
-    await cfg.airbyte.refresh(JIRA_CONNECTION_ID);
+    work.push(cfg.airbyte.refresh(JIRA_CONNECTION_ID, 'Jira'));
   }
 
-  if (!work) {
+  if (work.length === 0) {
     display('nothing to refresh');
+  } else {
+    await Promise.all(work);
   }
 }

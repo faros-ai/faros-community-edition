@@ -175,6 +175,7 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
 
   await cfg.airbyte.triggerAndTrackSync(
     JIRA_CONNECTION_ID,
+    'Jira',
     cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
     projects?.length || 0
   );

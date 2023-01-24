@@ -155,6 +155,7 @@ export async function runGitlab(cfg: GitLabConfig): Promise<void> {
 
   await cfg.airbyte.triggerAndTrackSync(
     GITLAB_CONNECTION_ID,
+    'GitLab',
     cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
     projects?.length || 0
   );

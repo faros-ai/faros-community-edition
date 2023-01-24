@@ -84,6 +84,7 @@ export class Airbyte {
 
   async triggerAndTrackSync(
     connectionId: string,
+    sourceName: string,
     days: number,
     entries: number
   ): Promise<void> {
@@ -103,7 +104,7 @@ export class Airbyte {
         Emoji.STOPWATCH
       );
       const job = await this.triggerSync(connectionId);
-      await this.track(job, connectionId);
+      await this.track(job, connectionId, sourceName);
     } catch (error) {
       errorLog(
         `Sync failed. %s Please check the ${await terminalLink(
@@ -116,11 +117,16 @@ export class Airbyte {
     }
   }
 
-  private async track(job: number, connectionId: string): Promise<void> {
+  private async track(
+    job: number,
+    connectionId: string,
+    sourceName: string
+  ): Promise<void> {
     const syncBar = new ProgressBar(':bar', {
       total: 2,
       complete: process.env.FAROS_NO_EMOJI ? '.' : Emoji.PROGRESS,
       incomplete: ' ',
+      clear: true,
     });
 
     let val = 1;
@@ -134,14 +140,15 @@ export class Airbyte {
         syncBar.terminate();
         if (status !== 'succeeded') {
           errorLog(
-            `Sync ${status}. %s Please check the ${await terminalLink(
+            `%s sync ${status}. %s Please check the ${await terminalLink(
               'logs',
               this.airbyteStatusUrl(connectionId)
             )}`,
+            sourceName,
             Emoji.FAILURE
           );
         } else {
-          display('Syncing succeeded %s', Emoji.SUCCESS);
+          display('%s sync succeeded %s', sourceName, Emoji.SUCCESS);
         }
       }
       await sleep(1000);
@@ -163,8 +170,8 @@ export class Airbyte {
     return response.data.jobs[0]?.job.status === 'succeeded';
   }
 
-  async refresh(connectionId: string): Promise<void> {
+  async refresh(connectionId: string, sourceName: string): Promise<void> {
     const job = await this.triggerSync(connectionId);
-    await this.track(job, connectionId);
+    await this.track(job, connectionId, sourceName);
   }
 }

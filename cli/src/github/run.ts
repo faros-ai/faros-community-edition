@@ -147,6 +147,7 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
 
   await cfg.airbyte.triggerAndTrackSync(
     GITHUB_CONNECTION_ID,
+    'GitHub',
     cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
     repos?.length || 0
   );

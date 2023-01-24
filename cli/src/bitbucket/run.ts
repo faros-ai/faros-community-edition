@@ -227,6 +227,7 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
 
   await cfg.airbyte.triggerAndTrackSync(
     BITBUCKET_CONNECTION_ID,
+    'Bitbucket',
     cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
     repos?.length || 0
   );

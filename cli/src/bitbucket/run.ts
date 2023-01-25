@@ -42,7 +42,7 @@ export function makeBitbucketCommand(): Command {
   const cmd = new Command()
     .name('bitbucket')
     .option(
-      '--api-url <api-url>',
+      '--server-url <server-url>',
       'API URL, defaults to https://api.bitbucket.org/2.0'
     )
     .option('--username <username>', 'Username')
@@ -81,7 +81,7 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
   const serverUrl =
     cfg.serverUrl ||
     (await runInput({
-      name: 'api_url',
+      name: 'server_url',
       message: 'Enter the API URL, defaults to https://api.bitbucket.org/2.0',
     })) ||
     DEFAULT_API_URL;

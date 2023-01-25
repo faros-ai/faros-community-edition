@@ -7,6 +7,7 @@ import {makeGithubCommand, runGithub} from './github/run';
 import {makeGitlabCommand, runGitlab} from './gitlab/run';
 import {makeJiraCommand, runJira} from './jira/run';
 import {Metabase} from './metabase/metabase-client';
+import {makeRefreshCommand, runRefresh} from './refresh/run';
 import {display, terminalLink} from './utils';
 import {runSelect} from './utils/prompts';
 
@@ -27,6 +28,7 @@ export async function main(): Promise<void> {
   program.addCommand(makeGitlabCommand());
   program.addCommand(makeBitbucketCommand());
   program.addCommand(makeJiraCommand());
+  program.addCommand(makeRefreshCommand());
 
   // Commander doesn't allow for empty subcommand names, even if the subcommand
   // is marked as default. Users can omit the subcommand below though, which is
@@ -52,6 +54,7 @@ export async function main(): Promise<void> {
             'GitLab (Cloud / Server)',
             'Bitbucket (Cloud / Server)',
             'Jira (Cloud)',
+            'Refresh existing sources',
             'I\'m done!',
           ],
         });
@@ -67,6 +70,9 @@ export async function main(): Promise<void> {
             break;
           case 'Jira (Cloud)':
             await runJira({airbyte, metabase});
+            break;
+          case 'Refresh existing sources':
+            await runRefresh({airbyte, metabase});
             break;
           case 'I\'m done!':
             done = true;
@@ -108,9 +114,7 @@ export async function main(): Promise<void> {
             thisCommand.opts().airbyteUrl
           )}`
         );
-        display(
-          'You can run this CLI again with ./run_cli.sh'
-        );
+        display('You can run this CLI again with ./run_cli.sh');
       });
   });
 

@@ -23,7 +23,7 @@ import {
 } from '../utils/prompts';
 
 const GITLAB_SOURCE_ID = '59c74ca4-8cbb-4c65-8cb7-66bf771190fb';
-const GITLAB_CONNECTION_ID = 'cef1b90d-ab16-4645-a0e3-b81818b8ffc7';
+export const GITLAB_CONNECTION_ID = 'cef1b90d-ab16-4645-a0e3-b81818b8ffc7';
 const DEFAULT_CUTOFF_DAYS = 30;
 const DEFAULT_API_URL = 'gitlab.com';
 
@@ -155,6 +155,7 @@ export async function runGitlab(cfg: GitLabConfig): Promise<void> {
 
   await cfg.airbyte.triggerAndTrackSync(
     GITLAB_CONNECTION_ID,
+    'GitLab',
     cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
     projects?.length || 0
   );

@@ -84,6 +84,7 @@ export class Airbyte {
 
   async triggerAndTrackSync(
     connectionId: string,
+    sourceName: string,
     days: number,
     entries: number
   ): Promise<void> {
@@ -103,36 +104,7 @@ export class Airbyte {
         Emoji.STOPWATCH
       );
       const job = await this.triggerSync(connectionId);
-
-      const syncBar = new ProgressBar(':bar', {
-        total: 2,
-        complete: process.env.FAROS_NO_EMOJI ? '.' : Emoji.PROGRESS,
-        incomplete: ' ',
-      });
-
-      let val = 1;
-      let running = true;
-      while (running) {
-        syncBar.tick(val);
-        val *= -1;
-        const status = await this.getJobStatus(job);
-        if (status !== 'running') {
-          running = false;
-          syncBar.terminate();
-          if (status !== 'succeeded') {
-            errorLog(
-              `Sync ${status}. %s Please check the ${await terminalLink(
-                'logs',
-                this.airbyteStatusUrl(connectionId)
-              )}`,
-              Emoji.FAILURE
-            );
-          } else {
-            display('Syncing succeeded %s', Emoji.SUCCESS);
-          }
-        }
-        await sleep(1000);
-      }
+      await this.track(job, connectionId, sourceName);
     } catch (error) {
       errorLog(
         `Sync failed. %s Please check the ${await terminalLink(
@@ -145,7 +117,61 @@ export class Airbyte {
     }
   }
 
+  private async track(
+    job: number,
+    connectionId: string,
+    sourceName: string
+  ): Promise<void> {
+    const syncBar = new ProgressBar(':bar', {
+      total: 2,
+      complete: process.env.FAROS_NO_EMOJI ? '.' : Emoji.PROGRESS,
+      incomplete: ' ',
+      clear: true,
+    });
+
+    let val = 1;
+    let running = true;
+    while (running) {
+      syncBar.tick(val);
+      val *= -1;
+      const status = await this.getJobStatus(job);
+      if (status !== 'running') {
+        running = false;
+        syncBar.terminate();
+        if (status !== 'succeeded') {
+          errorLog(
+            `%s sync ${status}. %s Please check the ${await terminalLink(
+              'logs',
+              this.airbyteStatusUrl(connectionId)
+            )}`,
+            sourceName,
+            Emoji.FAILURE
+          );
+        } else {
+          display('%s sync succeeded %s', sourceName, Emoji.SUCCESS);
+        }
+      }
+      await sleep(1000);
+    }
+  }
   private airbyteStatusUrl(connectionId: string): string {
     return `${this.airbyteUrl}/connections/${connectionId}/status`;
+  }
+
+  async isActiveConnection(connectionId: string): Promise<boolean> {
+    const response = await this.api
+      .post('/jobs/list', {
+        configTypes: ['sync'],
+        configId: connectionId,
+      })
+      .catch((err) => {
+        throw wrapApiError(err, ' Failed to call /jobs/list');
+      });
+    return response.data.jobs[0]?.job.status === 'succeeded';
+  }
+
+  async refresh(connectionId: string, sourceName: string): Promise<void> {
+    const job = await this.triggerSync(connectionId);
+    await this.track(job, connectionId, sourceName);
   }
 }

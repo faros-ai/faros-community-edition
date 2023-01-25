@@ -22,7 +22,7 @@ import {
 } from '../utils/prompts';
 
 const BITBUCKET_SOURCE_ID = '5a19e927-51a2-4d5f-9b26-b35aba0910e0';
-const BITBUCKET_CONNECTION_ID = '2093cc9f-81d5-47df-8c14-d898c89f4c81';
+export const BITBUCKET_CONNECTION_ID = '2093cc9f-81d5-47df-8c14-d898c89f4c81';
 const DEFAULT_CUTOFF_DAYS = 30;
 const DEFAULT_API_URL = 'https://api.bitbucket.org/2.0';
 
@@ -227,6 +227,7 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
 
   await cfg.airbyte.triggerAndTrackSync(
     BITBUCKET_CONNECTION_ID,
+    'Bitbucket',
     cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
     repos?.length || 0
   );

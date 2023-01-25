@@ -14,7 +14,7 @@ interface RefreshConfig {
 }
 
 export function makeRefreshCommand(): Command {
-  const cmd = new Command().name('refresh');
+  const cmd = new Command().name('refresh-sources');
 
   cmd.action(async (options) => {
     const airbyte = new Airbyte(options.airbyteUrl);

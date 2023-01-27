@@ -217,9 +217,7 @@ export class AirbyteInit {
   }
 
   async setupFarosDestinationDefinition(): Promise<void> {
-    // const version = await AirbyteInit.getLatestImageTag(FAROS_DEST_REPO);
-    // Temporary
-    const version = "0.4.48";
+    const version = await AirbyteInit.getLatestImageTag(FAROS_DEST_REPO);
     const listResponse = await this.api.post('/destination_definitions/list');
     const farosDestDef = find(
       listResponse.data.destinationDefinitions as DestinationDefinition[],

@@ -398,6 +398,9 @@ export class Metabase {
         ...card,
         // Accept cardId or card_id
         cardId: card.cardId ?? card.card_id,
+        // v45+ size options. For v44 and below Metabase ignores them
+        size_x: card.sizeX,
+        size_y: card.sizeY,
       });
       return data;
     } catch (err) {

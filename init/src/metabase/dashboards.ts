@@ -186,8 +186,9 @@ export class Dashboards {
       layout.push({
         row: cardLayout.row,
         col: cardLayout.col,
-        sizeX: cardLayout.sizeX,
-        sizeY: cardLayout.sizeY,
+        // Support for v45+
+        sizeX: cardLayout.sizeX ?? cardLayout.size_x,
+        sizeY: cardLayout.sizeY ?? cardLayout.size_y,
         card_id: cardLayout.card_id,
         series,
         parameter_mappings: cardLayout.parameter_mappings,

@@ -256,16 +256,17 @@ export class AirbyteInit {
    *
    * 12/20/22: we temporarily stop updating the Jira source after issues
    * introduced by https://github.com/airbytehq/airbyte/pull/20128
+   *
+   * 2/1/23: we temporarily stop updating all airbyte sources, as
+   * we are at the mercy of a incompatible spec change, e.g.
+   * gitlab spec from 0.1.6 to 1.0.2 (broke the CLI).
    */
   async updateSelectSourceVersions(concurrency?: number): Promise<void> {
     const listResponse = await this.api.post('/source_definitions/list');
     const farosSourceDefs = (
       listResponse.data.sourceDefinitions as SourceDefinition[]
     ).filter(
-      (sd) =>
-        sd.dockerRepository === 'airbyte/source-github' ||
-        sd.dockerRepository === 'airbyte/source-gitlab' ||
-        sd.dockerRepository === 'farosai/airbyte-bitbucket-source'
+      (sd) => sd.dockerRepository === 'farosai/airbyte-bitbucket-source'
     );
 
     const promises: Promise<void>[] = [];

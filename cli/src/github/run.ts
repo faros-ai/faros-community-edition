@@ -10,7 +10,6 @@ import {
   Emoji,
   errorLog,
   parseIntegerPositive,
-  terminalLink,
   toStringList,
 } from '../utils';
 import {
@@ -69,11 +68,10 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
   await cfg.airbyte.waitUntilHealthy();
   if (!cfg.token) {
     display(
-      `Visit our ${await terminalLink(
-        'docs',
-        'https://community.faros.ai/docs/faros-essentials#api-token-requirements'
-      )} for token requirements`
+      `Provide GitHub API token with read permissions:
+      repo, read:org, read:user`
     );
+    display('Note: GitHub Enterprise Server not yet supported');
   }
   const token =
     cfg.token ||

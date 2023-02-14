@@ -11,7 +11,6 @@ import {
   Emoji,
   errorLog,
   parseIntegerPositive,
-  terminalLink,
   toStringList,
 } from '../utils';
 import {
@@ -41,13 +40,8 @@ interface BitbucketConfig {
 export function makeBitbucketCommand(): Command {
   const cmd = new Command()
     .name('bitbucket')
-    .option(
-      '--server-url <server-url>',
-      'API URL, defaults to https://api.bitbucket.org/2.0'
-    )
     .option('--username <username>', 'Username')
-    .option('--password <password>', 'Password')
-    .option('--token <token>', 'Personal Access Token')
+    .option('--password <password>', 'App Password')
     .option('--workspace <workspace>', 'Workspace')
     .addOption(
       new Option(
@@ -78,76 +72,43 @@ export function makeBitbucketCommand(): Command {
 export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
   await cfg.airbyte.waitUntilHealthy();
 
-  const serverUrl =
-    cfg.serverUrl ||
+  const serverUrl = DEFAULT_API_URL;
+
+  const username =
+    cfg.username ||
     (await runInput({
-      name: 'server_url',
-      message: 'Enter the API URL, defaults to https://api.bitbucket.org/2.0',
-    })) ||
-    DEFAULT_API_URL;
+      name: 'username',
+      message: 'Username?',
+    }));
 
-  let authenticationMethod;
-  if (cfg.token) {
-    authenticationMethod = 'Personal Access Token';
-  } else if (cfg.username || cfg.password) {
-    authenticationMethod = 'Username/Password';
-  } else {
-    authenticationMethod = await runSelect({
-      name: 'authenticationMethod',
-      message: 'Choose your authentication method',
-      choices: ['Username/Password', 'Personal Access Token'],
-    });
+  if (!cfg.password) {
+    display(
+      `Provide Bitbucket "App Password" with read permissions:  
+      Account: read
+      Pull Requests: read
+      Issues: read
+      Workspace membership: read
+      Projects: read
+      Repositories: read
+      Pipelines: read`
+    );
+    display('Note: Bitbucket Server not yet supported');
   }
+  const password =
+    cfg.password ||
+    (await runPassword({
+      name: 'token',
+      message: 'Enter your App Password',
+    }));
+  const bitbucket = new Bitbucket({
+    auth: {
+      username,
+      password,
+    },
+  });
 
-  let bitbucket = new Bitbucket({});
-  let username, password, token;
-
-  switch (authenticationMethod) {
-    case 'Username/Password':
-      username =
-        cfg.username ||
-        (await runInput({
-          name: 'username',
-          message: 'Username?',
-        }));
-      password =
-        cfg.password ||
-        (await runPassword({
-          name: 'password',
-          message: 'Password?',
-        }));
-      bitbucket = new Bitbucket({
-        auth: {
-          username,
-          password,
-        },
-      });
-      break;
-    case 'Personal Access Token':
-      if (!cfg.password) {
-        display(
-          `Visit our ${await terminalLink(
-            'docs',
-            'https://community.faros.ai/docs/faros-essentials#api-token-requirements'
-          )} for token requirements`
-        );
-      }
-      token =
-        cfg.password ||
-        (await runPassword({
-          name: 'token',
-          message: 'Enter your Personal Access Token',
-        }));
-      bitbucket = new Bitbucket({
-        auth: {
-          token,
-        },
-      });
-      break;
-  }
-
-  const workspaces = cfg.workspace;
-  const repos = cfg.repoList;
+  let workspaces = cfg.workspace;
+  let repos = cfg.repoList;
 
   try {
     if (!repos || repos.length === 0) {
@@ -164,7 +125,7 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
       }
       let done = false;
       while (!done) {
-        const workspaces =
+        workspaces =
           cfg.workspace ||
           (await runSelect({
             name: 'workspaces',
@@ -172,7 +133,7 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
             choices: await getWorkspaces(bitbucket),
           }));
 
-        const repos =
+        repos =
           cfg.repoList ||
           (await runMultiSelect({
             name: 'repos',
@@ -214,7 +175,6 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
         cutoff_days: cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
         username,
         password,
-        token,
         pagelen: 10,
       },
       name: 'Bitbucket',

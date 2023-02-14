@@ -217,7 +217,8 @@ export class AirbyteInit {
   }
 
   async setupFarosDestinationDefinition(): Promise<void> {
-    const version = await AirbyteInit.getLatestImageTag(FAROS_DEST_REPO);
+    // const version = await AirbyteInit.getLatestImageTag(FAROS_DEST_REPO);
+    const version = '0.4.65'; // tmp for product hunt launch
     const listResponse = await this.api.post('/destination_definitions/list');
     const farosDestDef = find(
       listResponse.data.destinationDefinitions as DestinationDefinition[],
@@ -232,7 +233,9 @@ export class AirbyteInit {
         dockerImageTag: version,
         documentationUrl: 'https://docs.faros.ai',
       });
-    } else if (farosDestDef.dockerImageTag === version) {
+    } 
+    // tmp for product hunt launch
+    /* else if (farosDestDef.dockerImageTag === version) {
       logger.info('Faros Destination is already at %s', version);
     } else {
       logger.info(
@@ -245,6 +248,7 @@ export class AirbyteInit {
         dockerImageTag: version,
       });
     }
+    */
   }
 
   /**

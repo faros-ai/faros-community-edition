@@ -74,7 +74,7 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
     display(
       `The integration user needs application access to Jira,
       the 'Browse Users' global permission,
-      and the 'Browse Project' permission for each project
+      the 'Browse Project' permission for each project,
       and the 'View Development Tools' permission for each project`
     );
     display('Note: Jira Server/DC not yet supported');

@@ -126,7 +126,7 @@ export async function main(): Promise<void> {
         display('You can run this CLI again with ./run_cli.sh');
         display('You can stop Faros with ./stop.sh');
         display(
-          `For help, got to this ${await terminalLink(
+          `For help, go to this ${await terminalLink(
             'page',
             'https://community.faros.ai/docs/faros-essentials'
           )}.`

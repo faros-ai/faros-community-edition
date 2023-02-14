@@ -115,6 +115,8 @@ export async function main(): Promise<void> {
           )}`
         );
         display('You can run this CLI again with ./run_cli.sh');
+        display('You can stop Faros with ./stop.sh');
+        display('For more help, go to https://community.faros.ai/docs/faros-essentials');
       });
   });
 

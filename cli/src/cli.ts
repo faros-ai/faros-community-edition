@@ -8,7 +8,7 @@ import {makeGitlabCommand, runGitlab} from './gitlab/run';
 import {makeJiraCommand, runJira} from './jira/run';
 import {Metabase} from './metabase/metabase-client';
 import {makeRefreshCommand, runRefresh} from './refresh/run';
-import {display, terminalLink} from './utils';
+import {display, Emoji, terminalLink} from './utils';
 import {runSelect} from './utils/prompts';
 
 const DEFAULT_AIRBYTE_URL = 'http://localhost:8000';
@@ -52,7 +52,7 @@ export async function main(): Promise<void> {
           choices: [
             'GitHub (Cloud)',
             'GitLab (Cloud / Server)',
-            'Bitbucket (Cloud / Server)',
+            'Bitbucket (Cloud)',
             'Jira (Cloud)',
             'Refresh existing sources',
             'I\'m done!',
@@ -65,7 +65,7 @@ export async function main(): Promise<void> {
           case 'GitLab (Cloud / Server)':
             await runGitlab({airbyte, metabase});
             break;
-          case 'Bitbucket (Cloud / Server)':
+          case 'Bitbucket (Cloud)':
             await runBitbucket({airbyte, metabase});
             break;
           case 'Jira (Cloud)':
@@ -94,6 +94,15 @@ export async function main(): Promise<void> {
         'Metabase password',
         DEFAULT_METABASE_PASSWORD
       )
+      .hook('preAction', async () => {
+        display('%s Welcome to Faros Essentials!', Emoji.HELLO);
+        display(
+          `For documentation, please see this ${await terminalLink(
+            'page',
+            'https://community.faros.ai/docs/faros-essentials'
+          )}.`
+        );
+      })
       .hook('postAction', async (thisCommand) => {
         display(
           `Check out your metrics in ${await terminalLink(
@@ -116,7 +125,12 @@ export async function main(): Promise<void> {
         );
         display('You can run this CLI again with ./run_cli.sh');
         display('You can stop Faros with ./stop.sh');
-        display('For more help, go to https://community.faros.ai/docs/faros-essentials');
+        display(
+          `For help, go to this ${await terminalLink(
+            'page',
+            'https://community.faros.ai/docs/faros-essentials'
+          )}.`
+        );
       });
   });
 

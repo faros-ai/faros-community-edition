@@ -10,7 +10,6 @@ import {
   Emoji,
   errorLog,
   parseIntegerPositive,
-  terminalLink,
   toStringList,
 } from '../utils';
 import {
@@ -73,11 +72,12 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
   await cfg.airbyte.waitUntilHealthy();
   if (!cfg.token) {
     display(
-      `Visit our ${await terminalLink(
-        'docs',
-        'https://community.faros.ai/docs/faros-essentials#api-token-requirements'
-      )} for token requirements`
+      `The integration user needs application access to Jira,
+      the 'Browse Users' global permission,
+      the 'Browse Project' permission for each project,
+      and the 'View Development Tools' permission for each project`
     );
+    display('Note: Jira Server/DC not yet supported');
   }
   const domain =
     cfg.domain ||

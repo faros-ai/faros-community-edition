@@ -10,7 +10,6 @@ import {
   Emoji,
   errorLog,
   parseIntegerPositive,
-  terminalLink,
   toStringList,
 } from '../utils';
 import {
@@ -73,10 +72,7 @@ export async function runGitlab(cfg: GitLabConfig): Promise<void> {
   await cfg.airbyte.waitUntilHealthy();
   if (!cfg.token) {
     display(
-      `Visit our ${await terminalLink(
-        'docs',
-        'https://community.faros.ai/docs/faros-essentials#api-token-requirements'
-      )} for token requirements`
+      'Provide GitLab personal access token with read permissions: read_api'
     );
   }
   const api_url =

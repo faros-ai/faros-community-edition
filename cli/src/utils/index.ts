@@ -13,6 +13,7 @@ export enum Emoji {
   PROGRESS = '⏳',
   EMPTY = '🪹',
   STOPWATCH = '⏱',
+  HELLO = '👋',
 }
 
 function processEmoji(...args: any[]): any[] {

@@ -10,7 +10,7 @@
       edition: "community"
       hasura_url: "{{ hasura_url }}"
       hasura_admin_secret: "{{ hasura_admin_secret }}"
-      segment_user_id: "{{ segment_user_id }}"
+      segment_user_id: ""
     invalid_record_strategy: "SKIP"
     source_specific_configs:
       jira:

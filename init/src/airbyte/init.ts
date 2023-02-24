@@ -328,7 +328,7 @@ async function main(): Promise<void> {
   );
 
   const segmentUser = AirbyteInit.makeSegmentUser();
-  await AirbyteInit.sendIdentityAndStartEvent(segmentUser);
+  //await AirbyteInit.sendIdentityAndStartEvent(segmentUser);
 
   await airbyte.waitUntilHealthy();
   await airbyte.setupWorkspace(

@@ -7,15 +7,14 @@ x-logging: &default-logging
 services:
   faros-init:
     profiles: ["default", "faros-init"]
-    # image: ${FAROS_INIT_IMAGE?}
-    build: 
-      context: .
+    image: ${FAROS_INIT_IMAGE?}
     # 3 retries on failure
     restart: on-failure:3
     environment:
       AIRBYTE_API_CALLS_CONCURRENCY: ${AIRBYTE_API_CALLS_CONCURRENCY:-}
       AIRBYTE_DESTINATION_HASURA_URL: ${AIRBYTE_DESTINATION_HASURA_URL?}
       AIRBYTE_FORCE_SETUP: ${FAROS_AIRBYTE_FORCE_SETUP:-false}
+      TELEMETRY_OFF: ${TELEMETRY_OFF:-false}
       AIRBYTE_URL: ${AIRBYTE_URL?}
       FAROS_EMAIL: ${FAROS_EMAIL:-}
       FAROS_INIT_VERSION: ${FAROS_INIT_VERSION:-}

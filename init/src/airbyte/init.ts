@@ -124,7 +124,7 @@ export class AirbyteInit {
   }
 
   async setupWorkspace(
-    segmentUser: SegmentUser,
+    segmentUserId: string,
     hasuraAdminSecret: string,
     airbyteDestinationHasuraUrl: string,
     forceSetup?: boolean
@@ -161,7 +161,7 @@ export class AirbyteInit {
       handlebars.compile(destTemplate)({
         hasura_admin_secret: hasuraAdminSecret,
         hasura_url: airbyteDestinationHasuraUrl,
-        segment_user_id: segmentUser.userId,
+        segment_user_id: segmentUserId,
       }),
       'utf-8'
     );
@@ -233,7 +233,7 @@ export class AirbyteInit {
         dockerImageTag: version,
         documentationUrl: 'https://docs.faros.ai',
       });
-    } 
+    }
     // tmp for product hunt launch
     /* else if (farosDestDef.dockerImageTag === version) {
       logger.info('Faros Destination is already at %s', version);
@@ -307,6 +307,7 @@ async function main(): Promise<void> {
     .requiredOption('--airbyte-destination-hasura-url <string>')
     .requiredOption('--hasura-admin-secret <string>')
     .option('--force-setup')
+    .option('--telemetry-off')
     .option(
       '--airbyte-api-calls-concurrency <num>',
       'the max number of concurrent Airbyte api calls',
@@ -328,11 +329,12 @@ async function main(): Promise<void> {
   );
 
   const segmentUser = AirbyteInit.makeSegmentUser();
-  //await AirbyteInit.sendIdentityAndStartEvent(segmentUser);
-
+  if (!options?.telemetryOff) {
+    await AirbyteInit.sendIdentityAndStartEvent(segmentUser);
+  }
   await airbyte.waitUntilHealthy();
   await airbyte.setupWorkspace(
-    segmentUser,
+    options?.telemetryOff ? '' : segmentUser.userId,
     options.hasuraAdminSecret,
     options.airbyteDestinationHasuraUrl,
     options.forceSetup

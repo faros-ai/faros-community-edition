@@ -10,6 +10,7 @@ hasura_url=$HASURA_URL
 metabase_url=$METABASE_URL
 db_host=$FAROS_DB_HOST
 db_port=$FAROS_DB_PORT
+telemetry_off=$TELEMETRY_OFF
 
 # Prints a failure message and exits if the last command
 # executed failed (i.e., its exit code was not 0).
@@ -34,6 +35,10 @@ fi
 
 if [ -n "${airbyte_api_calls_concurrency}" ]; then
     airbyte_optional_args=("${airbyte_optional_args[@]}" --airbyte-api-calls-concurrency "${airbyte_api_calls_concurrency}")
+fi
+
+if [ "${telemetry_off}" = "true" ]; then
+    airbyte_optional_args=("${airbyte_optional_args[@]}" --telemetry-off)
 fi
 
 ./wait-for/wait-for.sh "$airbyte_url"/api/v1/health -t 60

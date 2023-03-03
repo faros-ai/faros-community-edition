@@ -1,0 +1,165 @@
+version: "3.7"
+x-logging: &default-logging
+  options:
+    max-size: "100m"
+    max-file: "5"
+  driver: json-file
+services:
+  faros-init:
+    image: farosai/faros-ce-init:latest
+    container_name: faros-init
+    # 3 retries on failure
+    #restart: on-failure:3
+    restart: "no"
+    entrypoint: /bin/sh -c "/flyway/faros/scripts/entrypoint.sh && tail -f /dev/null"
+    depends_on:
+      - faros-db
+    env_file:
+      <FAROS_CONF_DIR>/env
+    healthcheck:
+      test: ["CMD", "psql", "-d", "postgres://docker:docker@faros-db:5432/n8n", "-c", "SELECT 1"]
+      interval: 5s
+      timeout: 2s
+      start_period: 10s
+      retries: 5
+  
+  # Airbyte
+  # Source: https://github.com/airbytehq/airbyte/blob/v0.39.37-alpha/docker-compose.yaml
+  #https://github.com/compose-spec/compose-spec/blob/master/spec.md#using-extensions-as-fragments
+  init:
+    image: airbyte/init:0.39.37-alpha
+    logging: *default-logging
+    container_name: init
+    restart: "no"
+    depends_on:
+      - faros-db
+    command: /bin/sh -c "./scripts/create_mount_directories.sh /local_parent /tmp /tmp/airbyte_local && tail -f /dev/null"
+    environment:
+      - LOCAL_ROOT=/tmp/airbyte_local
+      - HACK_LOCAL_ROOT_PARENT=/tmp
+    volumes:
+      - <FAROS_CONF_DIR>/tmp:/local_parent
+  bootloader:
+    image: airbyte/bootloader:0.39.37-alpha
+    logging: *default-logging
+    container_name: airbyte-bootloader
+    restart: "no"
+    depends_on:
+      - faros-db
+    entrypoint: /bin/sh -c "airbyte-bootloader-0.39.37-alpha/bin/airbyte-bootloader && tail -f /dev/null"
+    env_file:
+      <FAROS_CONF_DIR>/env
+  faros-db:
+    image: airbyte/db:0.39.37-alpha
+    logging: *default-logging
+    container_name: airbyte-db
+    restart: unless-stopped
+    env_file:
+      <FAROS_CONF_DIR>/env
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+  worker:
+    image: airbyte/worker:0.39.37-alpha
+    logging: *default-logging
+    container_name: airbyte-worker
+    restart: unless-stopped
+    depends_on:
+      - faros-db
+    env_file:
+      <FAROS_CONF_DIR>/env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - workspace:/tmp/workspace
+      - /tmp/airbyte_local:/tmp/airbyte_local
+  server:
+    image: airbyte/server:0.39.37-alpha
+    logging: *default-logging
+    container_name: airbyte-server
+    depends_on:
+      - faros-db
+    restart: unless-stopped
+    env_file:
+      <FAROS_CONF_DIR>/env
+    ports:
+      - 8001:8001
+    volumes:
+      - workspace:/tmp/workspace
+      - data:/data
+      - /tmp/airbyte_local:/tmp/airbyte_local
+  webapp:
+    image: airbyte/webapp:0.39.37-alpha
+    logging: *default-logging
+    container_name: airbyte-webapp
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    env_file:
+      <FAROS_CONF_DIR>/env
+    depends_on:
+      - faros-db
+      - server
+      - worker
+      - airbyte-temporal
+  airbyte-temporal:
+    image: airbyte/temporal:0.39.37-alpha
+    logging: *default-logging
+    container_name: airbyte-temporal
+    restart: unless-stopped
+    ports:
+      - 7233:7233
+    env_file:
+      <FAROS_CONF_DIR>/env
+    depends_on:
+      - faros-db
+    volumes:
+      - <FAROS_CONF_DIR>/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+  
+  # Other services
+  hasura:
+    image: hasura/graphql-engine:v2.1.1
+    container_name: hasura
+    ports:
+      - 8080:8080
+    depends_on:
+      faros-init:
+          condition: service_healthy
+    restart: unless-stopped
+    env_file:
+      <FAROS_CONF_DIR>/env
+  metabase:
+    image: metabase/metabase:v0.45.2.1
+    container_name: metabase
+    ports:
+      - 3000:3000
+    depends_on:
+      faros-init:
+          condition: service_healthy
+    restart: unless-stopped
+    env_file:
+      <FAROS_CONF_DIR>/env
+  n8n:
+    image: n8nio/n8n:0.164.1
+    container_name: n8n
+    ports:
+      - 5678:5678
+    depends_on:
+      faros-init:
+          condition: service_healthy
+    restart: unless-stopped
+    env_file:
+      <FAROS_CONF_DIR>/env
+    volumes:
+      - n8n:/home/node/
+
+volumes:
+  workspace:
+    name: airbyte_workspace
+  data:
+    name: airbyte_data
+  db:
+    name: airbyte_db
+  n8n:
+    name: n8n_data
+

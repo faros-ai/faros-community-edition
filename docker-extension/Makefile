@@ -1,4 +1,4 @@
-IMAGE?=farosai/farosdockerextension
+IMAGE?=farosai/faros-ce-docker-extension
 TAG?=latest
 
 BUILDER=buildx-multi-arch

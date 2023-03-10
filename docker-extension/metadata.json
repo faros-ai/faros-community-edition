@@ -1,0 +1,13 @@
+{
+  "icon": "faros.svg",
+  "vm": {
+    "composefile": "docker-compose.yaml"
+  },
+  "ui": {
+    "dashboard-tab": {
+      "title": "Faros Extension",
+      "src": "index.html",
+      "root": "ui"
+    }
+  }
+}

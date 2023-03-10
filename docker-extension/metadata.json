@@ -1,5 +1,5 @@
 {
-  "icon": "docker.svg",
+  "icon": "faros.svg",
   "vm": {
     "composefile": "docker-compose.yaml"
   },

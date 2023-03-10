@@ -27,5 +27,5 @@ LABEL org.opencontainers.image.title="Faros" \
 
 COPY --from=client-builder /compose/docker-compose.yaml .
 COPY metadata.json .
-COPY docker.svg .
+COPY faros.svg .
 COPY --from=client-builder /ui/dist ui

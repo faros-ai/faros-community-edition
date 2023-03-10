@@ -11,11 +11,11 @@
 2. Install extension
 
   ```shell
-  docker extension install farosai/faros-ce-docker-extension:latest .
+  docker extension install farosai/faros-ce-docker-extension:latest
   ```
 
 ## Clean up
 
   ```shell
-  docker extension rm farosai/faros-ce-docker-extension:latest .
+  docker extension rm farosai/faros-ce-docker-extension:latest
   ```

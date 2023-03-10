@@ -1,4 +1,5 @@
 FROM --platform=$BUILDPLATFORM node:17.7-alpine3.14 AS client-builder
+ARG TARGETARCH
 WORKDIR /ui
 # cache packages in layer
 COPY ui/package.json /ui/package.json
@@ -9,6 +10,7 @@ RUN --mount=type=cache,target=/usr/src/app/.npm \
 # install
 COPY ui /ui
 RUN npm run build
+COPY docker-compose_${TARGETARCH}.yaml /compose/docker-compose.yaml
 
 FROM alpine
 LABEL org.opencontainers.image.title="Faros" \
@@ -23,7 +25,7 @@ LABEL org.opencontainers.image.title="Faros" \
     com.docker.desktop.extension.icon="https://raw.githubusercontent.com/faros-ai/faros-community-edition/main/img/faros.ico" \
     com.docker.extension.categories="utility-tools"
 
-COPY docker-compose_arm64.yaml docker-compose.yaml
+COPY --from=client-builder /compose/docker-compose.yaml .
 COPY metadata.json .
 COPY docker.svg .
 COPY --from=client-builder /ui/dist ui

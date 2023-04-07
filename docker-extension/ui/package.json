@@ -7,6 +7,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build"
   },
+ "overrides": {
+    "nth-check": "^2.0.1"
+  },
   "dependencies": {
     "@docker/docker-mui-theme": "^0.0.7",
     "@docker/extension-api-client": "^0.2.3",

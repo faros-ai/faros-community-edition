@@ -12,7 +12,7 @@ resources:
   # Faros
   - ./faros
 patches:
-  - ./airbyte/db.yaml
+  - path: ./airbyte/db.yaml
 configMapGenerator:
   - name: faros-config
     behavior: merge

@@ -30,7 +30,6 @@ export class AirbyteInit {
   constructor(private readonly api: AxiosInstance) {}
 
   async waitUntilHealthy(): Promise<void> {
-    logger.info('healthcheck');
     await retry(
       async () => {
         const response = await this.api.get('/health');

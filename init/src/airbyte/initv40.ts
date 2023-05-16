@@ -264,14 +264,14 @@ export class AirbyteInitV40 {
     logger.info('init');
 
     const workspaceId = await this.getFirstWorkspace();
-    console.log("workspaceId: " + workspaceId);
+    logger.info("workspaceId: " + workspaceId);
     await this.completeFarosWorkspaceSetup(workspaceId);
 
     const farosDestinationDefintionId = await this.createFarosDestinationDefinition(workspaceId, farosConnectorsVersion);
-    console.log("farosDestinationDefintionId: " + farosDestinationDefintionId);
+    logger.info("farosDestinationDefintionId: " + farosDestinationDefintionId);
 
     const farosDestinationId = await this.createFarosDestination(workspaceId, farosDestinationDefintionId, "http://localhost:8080", "admin", "123e4567-e89b-12d3-a456-426614174000");
-    console.log("farosDestinationId: " + farosDestinationId);
+    logger.info("farosDestinationId: " + farosDestinationId);
 
     const yamlSourceData = loadYamlFile(SOURCES); // do NOT converstion to camel case 
     
@@ -280,15 +280,15 @@ export class AirbyteInitV40 {
 
     const githubSourceDefinitionId = "ef69ef6e-aa7f-4af1-a01d-ef775033524e";
     const githubSourceId = await this.createSourceFromYAML(workspaceId, yamlSourceData, "GitHub", githubSourceDefinitionId);
-    console.log("githubSourceId: " + githubSourceId);
+    logger.info("githubSourceId: " + githubSourceId);
     const githubConnectionId = await this.createConnectionToFaros(githubSourceId, farosDestinationId, yamlCatalogData, "GitHub - Faros");
-    console.log("githubConnectionId: " + githubConnectionId);
+    logger.info("githubConnectionId: " + githubConnectionId);
 
     const gitlabSourceDefinitionId = "5e6175e5-68e1-4c17-bff9-56103bbb0d80";
     const gitlabSourceId = await this.createSourceFromYAML(workspaceId, yamlSourceData, "GitLab", gitlabSourceDefinitionId);
-    console.log("gitlabSourceId: " + gitlabSourceId);
+    logger.info("gitlabSourceId: " + gitlabSourceId);
     const gitlabConnectionId = await this.createConnectionToFaros(gitlabSourceId, farosDestinationId, yamlCatalogData, "GitLab - Faros");
-    console.log("gitlabConnectionId: " + gitlabConnectionId);
+    logger.info("gitlabConnectionId: " + gitlabConnectionId);
 
 
     const bitbucketSourceDefinitionId = await this.createCustomSourceDefinition({
@@ -300,20 +300,20 @@ export class AirbyteInitV40 {
         documentationUrl: "https://docs.faros.ai"
       }
     })
-    console.log("bitbucketSourceDefinitionId: " + bitbucketSourceDefinitionId);
+    logger.info("bitbucketSourceDefinitionId: " + bitbucketSourceDefinitionId);
 
     const bitbucketSourceId = await this.createSourceFromYAML(workspaceId, yamlSourceData, "Bitbucket", bitbucketSourceDefinitionId);
-    console.log("bitbucketSourceId: " + bitbucketSourceId);
+    logger.info("bitbucketSourceId: " + bitbucketSourceId);
 
     const bitbucketConnectionId = await this.createConnectionToFaros(bitbucketSourceId, farosDestinationId, yamlCatalogData, "Bitbucket - Faros");
-    console.log("bitbucketConnectionId: " + bitbucketConnectionId);
+    logger.info("bitbucketConnectionId: " + bitbucketConnectionId);
 
     const jiraSourceDefinitionId = "68e63de2-bb83-4c7e-93fa-a8a9051e3993";
     const jiraSourceId = await this.createSourceFromYAML(workspaceId, yamlSourceData, "Jira", jiraSourceDefinitionId);
-    console.log("jiraSourceId: " + jiraSourceId);
+    logger.info("jiraSourceId: " + jiraSourceId);
 
     const jiraConnectionId = await this.createConnectionToFaros(jiraSourceId, farosDestinationId, yamlCatalogData, "Jira - Faros");
-    console.log("jiraConnectionId: " + jiraConnectionId);
+    logger.info("jiraConnectionId: " + jiraConnectionId);
 
   }
 }

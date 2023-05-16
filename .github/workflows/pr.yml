@@ -53,9 +53,34 @@ jobs:
         run: npm run test:unit -- --coverage
         working-directory: init
 
-      # In order to optimize for speed, we use the latest init image.
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            farosai/faros-ce-init
+          flavor: |
+            latest=auto
+          tags: |
+            type=sha,format=long,prefix=
+            type=raw,value=latest,enable=true
+
+      - name: Set up Docker QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
       - name: Start services
-        run: FAROS_EMAIL=integration.tests@faros.ai FAROS_INIT_IMAGE=farosai/faros-ce-init:latest docker compose up --quiet-pull -d
+        run: FAROS_EMAIL=integration.tests@faros.ai FAROS_INIT_IMAGE=farosai/faros-ce-init:${{ github.sha }} docker compose up --quiet-pull -d
 
       - name: Show logs
         run: docker compose logs --tail all

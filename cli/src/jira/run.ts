@@ -152,7 +152,7 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
       }
     }
 
-    const jiraSourceId = await cfg.airbyte.findFarosSource("Jira");
+    const jiraSourceId = await cfg.airbyte.findFarosSource('Jira');
     await cfg.airbyte.setupSource({
       connectionConfiguration: {
         email,
@@ -172,7 +172,9 @@ export async function runJira(cfg: JiraConfig): Promise<void> {
     return;
   }
 
-  const jiraConnectionId = await cfg.airbyte.findFarosConnection("Jira - Faros");
+  const jiraConnectionId = await cfg.airbyte.findFarosConnection(
+    'Jira - Faros'
+  );
   await cfg.airbyte.triggerAndTrackSync(
     jiraConnectionId,
     'Jira',

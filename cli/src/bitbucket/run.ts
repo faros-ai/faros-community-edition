@@ -165,7 +165,7 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
       }
     }
 
-    const bitbucketSourceId = await cfg.airbyte.findFarosSource("Bitbucket");
+    const bitbucketSourceId = await cfg.airbyte.findFarosSource('Bitbucket');
     await cfg.airbyte.setupSource({
       connectionConfiguration: {
         serverUrl,
@@ -184,7 +184,9 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
     return;
   }
 
-  const bitbucketConnectionId = await cfg.airbyte.findFarosConnection("Bitbucket - Faros");
+  const bitbucketConnectionId = await cfg.airbyte.findFarosConnection(
+    'Bitbucket - Faros'
+  );
   await cfg.airbyte.triggerAndTrackSync(
     bitbucketConnectionId,
     'Bitbucket',

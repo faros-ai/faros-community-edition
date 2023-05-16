@@ -8,7 +8,7 @@ import util from 'util';
 import {v4 as uuidv4, v5 as uuidv5} from 'uuid';
 import {VError} from 'verror';
 
-import { AirbyteInitV40 } from './initv40';
+import {AirbyteInitV40} from './initv40';
 
 const logger = pino({
   name: 'airbyte-init',
@@ -102,7 +102,9 @@ export class AirbyteInit {
       } catch (err) {
         if (callback && err instanceof Error) {
           callback(err);
-          logger.error(`Failed to send identity and start event: ${err.message}`)
+          logger.error(
+            `Failed to send identity and start event: ${err.message}`
+          );
         }
       }
     };
@@ -134,16 +136,25 @@ export class AirbyteInit {
       logger.info(`Workspace ${workspaceId} is already set up`);
       return; // TODO: connector upgrades
       // TODO: force setup
-    } else {
-      logger.info(`Setting up workspace ${workspaceId}`);
+      if (forceSetup) {
+        throw new VError('Forced setup not supported');
+      }
     }
+    logger.info(`Setting up workspace ${workspaceId}`);
 
     // TODO: connectors upgrades
-    const farosConnectorsVersion = await AirbyteInit.getLatestImageTag(FAROS_DEST_REPO);
+    const farosConnectorsVersion = await AirbyteInit.getLatestImageTag(
+      FAROS_DEST_REPO
+    );
     logger.info('faros connectors version: ' + farosConnectorsVersion);
-    let airbyteInitV40: AirbyteInitV40 = new AirbyteInitV40(this.api);
+    const airbyteInitV40: AirbyteInitV40 = new AirbyteInitV40(this.api);
     try {
-      await airbyteInitV40.init(farosConnectorsVersion);
+      await airbyteInitV40.init(
+        farosConnectorsVersion,
+        airbyteDestinationHasuraUrl,
+        hasuraAdminSecret,
+        segmentUser.userId
+      );
     } catch (error) {
       throw new VError(`Failed to set up workspace: ${error}`);
     }
@@ -201,9 +212,9 @@ async function main(): Promise<void> {
   }
 
   const airbyte = new AirbyteInit(
-    
     axios.create({
-      baseURL: `${options.airbyteUrl}/api/v1`})
+      baseURL: `${options.airbyteUrl}/api/v1`,
+    })
   );
 
   const segmentUser = AirbyteInit.makeSegmentUser();
@@ -218,7 +229,7 @@ async function main(): Promise<void> {
     options.airbyteDestinationHasuraUrl,
     options.forceSetup
   );
-    
+
   logger.info('Airbyte setup is complete');
 }
 

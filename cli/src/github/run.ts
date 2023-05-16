@@ -123,7 +123,7 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
       }
     }
 
-    const githubSourceId = await cfg.airbyte.findFarosSource("GitHub");
+    const githubSourceId = await cfg.airbyte.findFarosSource('GitHub');
     await cfg.airbyte.setupSource({
       connectionConfiguration: {
         repository: repos?.join(' '),
@@ -142,7 +142,9 @@ export async function runGithub(cfg: GithubConfig): Promise<void> {
     return;
   }
 
-  const githubConnectionId = await cfg.airbyte.findFarosConnection("GitHub - Faros");
+  const githubConnectionId = await cfg.airbyte.findFarosConnection(
+    'GitHub - Faros'
+  );
   await cfg.airbyte.triggerAndTrackSync(
     githubConnectionId,
     'GitHub',

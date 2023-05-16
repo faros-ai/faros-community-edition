@@ -50,14 +50,13 @@ export class Airbyte {
   async findFarosSource(name: string): Promise<string> {
     const workspaceId = await this.getFirstWorkspace();
     const response = await this.api
-    .post('/sources/list', {workspaceId})
-    .catch((err) => {
-      throw wrapApiError(
-        err,
-        'Failed to call /sources/list'
-      );
-    })
-    return response.data.sources.filter((source: any) => source.name === name)[0].sourceId;
+      .post('/sources/list', {workspaceId})
+      .catch((err) => {
+        throw wrapApiError(err, 'Failed to call /sources/list');
+      });
+    return response.data.sources.filter(
+      (source: any) => source.name === name
+    )[0].sourceId;
   }
 
   async findFarosConnection(name: string): Promise<string> {
@@ -65,12 +64,11 @@ export class Airbyte {
     const response = await this.api
       .post('/connections/list', {workspaceId})
       .catch((err) => {
-        throw wrapApiError(
-          err,
-          'Failed to call /connections/list'
-        );
-      })
-    return response.data.connections.filter((connection: any) => connection.name === name)[0].connectionId;
+        throw wrapApiError(err, 'Failed to call /connections/list');
+      });
+    return response.data.connections.filter(
+      (connection: any) => connection.name === name
+    )[0].connectionId;
   }
 
   async setupSource(config: any): Promise<void> {

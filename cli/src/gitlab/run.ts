@@ -132,7 +132,7 @@ export async function runGitlab(cfg: GitLabConfig): Promise<void> {
       }
     }
 
-    const gitlabSourceId = await cfg.airbyte.findFarosSource("GitLab");
+    const gitlabSourceId = await cfg.airbyte.findFarosSource('GitLab');
     await cfg.airbyte.setupSource({
       connectionConfiguration: {
         api_url,
@@ -148,7 +148,9 @@ export async function runGitlab(cfg: GitLabConfig): Promise<void> {
     return;
   }
 
-  const gitlabConnectionId = await cfg.airbyte.findFarosConnection("GitLab - Faros");
+  const gitlabConnectionId = await cfg.airbyte.findFarosConnection(
+    'GitLab - Faros'
+  );
   await cfg.airbyte.triggerAndTrackSync(
     gitlabConnectionId,
     'GitLab',

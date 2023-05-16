@@ -89,9 +89,8 @@ jobs:
           echo "Faros init container exit code was ${CONTAINER_EXIT_CODE}"
           [[ $CONTAINER_EXIT_CODE -eq 0 ]]
 
-      - name: Get destination id & Hasura Admin Secret
+      - name: Get Hasura Admin Secret
         run: |
-          echo "DESTINATION_ID=$(cat ${{ github.workspace }}/init/resources/airbyte/workspace/airbyte_config/DESTINATION_CONNECTION.yaml | yq '.[0].destinationId')" >> "$GITHUB_ENV"
           echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"
 
       - name: Run integration tests (init)

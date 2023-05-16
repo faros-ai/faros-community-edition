@@ -239,7 +239,6 @@ export class AirbyteInitV40 {
     })
   }
 
-  
   async createConnectionToFaros(sourceId: string, farosDestinationId: string, yamlData: any, source: string): Promise<string> {
     
     const connection = findEntryWithAttributeValue(yamlData, "prefix", source);
@@ -258,10 +257,9 @@ export class AirbyteInitV40 {
       delete streamWithConfig.cursorField;
       delete streamWithConfig.destinationSyncMode;
       delete streamWithConfig.primaryKey;
-      delete streamWithConfig.stream.jsonSchema;
+      streamWithConfig.stream.jsonSchema = {}; // removing it completely causes the sync to not start
       return streamWithConfig;
     })
-
 
     return this.createConnection({
       name: connection.name,

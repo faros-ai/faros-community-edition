@@ -6,7 +6,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "6421df4e-0c5a-4666-a530-9c01de683518"
-  name: "default"
+  name: "GitHub - Faros"
   catalog:
     streams:
     - stream:
@@ -4406,7 +4406,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "cef1b90d-ab16-4645-a0e3-b81818b8ffc7"
-  name: "default"
+  name: "GitLab - Faros"
   catalog:
     streams:
     - stream:
@@ -6286,7 +6286,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "2093cc9f-81d5-47df-8c14-d898c89f4c81"
-  name: "default"
+  name: "Bitbucket - Faros"
   catalog:
     streams:
     - stream:
@@ -7891,7 +7891,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "285b3dea-7fd5-4fb1-a088-0585eac66fa2"
-  name: "default"
+  name: "Phabricator - Faros"
   catalog:
     streams:
     - stream:
@@ -10680,7 +10680,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "577ceecf-a92a-4785-b385-c41112d7f537"
-  name: "default"
+  name: "Jira - Faros"
   catalog:
     streams:
     - stream:
@@ -11970,7 +11970,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "0b3cbaa7-82b2-4171-a7c8-2d3ba8a014ce"
-  name: "default"
+  name: "Buildkite - Faros"
   catalog:
     streams:
     - stream:
@@ -12131,7 +12131,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "997e5c0f-f81b-45a9-8fbd-e7c514008f71"
-  name: "default"
+  name: "CircleCI - Faros"
   catalog:
     streams:
     - stream:
@@ -12290,7 +12290,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "1381ff92-865d-473c-9c97-20b7e81afa78"
-  name: "default"
+  name: "Harness - Faros"
   catalog:
     streams:
     - stream:
@@ -12425,7 +12425,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "bd8ead71-0911-4b72-9916-245624fc44c1"
-  name: "default"
+  name: "Jenkins - Faros"
   catalog:
     streams:
     - stream:
@@ -12649,7 +12649,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "d58ba853-baea-46b1-93e4-bf1771ee2e32"
-  name: "default"
+  name: "Datadog - Faros"
   catalog:
     streams:
     - stream:
@@ -12858,7 +12858,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "955e6bfc-3056-4b07-820d-0b5039ce69e4"
-  name: "default"
+  name: "OpsGenie - Faros"
   catalog:
     streams:
     - stream:
@@ -13069,7 +13069,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "8885a0f8-a0ae-4cce-84a4-4c8974691548"
-  name: "default"
+  name: "PagerDuty - Faros"
   catalog:
     streams:
     - stream:
@@ -13358,7 +13358,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "7ca9314f-9654-460b-8b9a-87821f25f5ef"
-  name: "default"
+  name: "SquadCast - Faros"
   catalog:
     streams:
     - stream:
@@ -13657,7 +13657,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "3e16f930-5b66-4214-803e-39bc4a6413bb"
-  name: "default"
+  name: "Statuspage - Faros"
   catalog:
     streams:
     - stream:
@@ -13801,7 +13801,7 @@
   destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
   operationIds: []
   connectionId: "e039b3c9-3abf-4459-b69b-e177cb34873f"
-  name: "default"
+  name: "VictorOps - Faros"
   catalog:
     streams:
     - stream:

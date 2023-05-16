@@ -1,10 +1,6 @@
 import {Command} from 'commander';
 
 import {Airbyte} from '../airbyte/airbyte-client';
-import {BITBUCKET_CONNECTION_ID} from '../bitbucket/run';
-import {GITHUB_CONNECTION_ID} from '../github/run';
-import {GITLAB_CONNECTION_ID} from '../gitlab/run';
-import {JIRA_CONNECTION_ID} from '../jira/run';
 import {Metabase} from '../metabase/metabase-client';
 import {display, Emoji} from '../utils';
 
@@ -34,24 +30,24 @@ export async function runRefresh(cfg: RefreshConfig): Promise<void> {
   await cfg.airbyte.waitUntilHealthy();
   const work = [];
 
-  if (await cfg.airbyte.isActiveConnection(GITHUB_CONNECTION_ID)) {
+  if (await cfg.airbyte.isActiveConnection("GitHub - Faros")) {
     display('refreshing GitHub %s', Emoji.SYNC);
-    work.push(cfg.airbyte.refresh(GITHUB_CONNECTION_ID, 'GitHub'));
+    work.push(cfg.airbyte.refresh("GitHub - Faros", 'GitHub'));
   }
 
-  if (await cfg.airbyte.isActiveConnection(GITLAB_CONNECTION_ID)) {
+  if (await cfg.airbyte.isActiveConnection("GitLab - Faros")) {
     display('refreshing GitLab %s', Emoji.SYNC);
-    work.push(cfg.airbyte.refresh(GITLAB_CONNECTION_ID, 'GitLab'));
+    work.push(cfg.airbyte.refresh("GitLab - Faros", 'GitLab'));
   }
 
-  if (await cfg.airbyte.isActiveConnection(BITBUCKET_CONNECTION_ID)) {
+  if (await cfg.airbyte.isActiveConnection("Bitbucket - Faros")) {
     display('refreshing Bitbucket %s', Emoji.SYNC);
-    work.push(cfg.airbyte.refresh(BITBUCKET_CONNECTION_ID, 'Bitbucket'));
+    work.push(cfg.airbyte.refresh("Bitbucket - Faros", 'Bitbucket'));
   }
 
-  if (await cfg.airbyte.isActiveConnection(JIRA_CONNECTION_ID)) {
+  if (await cfg.airbyte.isActiveConnection("Jira - Faros")) {
     display('refreshing Jira %s', Emoji.SYNC);
-    work.push(cfg.airbyte.refresh(JIRA_CONNECTION_ID, 'Jira'));
+    work.push(cfg.airbyte.refresh("Jira - Faros", 'Jira'));
   }
 
   if (work.length === 0) {

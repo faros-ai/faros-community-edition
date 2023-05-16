@@ -1,8 +1,30 @@
-import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
+import {AxiosInstance} from 'axios';
 import {Dictionary} from 'lodash';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
+import pino from 'pino';
+import path from 'path';
 
+const logger = pino({
+  name: 'airbytev40-init',
+  level: process.env.LOG_LEVEL || 'info',
+});
+
+import {BASE_RESOURCES_DIR} from '../config';
+const CATALOGS = path.join(
+  BASE_RESOURCES_DIR,
+  'airbyte',
+  'workspace',
+  'airbyte_config',
+  'STANDARD_SYNC.yaml'
+);
+const SOURCES = path.join(
+  BASE_RESOURCES_DIR,
+  'airbyte',
+  'workspace',
+  'airbyte_config',
+  'SOURCE_CONNECTION.yaml'
+);
 // Function to load and parse a YAML file
 function loadYamlFile(filePath: string): any {
   try {
@@ -42,15 +64,8 @@ function convertKeysToCamelCase(data: any): any {
 export class AirbyteInitV40 {
   private readonly api: AxiosInstance;
 
-  constructor(
-    airbyteUrl: string,
-    axiosConfig: Omit<AxiosRequestConfig, 'baseUrl'> = {
-      headers: {
-        'Authorization': "Basic YWlyYnl0ZTpwYXNzd29yZA=="
-      }
-    }
-  ) {
-    this.api = axios.create({baseURL: `${airbyteUrl}/api/v1`, ...axiosConfig});
+  constructor(api: AxiosInstance) {
+    this.api = api;
   }
 
   async createWorkspace(params: {
@@ -155,7 +170,6 @@ export class AirbyteInitV40 {
     return response.data.connectionId as string;
   }
 
-
   async getFarosWorkspace(): Promise<string> {
     return this.getWorkspaceBySlug({
       slug: "faros"
@@ -178,13 +192,13 @@ export class AirbyteInitV40 {
     })
   }
 
-  async createFarosDestinationDefinition(workspaceId: string): Promise<string> {
+  async createFarosDestinationDefinition(workspaceId: string, version: string): Promise<string> {
     return this.createCustomDestinationDefinition({
       workspaceId,
       destinationDefinition: {
         name: "Faros Destination",
         dockerRepository: "farosai/airbyte-faros-destination",
-        dockerImageTag: "0.4.69",
+        dockerImageTag: version,
         documentationUrl: "https://docs.faros.ai"
       }
     })
@@ -214,8 +228,8 @@ export class AirbyteInitV40 {
     return (await this.listDestinationNames({workspaceId})).filter((name: string) => name === "Faros Destination")[0]
   }
 
-  async createGitHubSource(workspaceId: string, yamlData: any, sourceDefinitionId: string): Promise<string> {
-    const source = findEntryWithAttributeValue(yamlData, "sourceDefinitionId", sourceDefinitionId);
+  async createSourceFromYAML(workspaceId: string, yamlData: any, sourceName: string, sourceDefinitionId : string): Promise<string> {
+    const source = findEntryWithAttributeValue(yamlData, "name", sourceName);
 
     return this.createSource({
       workspaceId,
@@ -261,29 +275,60 @@ export class AirbyteInitV40 {
     })
   }
 
-  async init() {
+  async init(farosConnectorsVersion: string) {
+    logger.info('init');
+
     const workspaceId = await this.getFirstWorkspace();
-    console.log(workspaceId);
+    console.log("workspaceId: " + workspaceId);
     await this.completeFarosWorkspaceSetup(workspaceId);
 
-    const farosDestinationDefintionId = await this.createFarosDestinationDefinition(workspaceId);
-    console.log(farosDestinationDefintionId);
+    const farosDestinationDefintionId = await this.createFarosDestinationDefinition(workspaceId, farosConnectorsVersion);
+    console.log("farosDestinationDefintionId: " + farosDestinationDefintionId);
 
     const farosDestinationId = await this.createFarosDestination(workspaceId, farosDestinationDefintionId, "http://localhost:8080", "admin", "123e4567-e89b-12d3-a456-426614174000");
-    console.log(farosDestinationId);
+    console.log("farosDestinationId: " + farosDestinationId);
 
-    const yamlSourceFilePath = 'resources/airbyte/workspace/airbyte_config/SOURCE_CONNECTION.yaml';
-    const yamlSourceData = loadYamlFile(yamlSourceFilePath);
-    const ghSourceDefinitionId = "ef69ef6e-aa7f-4af1-a01d-ef775033524e";
-    const ghSourceId = await this.createGitHubSource(workspaceId, yamlSourceData, ghSourceDefinitionId);
-    console.log(ghSourceId);
+    const yamlSourceData = loadYamlFile(SOURCES); // do NOT converstion to camel case 
+    
+    // convert to camel case because of sync_mode (file) vs syncMode (API)
+    const yamlCatalogData = convertKeysToCamelCase(loadYamlFile(CATALOGS)); 
 
-    const yamlConnectionFilePath = 'resources/airbyte/workspace/airbyte_config/STANDARD_SYNC.yaml';
-    const yamlConnectionData = convertKeysToCamelCase(loadYamlFile(yamlConnectionFilePath));
-    const ghConnectionId = await this.createConnectionToFaros(ghSourceId, farosDestinationId, yamlConnectionData, "github_source__github__");
-    console.log(ghConnectionId);
+    const githubSourceDefinitionId = "ef69ef6e-aa7f-4af1-a01d-ef775033524e";
+    const githubSourceId = await this.createSourceFromYAML(workspaceId, yamlSourceData, "GitHub", githubSourceDefinitionId);
+    console.log("githubSourceId: " + githubSourceId);
+    const githubConnectionId = await this.createConnectionToFaros(githubSourceId, farosDestinationId, yamlCatalogData, "github_source__github__");
+    console.log("githubConnectionId: " + githubConnectionId);
+
+    const gitlabSourceDefinitionId = "5e6175e5-68e1-4c17-bff9-56103bbb0d80";
+    const gitlabSourceId = await this.createSourceFromYAML(workspaceId, yamlSourceData, "GitLab", gitlabSourceDefinitionId);
+    console.log("gitlabSourceId: " + gitlabSourceId);
+    const gitlabConnectionId = await this.createConnectionToFaros(gitlabSourceId, farosDestinationId, yamlCatalogData, "gitlab_source__gitlab__");
+    console.log("gitlabConnectionId: " + gitlabConnectionId);
+
+
+    const bitbucketSourceDefinitionId = await this.createCustomSourceDefinition({
+      workspaceId,
+      sourceDefinition: {
+        name: "Bitbucket",
+        dockerRepository: "farosai/airbyte-bitbucket-source",
+        dockerImageTag: farosConnectorsVersion ? farosConnectorsVersion : "0.4.69",
+        documentationUrl: "https://docs.faros.ai"
+      }
+    })
+    console.log("bitbucketSourceDefinitionId: " + bitbucketSourceDefinitionId);
+
+    const bitbucketSourceId = await this.createSourceFromYAML(workspaceId, yamlSourceData, "Bitbucket", bitbucketSourceDefinitionId);
+    console.log("bitbucketSourceId: " + bitbucketSourceId);
+
+    const bitbucketConnectionId = await this.createConnectionToFaros(bitbucketSourceId, farosDestinationId, yamlCatalogData, "bitbucket_source__bitbucket__");
+    console.log("bitbucketConnectionId: " + bitbucketConnectionId);
+
+    const jiraSourceDefinitionId = "68e63de2-bb83-4c7e-93fa-a8a9051e3993";
+    const jiraSourceId = await this.createSourceFromYAML(workspaceId, yamlSourceData, "Jira", jiraSourceDefinitionId);
+    console.log("jiraSourceId: " + jiraSourceId);
+
+    const jiraConnectionId = await this.createConnectionToFaros(jiraSourceId, farosDestinationId, yamlCatalogData, "jira_source__jira__");
+    console.log("jiraConnectionId: " + jiraConnectionId);
+
   }
 }
-
-let airbyteInitV40: AirbyteInitV40 = new AirbyteInitV40("http://localhost:8000");
-airbyteInitV40.init();

@@ -48,7 +48,7 @@
   sourceId: "22852029-670c-4296-958e-c581fa76ae98"
   configuration:
     email: ""
-    domain: ""
+    domain: "jira.atlassian.net"
     projects: []
     api_token: ""
     start_date: "2022-01-01T00:00:00Z"

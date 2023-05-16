@@ -1,11 +1,5 @@
 ---
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "github_source__github__"
-  sourceId: "5d9079ca-8173-406f-bfdb-41f19c62daff"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "6421df4e-0c5a-4666-a530-9c01de683518"
+- prefix: "github_source__github__"
   name: "GitHub - Faros"
   catalog:
     streams:
@@ -18,7 +12,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -31,7 +25,7 @@
         - - "name"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "repository"
       - - "name"
@@ -44,7 +38,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -60,7 +54,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "created_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "sha"
     - stream:
@@ -72,7 +66,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -88,7 +82,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -104,7 +98,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -116,7 +110,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -132,7 +126,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -148,7 +142,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "created_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -164,7 +158,7 @@
       sync_mode: "full_refresh"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -180,7 +174,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -196,7 +190,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "submitted_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -209,7 +203,7 @@
         - - "name"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "repository"
       - - "name"
@@ -222,7 +216,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -234,7 +228,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -250,19 +244,13 @@
       sync_mode: "incremental"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "gitlab_source__gitlab__"
-  sourceId: "59c74ca4-8cbb-4c65-8cb7-66bf771190fb"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "cef1b90d-ab16-4645-a0e3-b81818b8ffc7"
+- prefix: "gitlab_source__gitlab__"
   name: "GitLab - Faros"
   catalog:
     streams:
@@ -275,7 +263,7 @@
         - - "name"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "name"
     - stream:
@@ -291,7 +279,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "created_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -303,7 +291,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -315,7 +303,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -327,7 +315,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -339,7 +327,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -355,7 +343,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -367,7 +355,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -383,7 +371,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -399,7 +387,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -411,7 +399,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -423,7 +411,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -435,7 +423,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -447,7 +435,7 @@
         - - "name"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "name"
     - stream:
@@ -459,7 +447,7 @@
         - - "name"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "name"
     - stream:
@@ -471,19 +459,13 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "bitbucket_source__bitbucket__"
-  sourceId: "5a19e927-51a2-4d5f-9b26-b35aba0910e0"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "2093cc9f-81d5-47df-8c14-d898c89f4c81"
+- prefix: "bitbucket_source__bitbucket__"
   name: "Bitbucket - Faros"
   catalog:
     streams:
@@ -496,7 +478,7 @@
         - - "name"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "name"
     - stream:
@@ -512,7 +494,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "date"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "hash"
     - stream:
@@ -524,7 +506,7 @@
         - - "uuid"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "uuid"
     - stream:
@@ -540,7 +522,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updatedOn"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -552,7 +534,7 @@
         - - "uuid"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "uuid"
     - stream:
@@ -564,7 +546,7 @@
         - - "uuid"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "uuid"
     - stream:
@@ -579,7 +561,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "pullRequestUpdatedOn"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key: []
     - stream:
         name: "pull_requests"
@@ -594,7 +576,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updatedOn"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -605,7 +587,7 @@
         source_defined_primary_key: []
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key: []
     - stream:
         name: "workspace_users"
@@ -615,7 +597,7 @@
         source_defined_primary_key: []
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key: []
     - stream:
         name: "workspaces"
@@ -625,18 +607,12 @@
         source_defined_primary_key: []
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key: []
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "phabricator_source__phabricator"
-  sourceId: "8e08224a-08da-4da4-95df-79639df68962"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "285b3dea-7fd5-4fb1-a088-0585eac66fa2"
+- prefix: "phabricator_source__phabricator__"
   name: "Phabricator - Faros"
   catalog:
     streams:
@@ -656,7 +632,7 @@
       - "fields"
       - "committer"
       - "epoch"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key: []
     - stream:
         name: "projects"
@@ -673,7 +649,7 @@
       cursor_field:
       - "fields"
       - "dateModified"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "phid"
     - stream:
@@ -691,7 +667,7 @@
       cursor_field:
       - "fields"
       - "dateModified"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "phid"
     - stream:
@@ -709,7 +685,7 @@
       cursor_field:
       - "fields"
       - "dateModified"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "phid"
     - stream:
@@ -727,19 +703,13 @@
       cursor_field:
       - "fields"
       - "dateModified"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "phid"
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "jira_source__jira__"
-  sourceId: "22852029-670c-4296-958e-c581fa76ae98"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "577ceecf-a92a-4785-b385-c41112d7f537"
+- prefix: "jira_source__jira__"
   name: "Jira - Faros"
   catalog:
     streams:
@@ -758,7 +728,7 @@
       cursor_field:
       - "fields"
       - "updated"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -770,7 +740,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -788,7 +758,7 @@
       cursor_field:
       - "fields"
       - "updated"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -800,7 +770,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -818,7 +788,7 @@
       cursor_field:
       - "fields"
       - "updated"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -830,7 +800,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -842,7 +812,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -858,7 +828,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updated"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -876,7 +846,7 @@
       cursor_field:
       - "fields"
       - "updated"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -888,7 +858,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -899,7 +869,7 @@
         source_defined_primary_key: []
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key: []
     - stream:
         name: "workflow_statuses"
@@ -910,19 +880,13 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "buildkite_source__buildkite__"
-  sourceId: "407664f2-22b0-431d-bc36-b1be8a6aae96"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "0b3cbaa7-82b2-4171-a7c8-2d3ba8a014ce"
+- prefix: "buildkite_source__buildkite__"
   name: "Buildkite - Faros"
   catalog:
     streams:
@@ -939,7 +903,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "createdAt"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "uuid"
     - stream:
@@ -951,7 +915,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -963,19 +927,13 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "circleci_source__circleci__"
-  sourceId: "81c73d90-cbff-465a-ab8d-8cde1be6e718"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "997e5c0f-f81b-45a9-8fbd-e7c514008f71"
+- prefix: "circleci_source__circleci__"
   name: "CircleCI - Faros"
   catalog:
     streams:
@@ -992,7 +950,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -1004,19 +962,13 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "harness_source__harness"
-  sourceId: "c78b0bb2-5fee-46f7-a043-63e498004776"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "1381ff92-865d-473c-9c97-20b7e81afa78"
+- prefix: "harness_source__harness__"
   name: "Harness - Faros"
   catalog:
     streams:
@@ -1033,19 +985,13 @@
       sync_mode: "incremental"
       cursor_field:
       - "endedAt"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "jenkins_source__jenkins__"
-  sourceId: "55b0325e-4bc7-49b4-b230-36c5a67df068"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "bd8ead71-0911-4b72-9916-245624fc44c1"
+- prefix: "jenkins_source__jenkins__"
   name: "Jenkins - Faros"
   catalog:
     streams:
@@ -1062,7 +1008,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "number"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "fullDisplayName"
     - stream:
@@ -1078,19 +1024,13 @@
       sync_mode: "incremental"
       cursor_field:
       - "url"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "fullName"
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "datadog_source__datadog__"
-  sourceId: "7fc3063d-fb70-4cf7-bff3-69051b58e84c"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "d58ba853-baea-46b1-93e4-bf1771ee2e32"
+- prefix: "datadog_source__datadog__"
   name: "Datadog - Faros"
   catalog:
     streams:
@@ -1106,7 +1046,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "modified"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key: []
     - stream:
         name: "users"
@@ -1120,18 +1060,12 @@
       sync_mode: "full_refresh"
       cursor_field:
       - "modifiedAt"
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key: []
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "opsgenie_source__opsgenie__"
-  sourceId: "6749ef2f-5dc7-4e5f-ad5d-74aac6ef49da"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "955e6bfc-3056-4b07-820d-0b5039ce69e4"
+- prefix: "opsgenie_source__opsgenie__"
   name: "OpsGenie - Faros"
   catalog:
     streams:
@@ -1148,7 +1082,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "createdAt"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -1160,7 +1094,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -1172,19 +1106,13 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "pagerduty_source__pagerduty__"
-  sourceId: "5ed7412c-72d3-46a9-bc40-0e362ad437c6"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "8885a0f8-a0ae-4cce-84a4-4c8974691548"
+- prefix: "pagerduty_source__pagerduty__"
   name: "PagerDuty - Faros"
   catalog:
     streams:
@@ -1201,7 +1129,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "created_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -1217,7 +1145,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "created_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -1229,7 +1157,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -1241,19 +1169,13 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "squadcast_source__squadcast__"
-  sourceId: "4321e9f5-bb4d-4f6e-8625-0cb73d1cff16"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "7ca9314f-9654-460b-8b9a-87821f25f5ef"
+- prefix: "squadcast_source__squadcast__"
   name: "SquadCast - Faros"
   catalog:
     streams:
@@ -1266,7 +1188,7 @@
         - - "alert_source_id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "alert_source_id"
     - stream:
@@ -1282,7 +1204,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "created_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -1294,7 +1216,7 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
     - stream:
@@ -1306,19 +1228,13 @@
         - - "id"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "statuspage_source__statuspage__"
-  sourceId: "a778b201-49fe-43e4-a470-391b07115fab"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "3e16f930-5b66-4214-803e-39bc4a6413bb"
+- prefix: "statuspage_source__statuspage__"
   name: "Statuspage - Faros"
   catalog:
     streams:
@@ -1335,7 +1251,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -1351,7 +1267,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "id"
     - stream:
@@ -1367,19 +1283,13 @@
       sync_mode: "full_refresh"
       cursor_field:
       - "updated_at"
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "id"
   status: "active"
   manual: true
   resourceRequirements: {}
-- namespaceDefinition: "source"
-  namespaceFormat: "${SOURCE_NAMESPACE}"
-  prefix: "victorops_source__victorops__"
-  sourceId: "e1d032e0-3a8b-47dc-bac8-2786264b11f4"
-  destinationId: "ca307eaf-5bee-4b26-84d4-3a084e6ebbcd"
-  operationIds: []
-  connectionId: "e039b3c9-3abf-4459-b69b-e177cb34873f"
+- prefix: "victorops_source__victorops__"
   name: "VictorOps - Faros"
   catalog:
     streams:
@@ -1396,7 +1306,7 @@
       sync_mode: "incremental"
       cursor_field:
       - "startTime"
-      destination_sync_mode: "append"
+      destination_sync_mode: "append_dedup"
       primary_key:
       - - "incidentNumber"
     - stream:
@@ -1408,7 +1318,7 @@
         - - "slug"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "slug"
     - stream:
@@ -1420,7 +1330,7 @@
         - - "username"
       sync_mode: "full_refresh"
       cursor_field: []
-      destination_sync_mode: "append"
+      destination_sync_mode: "overwrite"
       primary_key:
       - - "username"
   status: "active"

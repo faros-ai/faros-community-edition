@@ -170,18 +170,6 @@ export class AirbyteInitV40 {
     return response.data.connectionId as string;
   }
 
-  async getFarosWorkspace(): Promise<string> {
-    return this.getWorkspaceBySlug({
-      slug: "faros"
-    })
-  }
-
-  async createFarosWorkspace(): Promise<string> {
-    return this.createWorkspace({
-      name: "faros"
-    })
-  }
-
   async completeFarosWorkspaceSetup(workspaceId: string): Promise<string> {
     return this.completeWorkspaceSetup({
       workspaceId,
@@ -223,7 +211,6 @@ export class AirbyteInitV40 {
     })
   }
 
-  // TODO: cleanup
   async getFarosDestinationId(workspaceId: string):  Promise<string> {
     return (await this.listDestinationNames({workspaceId})).filter((name: string) => name === "Faros Destination")[0]
   }
@@ -239,9 +226,9 @@ export class AirbyteInitV40 {
     })
   }
 
-  async createConnectionToFaros(sourceId: string, farosDestinationId: string, yamlData: any, source: string): Promise<string> {
+  async createConnectionToFaros(sourceId: string, farosDestinationId: string, yamlData: any, connectionName: string): Promise<string> {
     
-    const connection = findEntryWithAttributeValue(yamlData, "prefix", source);
+    const connection = findEntryWithAttributeValue(yamlData, "name", connectionName);
     const streams: any[] = connection.catalog.streams;
     const streamsWithConfig = streams.map(stream => {
       var streamWithConfig = { ...stream };
@@ -294,13 +281,13 @@ export class AirbyteInitV40 {
     const githubSourceDefinitionId = "ef69ef6e-aa7f-4af1-a01d-ef775033524e";
     const githubSourceId = await this.createSourceFromYAML(workspaceId, yamlSourceData, "GitHub", githubSourceDefinitionId);
     console.log("githubSourceId: " + githubSourceId);
-    const githubConnectionId = await this.createConnectionToFaros(githubSourceId, farosDestinationId, yamlCatalogData, "github_source__github__");
+    const githubConnectionId = await this.createConnectionToFaros(githubSourceId, farosDestinationId, yamlCatalogData, "GitHub - Faros");
     console.log("githubConnectionId: " + githubConnectionId);
 
     const gitlabSourceDefinitionId = "5e6175e5-68e1-4c17-bff9-56103bbb0d80";
     const gitlabSourceId = await this.createSourceFromYAML(workspaceId, yamlSourceData, "GitLab", gitlabSourceDefinitionId);
     console.log("gitlabSourceId: " + gitlabSourceId);
-    const gitlabConnectionId = await this.createConnectionToFaros(gitlabSourceId, farosDestinationId, yamlCatalogData, "gitlab_source__gitlab__");
+    const gitlabConnectionId = await this.createConnectionToFaros(gitlabSourceId, farosDestinationId, yamlCatalogData, "GitLab - Faros");
     console.log("gitlabConnectionId: " + gitlabConnectionId);
 
 
@@ -318,14 +305,14 @@ export class AirbyteInitV40 {
     const bitbucketSourceId = await this.createSourceFromYAML(workspaceId, yamlSourceData, "Bitbucket", bitbucketSourceDefinitionId);
     console.log("bitbucketSourceId: " + bitbucketSourceId);
 
-    const bitbucketConnectionId = await this.createConnectionToFaros(bitbucketSourceId, farosDestinationId, yamlCatalogData, "bitbucket_source__bitbucket__");
+    const bitbucketConnectionId = await this.createConnectionToFaros(bitbucketSourceId, farosDestinationId, yamlCatalogData, "Bitbucket - Faros");
     console.log("bitbucketConnectionId: " + bitbucketConnectionId);
 
     const jiraSourceDefinitionId = "68e63de2-bb83-4c7e-93fa-a8a9051e3993";
     const jiraSourceId = await this.createSourceFromYAML(workspaceId, yamlSourceData, "Jira", jiraSourceDefinitionId);
     console.log("jiraSourceId: " + jiraSourceId);
 
-    const jiraConnectionId = await this.createConnectionToFaros(jiraSourceId, farosDestinationId, yamlCatalogData, "jira_source__jira__");
+    const jiraConnectionId = await this.createConnectionToFaros(jiraSourceId, farosDestinationId, yamlCatalogData, "Jira - Faros");
     console.log("jiraConnectionId: " + jiraConnectionId);
 
   }

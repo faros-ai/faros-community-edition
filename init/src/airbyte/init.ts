@@ -134,11 +134,11 @@ export class AirbyteInit {
 
     if (workspace.initialSetupComplete) {
       logger.info(`Workspace ${workspaceId} is already set up`);
-      return; // TODO: connector upgrades
       // TODO: force setup
       if (forceSetup) {
         throw new VError('Forced setup not supported');
       }
+      return; // TODO: connector upgrades
     }
     logger.info(`Setting up workspace ${workspaceId}`);
 

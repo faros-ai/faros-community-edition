@@ -290,24 +290,43 @@ export class AirbyteInitV40 {
     });
   }
 
-  async handleFarosSource(name: string, workspaceId: string, farosDestinationId: string, farosConnectorsVersion: string, yamlSourceData: any, yamlCatalogData: any): Promise<void> {
-    const sourceDefinitionId = await this.createCustomSourceDefinition(
-      {
-        workspaceId,
-        sourceDefinition: {
-          name,
-          dockerRepository: "farosai/airbyte-" + name.toLowerCase() + "-source",
-          dockerImageTag: farosConnectorsVersion,
-          documentationUrl: 'https://docs.faros.ai',
-        },
-      }
-    );
+  async handleFarosSource(
+    name: string,
+    workspaceId: string,
+    farosDestinationId: string,
+    farosConnectorsVersion: string,
+    yamlSourceData: any,
+    yamlCatalogData: any
+  ): Promise<void> {
+    const sourceDefinitionId = await this.createCustomSourceDefinition({
+      workspaceId,
+      sourceDefinition: {
+        name,
+        dockerRepository: 'farosai/airbyte-' + name.toLowerCase() + '-source',
+        dockerImageTag: farosConnectorsVersion,
+        documentationUrl: 'https://docs.faros.ai',
+      },
+    });
     logger.info('sourceDefinitionId for ' + name + ': ' + sourceDefinitionId);
 
-   this.createAndConnectSource(name, workspaceId, farosDestinationId, yamlSourceData, yamlCatalogData, sourceDefinitionId);
+    this.createAndConnectSource(
+      name,
+      workspaceId,
+      farosDestinationId,
+      yamlSourceData,
+      yamlCatalogData,
+      sourceDefinitionId
+    );
   }
 
-  async createAndConnectSource(name: string, workspaceId: string, farosDestinationId: string, yamlSourceData: any, yamlCatalogData: any, sourceDefinitionId: string): Promise<void> {
+  async createAndConnectSource(
+    name: string,
+    workspaceId: string,
+    farosDestinationId: string,
+    yamlSourceData: any,
+    yamlCatalogData: any,
+    sourceDefinitionId: string
+  ): Promise<void> {
     const sourceId = await this.createSourceFromYAML(
       workspaceId,
       yamlSourceData,
@@ -360,25 +379,142 @@ export class AirbyteInitV40 {
     const yamlCatalogData = convertKeysToCamelCase(loadYamlFile(CATALOGS));
 
     const githubSourceDefinitionId = 'ef69ef6e-aa7f-4af1-a01d-ef775033524e';
-    logger.info("sourceDefinitionId for GitHub: " + githubSourceDefinitionId + " (community)")
-    await this.createAndConnectSource("GitHub", workspaceId, farosDestinationId, yamlSourceData, yamlCatalogData, githubSourceDefinitionId);
+    logger.info(
+      'sourceDefinitionId for GitHub: ' +
+        githubSourceDefinitionId +
+        ' (community)'
+    );
+    await this.createAndConnectSource(
+      'GitHub',
+      workspaceId,
+      farosDestinationId,
+      yamlSourceData,
+      yamlCatalogData,
+      githubSourceDefinitionId
+    );
     const gitlabSourceDefinitionId = '5e6175e5-68e1-4c17-bff9-56103bbb0d80';
-    logger.info("sourceDefinitionId for GitLab: " + gitlabSourceDefinitionId + " (community)")
-    await this.createAndConnectSource("GitLab", workspaceId, farosDestinationId, yamlSourceData, yamlCatalogData, gitlabSourceDefinitionId);
+    logger.info(
+      'sourceDefinitionId for GitLab: ' +
+        gitlabSourceDefinitionId +
+        ' (community)'
+    );
+    await this.createAndConnectSource(
+      'GitLab',
+      workspaceId,
+      farosDestinationId,
+      yamlSourceData,
+      yamlCatalogData,
+      gitlabSourceDefinitionId
+    );
     const jiraSourceDefinitionId = '68e63de2-bb83-4c7e-93fa-a8a9051e3993';
-    logger.info("sourceDefinitionId for Jira: " + gitlabSourceDefinitionId + " (community)")
-    await this.createAndConnectSource("Jira", workspaceId, farosDestinationId, yamlSourceData, yamlCatalogData, jiraSourceDefinitionId);
-    await this.handleFarosSource("Bitbucket", workspaceId, farosDestinationId, farosConnectorsVersion, yamlSourceData, yamlCatalogData);
-    await this.handleFarosSource("Phabricator", workspaceId, farosDestinationId, farosConnectorsVersion, yamlSourceData, yamlCatalogData);
-    await this.handleFarosSource("Buildkite", workspaceId, farosDestinationId, farosConnectorsVersion, yamlSourceData, yamlCatalogData);
-    await this.handleFarosSource("CircleCI", workspaceId, farosDestinationId, farosConnectorsVersion, yamlSourceData, yamlCatalogData);
-    await this.handleFarosSource("Harness", workspaceId, farosDestinationId, farosConnectorsVersion, yamlSourceData, yamlCatalogData);
-    await this.handleFarosSource("Jenkins", workspaceId, farosDestinationId, farosConnectorsVersion, yamlSourceData, yamlCatalogData);
-    await this.handleFarosSource("Datadog", workspaceId, farosDestinationId, farosConnectorsVersion, yamlSourceData, yamlCatalogData);
-    await this.handleFarosSource("OpsGenie", workspaceId, farosDestinationId, farosConnectorsVersion, yamlSourceData, yamlCatalogData);
-    await this.handleFarosSource("PagerDuty", workspaceId, farosDestinationId, farosConnectorsVersion, yamlSourceData, yamlCatalogData);
-    await this.handleFarosSource("SquadCast", workspaceId, farosDestinationId, farosConnectorsVersion, yamlSourceData, yamlCatalogData);
-    await this.handleFarosSource("Statuspage", workspaceId, farosDestinationId, farosConnectorsVersion, yamlSourceData, yamlCatalogData);
-    await this.handleFarosSource("VictorOps", workspaceId, farosDestinationId, farosConnectorsVersion, yamlSourceData, yamlCatalogData);
+    logger.info(
+      'sourceDefinitionId for Jira: ' +
+        gitlabSourceDefinitionId +
+        ' (community)'
+    );
+    await this.createAndConnectSource(
+      'Jira',
+      workspaceId,
+      farosDestinationId,
+      yamlSourceData,
+      yamlCatalogData,
+      jiraSourceDefinitionId
+    );
+    await this.handleFarosSource(
+      'Bitbucket',
+      workspaceId,
+      farosDestinationId,
+      farosConnectorsVersion,
+      yamlSourceData,
+      yamlCatalogData
+    );
+    await this.handleFarosSource(
+      'Phabricator',
+      workspaceId,
+      farosDestinationId,
+      farosConnectorsVersion,
+      yamlSourceData,
+      yamlCatalogData
+    );
+    await this.handleFarosSource(
+      'Buildkite',
+      workspaceId,
+      farosDestinationId,
+      farosConnectorsVersion,
+      yamlSourceData,
+      yamlCatalogData
+    );
+    await this.handleFarosSource(
+      'CircleCI',
+      workspaceId,
+      farosDestinationId,
+      farosConnectorsVersion,
+      yamlSourceData,
+      yamlCatalogData
+    );
+    await this.handleFarosSource(
+      'Harness',
+      workspaceId,
+      farosDestinationId,
+      farosConnectorsVersion,
+      yamlSourceData,
+      yamlCatalogData
+    );
+    await this.handleFarosSource(
+      'Jenkins',
+      workspaceId,
+      farosDestinationId,
+      farosConnectorsVersion,
+      yamlSourceData,
+      yamlCatalogData
+    );
+    await this.handleFarosSource(
+      'Datadog',
+      workspaceId,
+      farosDestinationId,
+      farosConnectorsVersion,
+      yamlSourceData,
+      yamlCatalogData
+    );
+    await this.handleFarosSource(
+      'OpsGenie',
+      workspaceId,
+      farosDestinationId,
+      farosConnectorsVersion,
+      yamlSourceData,
+      yamlCatalogData
+    );
+    await this.handleFarosSource(
+      'PagerDuty',
+      workspaceId,
+      farosDestinationId,
+      farosConnectorsVersion,
+      yamlSourceData,
+      yamlCatalogData
+    );
+    await this.handleFarosSource(
+      'SquadCast',
+      workspaceId,
+      farosDestinationId,
+      farosConnectorsVersion,
+      yamlSourceData,
+      yamlCatalogData
+    );
+    await this.handleFarosSource(
+      'Statuspage',
+      workspaceId,
+      farosDestinationId,
+      farosConnectorsVersion,
+      yamlSourceData,
+      yamlCatalogData
+    );
+    await this.handleFarosSource(
+      'VictorOps',
+      workspaceId,
+      farosDestinationId,
+      farosConnectorsVersion,
+      yamlSourceData,
+      yamlCatalogData
+    );
   }
 }

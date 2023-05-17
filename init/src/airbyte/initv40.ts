@@ -309,7 +309,7 @@ export class AirbyteInitV40 {
     });
     logger.info('sourceDefinitionId for ' + name + ': ' + sourceDefinitionId);
 
-    this.createAndConnectSource(
+    await this.createAndConnectSource(
       name,
       workspaceId,
       farosDestinationId,

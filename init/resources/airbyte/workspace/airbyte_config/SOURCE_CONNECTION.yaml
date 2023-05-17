@@ -52,7 +52,7 @@
   configuration:
     url: "https://circleci.com/api/v2"
     token: ""
-    repo_names: []
+    project_names: []
     cutoff_days: 90
     reject_unauthorized: true
   tombstone: false

@@ -50,24 +50,28 @@ export class AirbyteClient {
     );
   }
 
-  async checkDestinationConnection(destinationId: string): Promise<boolean> {
-    return await this.api
-      .post('/destinations/check_connection', {
-        destinationId,
-      })
-      .then((response) => response.data.status === 'succeeded');
+  async getFirstWorkspace(): Promise<string> {
+    const response = await this.api.post('/workspaces/list', {});
+    return response.data.workspaces[0].workspaceId as string;
+  }
+
+  async checkDestinationConnection(destinationName: string): Promise<boolean> {
+    const workspaceId = await this.getFirstWorkspace();
+    const response = await this.api.post('/destinations/list', {workspaceId});
+    return (
+      response.data.destinations.filter(
+        (destination) => destination.name === destinationName
+      ).length > 0
+    );
   }
 
   async getDestinationConnectionConfiguration(
-    destinationId: string
+    destinationName: string
   ): Promise<ConnectionConfiguration> {
-    return await this.api
-      .post('/destinations/get', {
-        destinationId,
-      })
-      .then(
-        (response) =>
-          response.data.connectionConfiguration as ConnectionConfiguration
-      );
+    const workspaceId = await this.getFirstWorkspace();
+    const response = await this.api.post('/destinations/list', {workspaceId});
+    return response.data.destinations.filter(
+      (destination) => destination.name === destinationName
+    )[0].connectionConfiguration as ConnectionConfiguration;
   }
 }

@@ -6,13 +6,11 @@ import path from 'path';
 import {AirbyteClient, ConnectionConfiguration} from './airbyte-client';
 import {HasuraClient} from './hasura-client';
 
-let destinationId: string;
 let hasuraAdminSecret: string;
 let hasuraClient: HasuraClient;
 let airbyteClient: AirbyteClient;
 
 beforeAll(async () => {
-  destinationId = process.env.DESTINATION_ID;
   hasuraAdminSecret = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
 
   airbyteClient = new AirbyteClient('http://localhost:8000');
@@ -29,7 +27,7 @@ describe('integration tests', () => {
     'check connection to the Faros destination',
     async () => {
       expect(
-        await airbyteClient.checkDestinationConnection(destinationId)
+        await airbyteClient.checkDestinationConnection('Faros Destination')
       ).toBe(true);
     },
     60 * 1000
@@ -40,7 +38,7 @@ describe('integration tests', () => {
     async () => {
       const connectionConfiguration: ConnectionConfiguration =
         await airbyteClient.getDestinationConnectionConfiguration(
-          destinationId
+          'Faros Destination'
         );
 
       connectionConfiguration.edition_configs.hasura_admin_secret =

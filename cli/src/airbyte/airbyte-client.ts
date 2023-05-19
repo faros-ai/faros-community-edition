@@ -42,6 +42,35 @@ export class Airbyte {
     );
   }
 
+  async getFirstWorkspace(): Promise<string> {
+    const response = await this.api.post('/workspaces/list', {});
+    return response.data.workspaces[0].workspaceId as string;
+  }
+
+  async findFarosSource(name: string): Promise<string> {
+    const workspaceId = await this.getFirstWorkspace();
+    const response = await this.api
+      .post('/sources/list', {workspaceId})
+      .catch((err) => {
+        throw wrapApiError(err, 'Failed to call /sources/list');
+      });
+    return response.data.sources.filter(
+      (source: any) => source.name === name
+    )[0].sourceId;
+  }
+
+  async findFarosConnection(name: string): Promise<string> {
+    const workspaceId = await this.getFirstWorkspace();
+    const response = await this.api
+      .post('/connections/list', {workspaceId})
+      .catch((err) => {
+        throw wrapApiError(err, 'Failed to call /connections/list');
+      });
+    return response.data.connections.filter(
+      (connection: any) => connection.name === name
+    )[0].connectionId;
+  }
+
   async setupSource(config: any): Promise<void> {
     display('Setting up source %s', Emoji.SETUP);
     await this.api
@@ -158,11 +187,13 @@ export class Airbyte {
     return `${this.airbyteUrl}/connections/${connectionId}/status`;
   }
 
-  async isActiveConnection(connectionId: string): Promise<boolean> {
+  async isActiveConnection(connectionName: string): Promise<boolean> {
+    const connection = await this.findFarosConnection(connectionName);
+
     const response = await this.api
       .post('/jobs/list', {
         configTypes: ['sync'],
-        configId: connectionId,
+        configId: connection,
       })
       .catch((err) => {
         throw wrapApiError(err, ' Failed to call /jobs/list');
@@ -170,7 +201,8 @@ export class Airbyte {
     return response.data.jobs[0]?.job.status === 'succeeded';
   }
 
-  async refresh(connectionId: string, sourceName: string): Promise<void> {
+  async refresh(connectionName: string, sourceName: string): Promise<void> {
+    const connectionId = await this.findFarosConnection(connectionName);
     const job = await this.triggerSync(connectionId);
     await this.track(job, connectionId, sourceName);
   }

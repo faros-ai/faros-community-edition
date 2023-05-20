@@ -51,10 +51,10 @@ services:
       retries: 5
   
   # Airbyte
-  # Source: https://github.com/airbytehq/airbyte/blob/v0.39.37-alpha/docker-compose.yaml
+  # Source: https://github.com/airbytehq/airbyte/blob/v0.40.9/docker-compose.yaml
   #https://github.com/compose-spec/compose-spec/blob/master/spec.md#using-extensions-as-fragments
   init:
-    image: airbyte/init:0.39.37-alpha
+    image: airbyte/init:0.40.9
     logging: *default-logging
     container_name: init
     restart: "no"
@@ -67,15 +67,15 @@ services:
     volumes:
       - tmp:/local_parent
   bootloader:
-    image: airbyte/bootloader:0.39.37-alpha
+    image: airbyte/bootloader:0.40.9
     logging: *default-logging
     container_name: airbyte-bootloader
     restart: "no"
     depends_on:
       - faros-db
-    entrypoint: /bin/sh -c "airbyte-bootloader-0.39.37-alpha/bin/airbyte-bootloader && tail -f /dev/null"
+    entrypoint: /bin/sh -c "airbyte-bootloader-0.40.9/bin/airbyte-bootloader && tail -f /dev/null"
     environment:
-      - AIRBYTE_VERSION=0.39.37-alpha
+      - AIRBYTE_VERSION=0.40.9
       - CONFIG_DATABASE_PASSWORD=
       - CONFIG_DATABASE_URL=
       - CONFIG_DATABASE_USER=
@@ -85,7 +85,7 @@ services:
       - LOG_LEVEL=INFO
       - RUN_DATABASE_MIGRATION_ON_STARTUP=true
   faros-db:
-    image: airbyte/db:0.39.37-alpha
+    image: airbyte/db:0.40.9
     logging: *default-logging
     container_name: airbyte-db
     restart: unless-stopped
@@ -103,14 +103,14 @@ services:
     ports:
       - 5432:5432
   worker:
-    image: airbyte/worker:0.39.37-alpha
+    image: airbyte/worker:0.40.9
     logging: *default-logging
     container_name: airbyte-worker
     restart: unless-stopped
     depends_on:
       - faros-db
     environment:
-      - AIRBYTE_VERSION=0.39.37-alpha
+      - AIRBYTE_VERSION=0.40.9
       - AUTO_DISABLE_FAILING_CONNECTIONS=false
       - CONFIG_DATABASE_PASSWORD=
       - CONFIG_DATABASE_URL=
@@ -121,6 +121,7 @@ services:
       - DATABASE_URL=jdbc:postgresql://faros-db:5432/airbyte
       - DATABASE_USER=docker
       - DEPLOYMENT_MODE=
+      - INTERNAL_API_HOST=airbyte-server:8001
       - JOBS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION=0.29.15.001
       - JOB_MAIN_CONTAINER_CPU_LIMIT
       - JOB_MAIN_CONTAINER_CPU_REQUEST
@@ -129,10 +130,15 @@ services:
       - LOCAL_DOCKER_MOUNT=/tmp/airbyte_local
       - LOCAL_ROOT=/tmp/airbyte_local
       - LOG_LEVEL=INFO
+      - LOG_CONNECTOR_MESSAGES=
       - MAX_CHECK_WORKERS=5
       - MAX_DISCOVER_WORKERS=5
       - MAX_SPEC_WORKERS=5
       - MAX_SYNC_WORKERS=5
+      - NORMALIZATION_JOB_MAIN_CONTAINER_MEMORY_LIMIT=
+      - NORMALIZATION_JOB_MAIN_CONTAINER_MEMORY_REQUEST=
+      - NORMALIZATION_JOB_MAIN_CONTAINER_CPU_LIMIT=
+      - NORMALIZATION_JOB_MAIN_CONTAINER_CPU_REQUEST=
       - SECRET_PERSISTENCE=NONE
       - SYNC_JOB_MAX_ATTEMPTS=1
       - SYNC_JOB_MAX_TIMEOUT_DAYS=1
@@ -150,13 +156,16 @@ services:
       - ACTIVITY_INITIAL_DELAY_BETWEEN_ATTEMPTS_SECONDS=
       - ACTIVITY_MAX_DELAY_BETWEEN_ATTEMPTS_SECONDS=
       - WORKFLOW_FAILURE_RESTART_DELAY_SECONDS=
-      - USE_STREAM_CAPABLE_STATE=false
+      - USE_STREAM_CAPABLE_STATE=true
+      - MICRONAUT_ENVIRONMENTS=control
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - workspace:/tmp/workspace
       - tmp:/tmp/airbyte_local
+    ports:
+      - 9000:9000
   server:
-    image: airbyte/server:0.39.37-alpha
+    image: airbyte/server:0.40.9
     logging: *default-logging
     container_name: airbyte-server
     depends_on:
@@ -164,7 +173,7 @@ services:
     restart: unless-stopped
     environment:
       - AIRBYTE_ROLE=
-      - AIRBYTE_VERSION=0.39.37-alpha
+      - AIRBYTE_VERSION=0.40.9
       - CONFIG_DATABASE_PASSWORD=
       - CONFIG_DATABASE_URL=
       - CONFIG_DATABASE_USER=
@@ -183,6 +192,8 @@ services:
       - SECRET_PERSISTENCE=NONE
       - TEMPORAL_HOST=airbyte-temporal:7233
       - TRACKING_STRATEGY=logging
+      - JOB_ERROR_REPORTING_STRATEGY=
+      - JOB_ERROR_REPORTING_SENTRY_DSN=
       - WEBAPP_URL=http://localhost:8000/
       - WORKER_ENVIRONMENT=docker
       - WORKSPACE_ROOT=/tmp/workspace
@@ -193,7 +204,7 @@ services:
       - data:/data
       - tmp:/tmp/airbyte_local
   webapp:
-    image: airbyte/webapp:0.39.37-alpha
+    image: airbyte/webapp:0.40.9
     logging: *default-logging
     container_name: airbyte-webapp
     restart: unless-stopped
@@ -201,11 +212,9 @@ services:
       - 8000:80
     environment:
       - AIRBYTE_ROLE=
-      - AIRBYTE_VERSION=0.39.37-alpha
+      - AIRBYTE_VERSION=0.40.9
       - API_URL=/api/v1/
-      - FULLSTORY=
       - INTERNAL_API_HOST=airbyte-server:8001
-      - IS_DEMO=
       - OPENREPLAY=
       - PAPERCUPS_STORYTIME=disabled
       - TRACKING_STRATEGY=logging
@@ -215,7 +224,7 @@ services:
       - worker
       - airbyte-temporal
   airbyte-temporal:
-    image: airbyte/temporal:0.39.37-alpha
+    image: airbyte/temporal:0.40.9
     logging: *default-logging
     container_name: airbyte-temporal
     restart: unless-stopped
@@ -231,6 +240,22 @@ services:
       - POSTGRES_USER=docker
     volumes:
       - tmp:/etc/temporal/config/dynamicconfig
+  airbyte-cron:
+    image: airbyte/cron:0.40.9
+    logging: *default-logging
+    container_name: airbyte-cron
+    restart: unless-stopped
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - LOG_LEVEL=INFO
+      - POSTGRES_PWD=docker
+      - POSTGRES_SEEDS=faros-db
+      - POSTGRES_USER=docker
+      - TEMPORAL_HISTORY_RETENTION_IN_DAYS=
+      - WORKSPACE_ROOT=/tmp/workspace
+    volumes:
+      - workspace:/tmp/workspace
   
   # Other services
   hasura:

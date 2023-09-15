@@ -45,7 +45,7 @@ export class AirbyteInit {
     );
   }
 
-  static makeSegmentUser(): SegmentUser {
+  static makeSegmentUser(): SegmentUser | undefined {
     const version = process.env.FAROS_INIT_VERSION || '';
     const source = process.env.FAROS_START_SOURCE || '';
     const envEmail = process.env.FAROS_EMAIL;
@@ -57,23 +57,18 @@ export class AirbyteInit {
         source,
       };
     }
-    const email = 'anonymous@anonymous.me';
-    if (process.env.HOSTNAME) {
-      return {
-        userId: uuidv5(process.env.HOSTNAME, UUID_NAMESPACE),
-        email,
-        version,
-        source,
-      };
-    }
-    return {userId: uuidv4(), email, version, source};
+   return undefined;
   }
 
   static sendIdentityAndStartEvent(
-    segmentUser: SegmentUser,
+    segmentUser: SegmentUser | undefined,
     host?: string | undefined
   ): Promise<void> {
-    const analytics = new Analytics('YEu7VC65n9dIR85pQ1tgV2RHQHjo2bwn', {
+    if (segmentUser === undefined) {
+      logger.info('Skipping Telemetry');
+      return Promise.resolve();
+    }
+    const analytics = new Analytics('YFJm3AJBKwOm0Hp4o4vD9iqnZN5bVn45', {
       // Segment host is used for testing purposes only
       host,
     });
@@ -82,18 +77,18 @@ export class AirbyteInit {
         analytics
           .identify(
             {
-              userId: segmentUser.userId,
+              userId: segmentUser?.userId,
               traits: {
-                email: segmentUser.email,
-                version: segmentUser.version,
-                source: segmentUser.source,
+                email: segmentUser?.email,
+                version: segmentUser?.version,
+                source: segmentUser?.source,
               },
             },
             callback
           )
           .track(
             {
-              userId: segmentUser.userId,
+              userId: segmentUser?.userId,
               event: 'Start',
             },
             callback
@@ -117,7 +112,7 @@ export class AirbyteInit {
   }
 
   async setupWorkspace(
-    segmentUser: SegmentUser,
+    segmentUser: SegmentUser | undefined,
     hasuraAdminSecret: string,
     airbyteDestinationHasuraUrl: string,
     forceSetup?: boolean
@@ -149,11 +144,13 @@ export class AirbyteInit {
     logger.info('faros connectors version: ' + farosConnectorsVersion);
     const airbyteInitV40: AirbyteInitV40 = new AirbyteInitV40(this.api);
     try {
+      // destination spec expects uuid for segment_user_id
+      // empty string fails validation
       await airbyteInitV40.init(
         farosConnectorsVersion,
         airbyteDestinationHasuraUrl,
         hasuraAdminSecret,
-        segmentUser.userId
+        segmentUser?.userId ?? "00000000-0000-0000-0000-000000000000"
       );
     } catch (error) {
       throw new VError(`Failed to set up workspace: ${error}`);

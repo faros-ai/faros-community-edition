@@ -1,11 +1,10 @@
-import Analytics from 'analytics-node';
+import {Analytics} from '@segment/analytics-node';
 import retry from 'async-retry';
 import axios, {AxiosInstance} from 'axios';
 import {InvalidArgumentError, program} from 'commander';
 import {find} from 'lodash';
 import pino from 'pino';
-import util from 'util';
-import {v4 as uuidv4, v5 as uuidv5} from 'uuid';
+import {v5 as uuidv5} from 'uuid';
 import {VError} from 'verror';
 
 import {AirbyteInitV40} from './initv40';
@@ -57,10 +56,10 @@ export class AirbyteInit {
         source,
       };
     }
-   return undefined;
+    return undefined;
   }
 
-  static sendIdentityAndStartEvent(
+  static async sendIdentityAndStartEvent(
     segmentUser: SegmentUser | undefined,
     host?: string | undefined
   ): Promise<void> {
@@ -68,47 +67,27 @@ export class AirbyteInit {
       logger.info('Skipping Telemetry');
       return Promise.resolve();
     }
-    const analytics = new Analytics('YFJm3AJBKwOm0Hp4o4vD9iqnZN5bVn45', {
+    const analytics = new Analytics({
+      writeKey: 'YFJm3AJBKwOm0Hp4o4vD9iqnZN5bVn45',
       // Segment host is used for testing purposes only
       host,
     });
-    const fn = (callback: ((err: Error) => void) | undefined): void => {
-      try {
-        analytics
-          .identify(
-            {
-              userId: segmentUser?.userId,
-              traits: {
-                email: segmentUser?.email,
-                version: segmentUser?.version,
-                source: segmentUser?.source,
-              },
-            },
-            callback
-          )
-          .track(
-            {
-              userId: segmentUser?.userId,
-              event: 'Start',
-            },
-            callback
-          )
-          .flush(callback);
-      } catch (err) {
-        if (callback && err instanceof Error) {
-          callback(err);
-          logger.error(
-            `Failed to send identity and start event: ${err.message}`
-          );
-        }
+    try {
+      analytics.identify({
+        userId: segmentUser?.userId,
+        traits: {
+          email: segmentUser?.email,
+          version: segmentUser?.version,
+          source: segmentUser?.source,
+        },
+      });
+      analytics.track({userId: segmentUser?.userId, event: 'Start'});
+      await analytics.closeAndFlush();
+    } catch (err) {
+      if (err instanceof Error) {
+        logger.error(`Failed to send identity and start event: ${err.message}`);
       }
-    };
-
-    return util
-      .promisify(fn)()
-      .catch((err) =>
-        logger.error(`Failed to send identity and start event: ${err.message}`)
-      );
+    }
   }
 
   async setupWorkspace(
@@ -150,7 +129,7 @@ export class AirbyteInit {
         farosConnectorsVersion,
         airbyteDestinationHasuraUrl,
         hasuraAdminSecret,
-        segmentUser?.userId ?? "00000000-0000-0000-0000-000000000000"
+        segmentUser?.userId ?? '00000000-0000-0000-0000-000000000000'
       );
     } catch (error) {
       throw new VError(`Failed to set up workspace: ${error}`);

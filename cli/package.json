@@ -94,12 +94,10 @@
       ".js"
     ],
     "testTimeout": 5000,
-    "transform": {
-      "^.+\\.ts$": [
-        "ts-jest", {
-          "tsconfig": "test/tsconfig.json"
-        }
-      ]
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "test/tsconfig.json"
+      }
     }
   }
 }

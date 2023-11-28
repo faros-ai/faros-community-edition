@@ -12,10 +12,10 @@
     "fix": "prettier --write 'src/**/*.ts' 'test/**/*.ts' && npm run lint -- --fix",
     "lint": "eslint 'src/**/*.ts' 'test/**/*.ts'",
     "prepare": "npm run build",
-    "test": "jest --verbose --color",
-    "test:integration": "jest test/integration-tests/*.ts --verbose --color",
-    "test:unit": "jest test/unit-tests/**/*.ts --verbose --color",
-    "test-cov": "jest --coverage --verbose --color",
+    "test": "node --no-experimental-fetch node_modules/.bin/jest --verbose --color",
+    "test:integration": "node --no-experimental-fetch node_modules/.bin/jest test/integration-tests/*.ts --verbose --color",
+    "test:unit": "node --no-experimental-fetch node_modules/.bin/jest test/unit-tests/**/*.ts --verbose --color",
+    "test-cov": "node --no-experimental-fetch node_modules/.bin/jest --coverage --verbose --color",
     "watch": "tsc -b -w src test"
   },
   "files": [

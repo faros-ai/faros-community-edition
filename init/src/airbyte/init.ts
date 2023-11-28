@@ -4,7 +4,6 @@ import axios, {AxiosInstance} from 'axios';
 import {InvalidArgumentError, program} from 'commander';
 import {find} from 'lodash';
 import pino from 'pino';
-import util from 'util';
 import {v5 as uuidv5} from 'uuid';
 import {VError} from 'verror';
 
@@ -60,7 +59,7 @@ export class AirbyteInit {
     return undefined;
   }
 
-  static sendIdentityAndStartEvent(
+  static async sendIdentityAndStartEvent(
     segmentUser: SegmentUser | undefined,
     host?: string | undefined
   ): Promise<void> {
@@ -73,32 +72,22 @@ export class AirbyteInit {
       // Segment host is used for testing purposes only
       host,
     });
-    const fn = (): void => {
-      try {
-        analytics.identify({
-          userId: segmentUser?.userId,
-          traits: {
-            email: segmentUser?.email,
-            version: segmentUser?.version,
-            source: segmentUser?.source,
-          },
-        });
-        analytics.track({userId: segmentUser?.userId, event: 'Start'});
-        analytics.closeAndFlush();
-      } catch (err) {
-        if (err instanceof Error) {
-          logger.error(
-            `Failed to send identity and start event: ${err.message}`
-          );
-        }
+    try {
+      analytics.identify({
+        userId: segmentUser?.userId,
+        traits: {
+          email: segmentUser?.email,
+          version: segmentUser?.version,
+          source: segmentUser?.source,
+        },
+      });
+      analytics.track({userId: segmentUser?.userId, event: 'Start'});
+      await analytics.closeAndFlush();
+    } catch (err) {
+      if (err instanceof Error) {
+        logger.error(`Failed to send identity and start event: ${err.message}`);
       }
-    };
-
-    return util
-      .promisify<void>(fn)()
-      .catch((err) =>
-        logger.error(`Failed to send identity and start event: ${err.message}`)
-      );
+    }
   }
 
   async setupWorkspace(

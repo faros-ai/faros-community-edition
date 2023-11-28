@@ -16,7 +16,7 @@ describe('airbyte', () => {
         bodies.push(body);
         return body;
       })
-      .twice()
+      .once()
       .reply(200, {});
 
     const email = 'test@test.com';
@@ -33,36 +33,32 @@ describe('airbyte', () => {
     await AirbyteInit.sendIdentityAndStartEvent(segmentUser, host);
     analyticsMock.done();
 
-    expect(bodies.length === 2);
+    expect(bodies.length).toEqual(1);
     expect(bodies[0]).toStrictEqual({
       batch: [
         {
           _metadata: expect.anything(),
           context: expect.anything(),
+          integrations: expect.anything(),
           messageId: expect.anything(),
           timestamp: expect.anything(),
           traits: {email, version, source},
           type: 'identify',
           userId,
         },
-      ],
-      sentAt: expect.anything(),
-      timestamp: expect.anything(),
-    });
-    expect(bodies[1]).toStrictEqual({
-      batch: [
         {
           _metadata: expect.anything(),
           context: expect.anything(),
-          messageId: expect.anything(),
-          timestamp: expect.anything(),
           event: 'Start',
+          integrations: expect.anything(),
+          messageId: expect.anything(),
+          properties: expect.anything(),
+          timestamp: expect.anything(),
           type: 'track',
           userId,
         },
       ],
       sentAt: expect.anything(),
-      timestamp: expect.anything(),
     });
   });
 });

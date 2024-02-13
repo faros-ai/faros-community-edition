@@ -83,6 +83,7 @@ jobs:
       - name: Show services
         run: docker compose ps -a
 
+      # See comment on same step in PR workflow
       - name: Wait for init to complete
         uses: nick-fields/retry@v3
         with:

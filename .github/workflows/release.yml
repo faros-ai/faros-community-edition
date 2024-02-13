@@ -83,11 +83,16 @@ jobs:
       - name: Show services
         run: docker compose ps -a
 
+      # See comment on same step in PR workflow
       - name: Wait for init to complete
-        run: |
-          CONTAINER_EXIT_CODE=$(docker wait faros-community-edition-faros-init-1)
-          echo "Faros init container exit code was ${CONTAINER_EXIT_CODE}"
-          [[ $CONTAINER_EXIT_CODE -eq 0 ]]
+        uses: nick-fields/retry@v3
+        with:
+          max_attempts: 2
+          timeout_minutes: 5
+          command: |
+            CONTAINER_EXIT_CODE=$(docker wait faros-community-edition-faros-init-1)
+            echo "Faros init container exit code was ${CONTAINER_EXIT_CODE}"
+            [[ $CONTAINER_EXIT_CODE -eq 0 ]]
 
       - name: Get Hasura Admin Secret
         run: |

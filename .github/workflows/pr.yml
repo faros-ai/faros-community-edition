@@ -63,11 +63,17 @@ jobs:
       - name: Show services
         run: docker compose ps -a
 
+      # The init container is configured to restart 3 times on failure, but
+      # docker wait only uses the first exit code. This container's entrypoint
+      # always fails on its first attempt, but usually one retry is sufficient.
       - name: Wait for init to complete
-        run: |
-          CONTAINER_EXIT_CODE=$(docker wait faros-community-edition-faros-init-1)
-          echo "Faros init container exit code was ${CONTAINER_EXIT_CODE}"
-          [[ $CONTAINER_EXIT_CODE -eq 0 ]]
+        uses: nick-fields/retry@v3
+        with:
+          max_attempts: 2
+          command: |
+            CONTAINER_EXIT_CODE=$(docker wait faros-community-edition-faros-init-1)
+            echo "Faros init container exit code was ${CONTAINER_EXIT_CODE}"
+            [[ $CONTAINER_EXIT_CODE -eq 0 ]]
 
       - name: Get Hasura Admin Secret
         run: |

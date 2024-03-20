@@ -13,16 +13,16 @@ Running the script:
 $ npm i # Install all dependencies, only needed once.
 ```
 
-### :bullettrain_side: Uploading mock data
+### :bullettrain_side: Uploading mock data (assuming you use the default Hasura admin password)
 ```sh
-$ ./bin/mock-data upload
+$ ./bin/mock-data upload --admin-secret admin
 ```
 
 Access the Welcome dashboard in [Metabase](http://localhost:3000/dashboard/1) on port 3000 to start exploring the mock data.
 
-### :x: Deleting mock data
+### :x: Deleting mock data (assuming you use the default Hasura admin password)
 ```sh
-$ ./bin/mock-data delete
+$ ./bin/mock-data delete --admin-secret admin
 ```
 > :clipboard: Note: You can also optionally specify the Hasura service url using the `-u` flag. **If this flag is not
 specified, the script will upload to the the default service url http://localhost:8080**

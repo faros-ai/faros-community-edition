@@ -13,7 +13,7 @@ Fixes # (issue)
 
 # Checklist
 (Delete what does not apply)
-- [ ] Have you checked to there aren't other open Pull Requests for the same update/change?
+- [ ] Have you checked that there aren't other open Pull Requests for the same update/change?
 - [ ] Have you lint your code locally before submission?
 - [ ] Have you added an explanation of what your changes do and why you'd like us to include them?
 - [ ] Have you written new tests for your core changes, as applicable?

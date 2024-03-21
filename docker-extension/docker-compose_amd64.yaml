@@ -16,7 +16,7 @@ services:
       - faros-db
     environment:
       AIRBYTE_API_CALLS_CONCURRENCY:
-      AIRBYTE_DESTINATION_HASURA_URL: "http://localhost:8080"
+      AIRBYTE_DESTINATION_HASURA_URL: "http://127.0.0.1:8080"
       AIRBYTE_FORCE_SETUP: false
       AIRBYTE_URL: "http://airbyte-webapp:80"
       FAROS_EMAIL:

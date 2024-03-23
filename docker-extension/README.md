@@ -4,7 +4,7 @@ See Docker extension SDK, especially the UI and VM sections of the metadata.
 * The difference between the docker-compose files is the metabase image used.
 * The docker-compose files are copies of the original one with all parameters set. It is not possible to easily pass environment variables to the extension.
 
-## Installation
+## Installation (for dev purposes)
 
 1. Build Docker image
 
@@ -23,6 +23,12 @@ See Docker extension SDK, especially the UI and VM sections of the metadata.
   ```shell
   docker extension rm farosai/faros-ce-docker-extension:latest
   ```
+
+## Publishing (Faros-only)
+
+```shell
+make push-extension TAG=X.Y.Z
+```
 
 ## Further reading
 Docker extension SDK, especially the UI and VM sections of the metadata

@@ -26,7 +26,6 @@ const DEFAULT_API_URL = 'https://api.bitbucket.org/2.0';
 interface BitbucketConfig {
   readonly airbyte: Airbyte;
   readonly metabase: Metabase;
-  readonly serverUrl?: string;
   readonly username?: string;
   readonly password?: string;
   readonly token?: string;
@@ -69,8 +68,6 @@ export function makeBitbucketCommand(): Command {
 
 export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
   await cfg.airbyte.waitUntilHealthy();
-
-  const serverUrl = DEFAULT_API_URL;
 
   const username =
     cfg.username ||
@@ -168,13 +165,13 @@ export async function runBitbucket(cfg: BitbucketConfig): Promise<void> {
     const bitbucketSourceId = await cfg.airbyte.findFarosSource('Bitbucket');
     await cfg.airbyte.setupSource({
       connectionConfiguration: {
-        serverUrl,
+        api_url: DEFAULT_API_URL,
         workspaces: [workspaces],
         repositories: repos,
         cutoff_days: cfg.cutoffDays || DEFAULT_CUTOFF_DAYS,
         username,
         password,
-        pagelen: 10,
+        page_size: 10,
       },
       name: 'Bitbucket',
       sourceId: bitbucketSourceId,

@@ -18,8 +18,8 @@
   tombstone: false
 - name: "Bitbucket"
   configuration:
-    pagelen: 100
-    serverUrl: "https://api.bitbucket.org/2.0"
+    page_size: 100
+    api_url: "https://api.bitbucket.org/2.0"
     workspaces: []
     cutoff_days: 90
   tombstone: false

@@ -309,8 +309,12 @@ export class AirbyteInitV40 {
     });
     logger.info('sourceDefinitionId for ' + name + ': ' + sourceDefinitionId);
 
+    // Prefix the name with "Faros" for sources that are also available in community
+    const prefixedName = ['GitHub', 'Jira'].includes(name)
+      ? `Faros${name}`
+      : name;
     await this.createAndConnectSource(
-      name,
+      prefixedName,
       workspaceId,
       farosDestinationId,
       yamlSourceData,
@@ -414,6 +418,7 @@ export class AirbyteInitV40 {
       'SquadCast',
       'Statuspage',
       'VictorOps',
+      'GitHub',
     ];
     for (const farosSource of farosSources) {
       await this.handleFarosSource(

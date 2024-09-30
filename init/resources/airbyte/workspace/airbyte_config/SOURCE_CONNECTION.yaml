@@ -8,7 +8,7 @@
       personal_access_token: ""
     page_size_for_large_streams: 10
   tombstone: false
-- name: "FarosGitHub"
+- name: "GitHub (Faros)"
   configuration:
     authentication:
       option_title: "Personal Access Token"

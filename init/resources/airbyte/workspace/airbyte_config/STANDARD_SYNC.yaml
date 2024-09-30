@@ -1341,7 +1341,7 @@
   manual: true
   resourceRequirements: {}
 - prefix: "faros_github_source__github__"
-  name: "FarosGitHub - Faros"
+  name: "GitHub (Faros) - Faros"
   catalog:
     streams:
     - stream:

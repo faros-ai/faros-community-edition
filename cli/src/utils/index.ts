@@ -14,6 +14,7 @@ export enum Emoji {
   EMPTY = '🪹',
   STOPWATCH = '⏱',
   HELLO = '👋',
+  WARNING = '⚠️',
 }
 
 function processEmoji(...args: any[]): any[] {
@@ -80,4 +81,23 @@ export function parseIntegerPositive(value: string): number {
 export async function terminalLink(text: string, url: string): Promise<string> {
   const terminalLink = (await dynamicImport('terminal-link')).default;
   return terminalLink(text, url);
+}
+
+export async function runAndValidateInput(
+  promptFunction: (...args: any[]) => Promise<any>,
+  promptOptions: any,
+  validationMessage: string,
+  validationFunction: (input: any) => boolean = (input: any): boolean => !!input
+): Promise<any> {
+  let input;
+  let isValid = false;
+  while (!isValid) {
+    input = await promptFunction(promptOptions);
+    if (validationFunction(input)) {
+      isValid = true;
+    } else {
+      display(validationMessage, Emoji.WARNING);
+    }
+  }
+  return input;
 }

@@ -1340,3 +1340,287 @@
   status: "active"
   manual: true
   resourceRequirements: {}
+- prefix: "faros_github_source__github__"
+  name: "GitHub (Faros) - Faros"
+  catalog:
+    streams:
+    - stream:
+        name: "faros_commits"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "committer"
+        - "date"
+        source_defined_primary_key:
+        - - "oid"
+      sync_mode: "incremental"
+      cursor_field:
+      - "committer"
+      - "date"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "oid"
+    - stream:
+        name: "faros_contributors_stats"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "org"
+        - - "repo"
+        - - "user"
+        - - "login"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "overwrite"
+      primary_key:
+      - - "org"
+      - - "repo"
+      - - "user"
+      - - "login"
+    - stream:
+        name: "faros_copilot_seats"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "org"
+        - - "user"
+      sync_mode: "incremental"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "org"
+      - - "user"
+    - stream:
+        name: "faros_copilot_usage"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "org"
+        - - "day"
+      sync_mode: "incremental"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "org"
+      - - "day"
+    - stream:
+        name: "faros_issues"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "updatedAt"
+        source_defined_primary_key:
+        - - "databaseId"
+      sync_mode: "incremental"
+      cursor_field:
+      - "updatedAt"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "databaseId"
+    - stream:
+        name: "faros_labels"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "org"
+        - - "repo"
+        - - "name"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "overwrite"
+      primary_key:
+      - - "org"
+      - - "repo"
+      - - "name"
+    - stream:
+        name: "faros_organizations"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "login"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "overwrite"
+      primary_key:
+      - - "login"
+    - stream:
+        name: "faros_outside_collaborators"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "org"
+        - - "login"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "overwrite"
+      primary_key:
+      - - "org"
+      - - "login"
+    - stream:
+        name: "faros_projects"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "overwrite"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "faros_pull_requests"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "updatedAt"
+        source_defined_primary_key:
+        - - "org"
+        - - "repo"
+        - - "number"
+      sync_mode: "incremental"
+      cursor_field:
+      - "updatedAt"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "org"
+      - - "repo"
+      - - "number"
+    - stream:
+        name: "faros_pull_request_comments"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        source_defined_cursor: true
+        default_cursor_field:
+        - "updated_at"
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "incremental"
+      cursor_field:
+      - "updated_at"
+      destination_sync_mode: "append"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "faros_releases"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "id"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "overwrite"
+      primary_key:
+      - - "id"
+    - stream:
+        name: "faros_repositories"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "org"
+        - - "name"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "overwrite"
+      primary_key:
+      - - "org"
+      - - "name"
+    - stream:
+        name: "faros_saml_sso_users"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "org"
+        - - "user"
+        - - "login"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "overwrite"
+      primary_key:
+      - - "org"
+      - - "user"
+      - - "login"
+    - stream:
+        name: "faros_tags"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "name"
+        - - "commit"
+        - - "sha"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "overwrite"
+      primary_key:
+      - - "name"
+      - - "commit"
+      - - "sha"
+    - stream:
+        name: "faros_teams"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "org"
+        - - "slug"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "overwrite"
+      primary_key:
+      - - "org"
+      - - "slug"
+    - stream:
+        name: "faros_team_memberships"
+        supported_sync_modes:
+        - "full_refresh"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "org"
+        - - "team"
+        - - "user"
+        - - "login"
+      sync_mode: "full_refresh"
+      cursor_field: []
+      destination_sync_mode: "overwrite"
+      primary_key:
+      - - "org"
+      - - "team"
+      - - "user"
+      - - "login"
+    - stream:
+        name: "faros_users"
+        supported_sync_modes:
+        - "full_refresh"
+        - "incremental"
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - "org"
+        - - "login"
+      sync_mode: "incremental"
+      cursor_field: []
+      destination_sync_mode: "append"
+      primary_key:
+      - - "org"
+      - - "login"
+  status: "active"
+  manual: true
+  resourceRequirements: {}

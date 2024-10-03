@@ -298,6 +298,9 @@ export class AirbyteInitV40 {
     yamlSourceData: any,
     yamlCatalogData: any
   ): Promise<void> {
+    // Prefix the name with "Faros" for sources that are also available in community
+    const nameWithSuffix = ['GitHub'].includes(name) ? `${name} (Faros)` : name;
+
     const sourceDefinitionId = await this.createCustomSourceDefinition({
       workspaceId,
       sourceDefinition: {
@@ -307,10 +310,10 @@ export class AirbyteInitV40 {
         documentationUrl: 'https://docs.faros.ai',
       },
     });
-    logger.info('sourceDefinitionId for ' + name + ': ' + sourceDefinitionId);
+    logger.info('sourceDefinitionId for ' + nameWithSuffix + ': ' + sourceDefinitionId);
 
     await this.createAndConnectSource(
-      name,
+      nameWithSuffix,
       workspaceId,
       farosDestinationId,
       yamlSourceData,
@@ -414,6 +417,7 @@ export class AirbyteInitV40 {
       'SquadCast',
       'Statuspage',
       'VictorOps',
+      'GitHub',
     ];
     for (const farosSource of farosSources) {
       await this.handleFarosSource(

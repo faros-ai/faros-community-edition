@@ -3,6 +3,7 @@ import {VError} from 'verror';
 
 import {Airbyte} from './airbyte/airbyte-client';
 import {makeBitbucketCommand, runBitbucket} from './bitbucket/run';
+import {makeFarosGithubCommand, runFarosGithub} from './faros-github/run';
 import {makeGithubCommand, runGithub} from './github/run';
 import {makeGitlabCommand, runGitlab} from './gitlab/run';
 import {makeJiraCommand, runJira} from './jira/run';
@@ -25,6 +26,7 @@ export function wrapApiError(cause: unknown, msg: string): Error {
 // eslint-disable-next-line require-await
 export async function main(): Promise<void> {
   program.addCommand(makeGithubCommand());
+  program.addCommand(makeFarosGithubCommand());
   program.addCommand(makeGitlabCommand());
   program.addCommand(makeBitbucketCommand());
   program.addCommand(makeJiraCommand());
@@ -51,6 +53,7 @@ export async function main(): Promise<void> {
           message: 'Select a source',
           choices: [
             'GitHub (Cloud)',
+            'FarosGitHub (Cloud / Server)',
             'GitLab (Cloud / Server)',
             'Bitbucket (Cloud)',
             'Jira (Cloud)',
@@ -61,6 +64,9 @@ export async function main(): Promise<void> {
         switch (source) {
           case 'GitHub (Cloud)':
             await runGithub({airbyte, metabase});
+            break;
+          case 'FarosGitHub (Cloud / Server)':
+            await runFarosGithub({airbyte, metabase});
             break;
           case 'GitLab (Cloud / Server)':
             await runGitlab({airbyte, metabase});

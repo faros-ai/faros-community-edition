@@ -1,6 +1,6 @@
 FROM flyway/flyway:8.5.10 as faros-init
 USER root
-RUN curl -fsSL https://deb.nodesource.com/setup_17.x | bash -
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get update \
   && apt-get -y install jq nodejs postgresql-client netcat wget \
   && apt-get clean

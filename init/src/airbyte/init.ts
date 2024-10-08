@@ -8,6 +8,7 @@ import {v5 as uuidv5} from 'uuid';
 import {VError} from 'verror';
 
 import {AirbyteInitV40} from './initv40';
+import {makeAxiosInstanceWithRetry} from 'faros-js-client';
 
 const logger = pino({
   name: 'airbyte-init',
@@ -188,7 +189,7 @@ async function main(): Promise<void> {
   }
 
   const airbyte = new AirbyteInit(
-    axios.create({
+    makeAxiosInstanceWithRetry({
       baseURL: `${options.airbyteUrl}/api/v1`,
     })
   );

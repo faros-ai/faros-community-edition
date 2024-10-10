@@ -304,7 +304,7 @@ export class AirbyteInitV40 {
     const sourceDefinitionId = await this.createCustomSourceDefinition({
       workspaceId,
       sourceDefinition: {
-        name,
+        name: nameWithSuffix,
         dockerRepository: 'farosai/airbyte-' + name.toLowerCase() + '-source',
         dockerImageTag: farosConnectorsVersion,
         documentationUrl: 'https://docs.faros.ai',

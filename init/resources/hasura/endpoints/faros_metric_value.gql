@@ -1,0 +1,29 @@
+mutation insert_faros_metric_value(
+  $data_uid: String!
+  $data_computedAt: timestamptz!
+  $data_value: String!
+  $data_definition: String!
+  $data_origin: String
+) {
+  insert_faros_MetricValue_one(
+    object: {
+      uid: $data_uid
+      computedAt: $data_computedAt
+      value: $data_value
+      definition: $data_definition
+      origin: $data_origin
+    }
+    on_conflict: {
+      constraint: faros_MetricValue_pkey
+      update_columns: [
+        computedAt
+        value
+        definition
+        origin
+        refreshedAt
+      ]
+    }
+  ) {
+    id
+  }
+}

@@ -265,6 +265,7 @@ export class Hasura {
     });
   }
 
+  // currently excludes branch, repo, file, and charactersAdded
   async postUserToolUsage(
     tool: any,
     usedAt: DateTime,

@@ -1,0 +1,115 @@
+mutation insert_vcs_user_tool_usage(
+  $data_user_uid: String!
+  $data_user_source: String!
+  $data_org_uid: String!
+  $data_org_source: String!
+  $data_tool: jsonb!
+  $data_used_at: timestamptz!
+  $data_recorded_at: timestamptz
+  $data_branch_name: String
+  $data_branch_repo_name: String
+  $data_branch_org_uid: String
+  $data_branch_org_source: String
+  $data_repo_name: String
+  $data_repo_org_uid: String
+  $data_repo_org_source: String
+  $data_file_uid: String
+  $data_file_repo_name: String
+  $data_file_repo_org_uid: String
+  $data_file_repo_org_source: String
+  $data_characters_added: Int
+  $data_origin: String
+) {
+  insert_vcs_UserToolUsage_one(
+    object: {
+      vcs_UserTool: {
+        data: {
+        	vcs_User: {
+            data: {
+              uid: $data_user_uid
+          		source: $data_user_source
+            }
+            on_conflict: {constraint: vcs_User_pkey, update_columns: refreshedAt}
+          }
+          vcs_Organization: {
+            data: {
+              uid: $data_org_uid
+              source: $data_org_source
+            }
+            on_conflict: {constraint: vcs_Organization_pkey, update_columns: refreshedAt}
+          }
+          tool: $data_tool
+        }
+        on_conflict: {constraint: vcs_UserTool_pkey, update_columns: refreshedAt}
+      }
+      usedAt: $data_used_at
+      recordedAt: $data_recorded_at
+      vcs_Branch: {
+        data: {
+          name: $data_branch_name
+          vcs_Repository: {
+            data: {
+              name: $data_branch_repo_name
+              vcs_Organization: {
+                data: {
+                  uid: $data_branch_org_uid
+                  source: $data_branch_org_source
+                }
+                on_conflict: {constraint: vcs_Organization_pkey, update_columns:refreshedAt}
+              }
+            }
+            on_conflict: {constraint: vcs_Repository_pkey, update_columns: refreshedAt}
+          }
+        }
+        on_conflict: {constraint: vcs_Branch_pkey, update_columns: refreshedAt}
+      }
+      vcs_Repository: {
+        data: {
+          name: $data_repo_name
+          vcs_Organization: {
+            data: {
+              uid: $data_repo_org_uid
+              source: $data_repo_org_source
+            }
+            on_conflict: {constraint: vcs_Organization_pkey, update_columns:refreshedAt}
+          }
+        }
+        on_conflict: {constraint: vcs_Repository_pkey, update_columns: refreshedAt}
+      }
+      vcs_File: {
+        data: {
+          uid: $data_file_uid
+          vcs_Repository: {
+            data: {
+              name: $data_file_repo_name
+              vcs_Organization: {
+                data: {
+                  uid: $data_file_repo_org_uid
+                  source: $data_file_repo_org_source
+                }
+                on_conflict: {constraint: vcs_Organization_pkey, update_columns:refreshedAt}
+              }
+            }
+            on_conflict: {constraint: vcs_Repository_pkey, update_columns: refreshedAt}
+          }
+        }
+      }
+      charactersAdded: $data_characters_added
+      origin: $data_origin
+    }
+    on_conflict: {
+      constraint: vcs_UserToolUsage_pkey
+      update_columns: [
+        recordedAt
+        branch
+        repository
+        file
+        charactersAdded
+        origin
+        refreshedAt
+      ]
+    }
+  ) {
+    id
+  }
+}

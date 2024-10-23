@@ -85,57 +85,11 @@ export class MockData {
         num++;
       }
       await this.writeTasks(week, weekStart);
+      await this.writeCopilot(week, weekStart);
     }
-
-    // test writes
-    await this.hasura.postMetricDefinition(
-      'myuid',
-      'myname',
-      ORIGIN
-    );
-
-    await this.hasura.postMetricValue(
-      'uid',
-      DateTime.now(),
-      'value',
-      'DailyGeneratedLineCount_Discard',
-      ORIGIN
-    );
-
-    await this.hasura.postTag(
-      'uid',
-      'key',
-      'value',
-      ORIGIN
-    );
-
-    await this.hasura.postMetricValueTag(
-      {uid: 'uid', definition: 'myuid'},
-      'uid',
-      ORIGIN
-    );
-
-    await this.hasura.postUserTool(
-      {uid: 'octocat', source:'GitHub'},
-      {uid: 'github', source: 'GitHub'},
-      {category: 'GitHubCopilot'},
-      false,
-      DateTime.now(),
-      DateTime.now(),
-      ORIGIN
-    );
-
-    await this.hasura.postUserToolUsage(
-      {
-        user: {uid: 'octocat', source: 'GitHub'},
-        organization: {uid: 'github', source: 'GitHub'},
-        tool: {category: 'GitHubCopilot'}
-      },
-      DateTime.now(),
-      DateTime.now(),
-      ORIGIN,
-    );
   }
+
+  // TODO add deletes!!!!
 
   /**
    * Deletes mock data, i.e. data uploaded by the upload script of
@@ -359,5 +313,135 @@ export class MockData {
         ORIGIN
       );
     }
+  }
+
+  private async writeCopilot(weekNum: number, week: DateTime): Promise<void> {
+    // test writes
+    await this.hasura.postMetricDefinition(
+      'myuid',
+      'myname',
+      ORIGIN
+    );
+
+    await this.hasura.postMetricValue(
+      'uid',
+      DateTime.now(),
+      'value',
+      'DailyGeneratedLineCount_Discard',
+      ORIGIN
+    );
+
+    await this.hasura.postTag(
+      'uid',
+      'key',
+      'value',
+      ORIGIN
+    );
+
+    await this.hasura.postMetricValueTag(
+      {uid: 'uid', definition: 'myuid'},
+      'uid',
+      ORIGIN
+    );
+
+    await this.hasura.postUserTool(
+      {uid: 'octocat', source:'GitHub'},
+      {uid: 'github', source: 'GitHub'},
+      {category: 'GitHubCopilot'},
+      false,
+      DateTime.now(),
+      DateTime.now(),
+      ORIGIN
+    );
+
+    await this.hasura.postUserToolUsage(
+      {
+        user: {uid: 'octocat', source: 'GitHub'},
+        organization: {uid: 'github', source: 'GitHub'},
+        tool: {category: 'GitHubCopilot'}
+      },
+      DateTime.now(),
+      DateTime.now(),
+      ORIGIN,
+    );
+
+    const languageTags = [
+      'c++',
+      'go',
+      'java',
+      'python',
+      'ruby',
+      'scala',
+      'sql',
+      'typescript',
+      'xlsx',
+      'yaml',
+    ].map((lang) => {
+      return {
+        faros_Tag: {
+          uid: 'copilotLanguage__' + lang,
+          key: 'copilotLanguage',
+          value: lang,
+        },
+      };
+    });
+    for (const tag of languageTags) {
+      await this.hasura.postTag(
+        tag.faros_Tag.uid,
+        tag.faros_Tag.key,
+        tag.faros_Tag.value,
+        ORIGIN
+      );
+    }
+
+    const ideTags = ['jetbrains', 'neovim', 'vscode'].map((i) => {
+      return {
+        faros_Tag: {
+          uid: 'copilotEditor__' + i,
+          key: 'copilotEditor',
+          value: i,
+        },
+      };
+    });
+
+    for (const tag of [...languageTags, ...ideTags]) {
+      await this.hasura.postTag(
+        tag.faros_Tag.uid,
+        tag.faros_Tag.key,
+        tag.faros_Tag.value,
+        ORIGIN
+      );
+    }
+
+    const metricDefs = [
+      'DailyActiveUserTrend',
+      'DailyGeneratedLineCount_Accept',
+      'DailyGeneratedLineCount_Discard',
+      'DailySuggestionReferenceCount_Accept',
+      'DailySuggestionReferenceCount_Discard',
+      'DailyActiveChatUserTrend',
+      'DailyChatAcceptanceCount',
+      'DailyChatTurnCount',
+    ].map((d) => {
+      return {
+        faros_MetricDefinition: {
+          uid: d,
+          name: d,
+          valueType: {category: 'Numeric'},
+        },
+      };
+    });
+
+    for (const def of metricDefs) {
+      await this.hasura.postMetricDefinition(
+        def.faros_MetricDefinition.uid,
+        def.faros_MetricDefinition.name,
+        ORIGIN
+      );
+    }
+
+
+
+
   }
 }

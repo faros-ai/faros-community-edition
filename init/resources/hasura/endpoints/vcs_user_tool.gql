@@ -1,0 +1,47 @@
+mutation insert_vcs_user_tool(
+  $data_user_uid: String!
+  $data_user_source: String!
+  $data_org_uid: String!
+  $data_org_source: String!
+  $data_tool: jsonb!
+  $data_inactive: Boolean!
+  $data_started_at: timestamptz!
+  $data_ended_at: timestamptz!
+  $data_origin: String
+) {
+  insert_vcs_UserTool_one(
+    object: {
+      vcs_User: {
+        data: {
+          uid: $data_user_uid
+          source: $data_user_source
+        }
+        on_conflict: {constraint: vcs_User_pkey, update_columns: refreshedAt}
+      }
+      vcs_Organization: {
+        data: {
+          uid: $data_org_uid
+          source: $data_org_source
+        }
+        on_conflict: {constraint: vcs_Organization_pkey, update_columns: refreshedAt}
+      }
+      tool: $data_tool
+      inactive: $data_inactive
+      startedAt: $data_started_at
+      endedAt: $data_ended_at
+      origin: $data_origin
+    }
+    on_conflict: {
+      constraint: vcs_UserTool_pkey
+      update_columns: [
+        inactive
+        startedAt
+        endedAt
+        origin
+        refreshedAt
+      ]
+    }
+  ) {
+    id
+  }
+}

@@ -86,6 +86,44 @@ export class MockData {
       }
       await this.writeTasks(week, weekStart);
     }
+
+    // test writes
+    await this.hasura.postMetricDefinition(
+      'myuid',
+      'myname',
+      ORIGIN
+    );
+
+    await this.hasura.postMetricValue(
+      'uid',
+      DateTime.now(),
+      'value',
+      'DailyGeneratedLineCount_Discard',
+      ORIGIN
+    );
+
+    await this.hasura.postTag(
+      'uid',
+      'key',
+      'value',
+      ORIGIN
+    );
+
+    await this.hasura.postMetricValueTag(
+      {uid: 'uid', definition: 'myuid'},
+      'uid',
+      ORIGIN
+    );
+
+    await this.hasura.postUserTool(
+      {uid: 'octocat', source:'GitHub'},
+      {uid: 'github', source: 'GitHub'},
+      {category: 'GitHubCopilot'},
+      false,
+      DateTime.now(),
+      DateTime.now(),
+      ORIGIN
+    );
   }
 
   /**

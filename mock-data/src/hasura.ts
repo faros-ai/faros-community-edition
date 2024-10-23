@@ -111,6 +111,47 @@ export class Hasura {
     });
   }
 
+  async postMetricDefinition(
+    uid: string,
+    name: string,
+    origin: string
+  ): Promise<void> {
+    await this.api.post('faros_metric_definition', {
+      data_uid: uid,
+      data_name: name,
+      data_origin: origin,
+    });
+  }
+
+  async postMetricValue(
+    uid: string,
+    computedAt: DateTime,
+    value: string,
+    definition: string,
+    origin: string
+  ): Promise<void> {
+    await this.api.post('faros_metric_value', {
+      data_uid: uid,
+      data_computedAt: computedAt,
+      data_value: value,
+      data_definition: definition,
+      data_origin: origin,
+    });
+  }
+
+  async postMetricValueTag(
+    value: any,
+    tag: string,
+    origin: string
+  ): Promise<void> {
+    await this.api.post('faros_metric_value_tag', {
+      data_value_uid: value.uid,
+      data_value_definition_uid: value.definition,
+      data_tag_id: tag,
+      data_origin: origin,
+    });
+  }
+
   async postPullRequest(
     id: string,
     author: string,
@@ -159,6 +200,20 @@ export class Hasura {
     });
   }
 
+  async postTag(
+    uid: string,
+    key: string,
+    value: string,
+    origin: string
+  ): Promise<void> {
+    await this.api.post('faros_tag', {
+      data_uid: uid,
+      data_key: key,
+      data_value: value,
+      data_origin: origin,
+    });
+  }
+
   async postTask(
     taskId: string,
     createdAt: DateTime,
@@ -184,6 +239,39 @@ export class Hasura {
       data_task_priority: priority,
       data_task_status_changelog: statusChangelog,
       data_task_source: source,
+      data_origin: origin,
+    });
+  }
+
+  async postUserTool(
+    user: any,
+    organization: any,
+    tool: any,
+    inactive: boolean,
+    startedAt: DateTime,
+    endedAt: DateTime,
+    origin: string,
+  ): Promise<void> {
+    await this.api.post('vcs_user_tool', {
+      data_user_uid: user.uid,
+      data_user_source: user.source,
+      data_org_uid: organization.uid,
+      data_org_source: organization.source,
+      data_tool: tool,
+      data_inactive: inactive,
+      data_started_at: startedAt,
+      data_ended_at: endedAt,
+      data_origin: origin
+    });
+  }
+
+  async postUserToolUsage(
+    userTool: any,
+    usedAt: DateTime,
+    refreshedAt: DateTime,
+    origin: string
+  ): Promise<void> {
+    await this.api.post('vcs_user_tool_usage', {
       data_origin: origin,
     });
   }
@@ -277,6 +365,36 @@ export class Hasura {
 
   async deleteIncidentApplicationImpact(origin: string): Promise<void> {
     await this.api.post('delete_ims_incident_application_impact', {
+      data_origin: origin,
+    });
+  }
+
+  async deleteMetricValue(origin: string): Promise<void> {
+    await this.api.post('delete_faros_metric_value', {
+      data_origin: origin,
+    });
+  }
+
+  async deleteMetricValueTag(origin: string): Promise<void> {
+    await this.api.post('delete_faros_metric_value_tag', {
+      data_origin: origin,
+    });
+  }
+
+  async deleteTag(origin: string): Promise<void> {
+    await this.api.post('delete_faros_tag', {
+      data_origin: origin,
+    });
+  }
+
+  async deleteUserTool(origin: string): Promise<void> {
+    await this.api.post('delete_vcs_user_tool', {
+      data_origin: origin,
+    });
+  }
+
+  async deleteUserToolUsage(origin: string): Promise<void> {
+    await this.api.post('delete_vcs_user_tool_usage', {
       data_origin: origin,
     });
   }

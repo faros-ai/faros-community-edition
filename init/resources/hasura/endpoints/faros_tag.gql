@@ -1,0 +1,27 @@
+mutation insert_faros_tag(
+  $data_uid: String!
+  $data_key: String!
+  $data_value: String!
+  $data_origin: String
+) {
+  insert_faros_Tag_one(
+    object: {
+      uid: $data_uid
+      key: $data_key
+      value: $data_value
+      origin: $data_origin
+    }
+    on_conflict: {
+      constraint: faros_Tag_pkey
+      update_columns: [
+        key
+        value
+        origin
+        refreshedAt
+      ]
+    }
+  ) {
+    id
+  }
+}
+

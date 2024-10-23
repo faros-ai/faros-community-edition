@@ -124,6 +124,17 @@ export class MockData {
       DateTime.now(),
       ORIGIN
     );
+
+    await this.hasura.postUserToolUsage(
+      {
+        user: {uid: 'octocat', source: 'GitHub'},
+        organization: {uid: 'github', source: 'GitHub'},
+        tool: {category: 'GitHubCopilot'}
+      },
+      DateTime.now(),
+      DateTime.now(),
+      ORIGIN,
+    );
   }
 
   /**

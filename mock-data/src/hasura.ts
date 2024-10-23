@@ -266,12 +266,19 @@ export class Hasura {
   }
 
   async postUserToolUsage(
-    userTool: any,
+    tool: any,
     usedAt: DateTime,
-    refreshedAt: DateTime,
-    origin: string
+    recordedAt: DateTime,
+    origin: string,
   ): Promise<void> {
     await this.api.post('vcs_user_tool_usage', {
+      data_user_uid: tool.user.uid,
+      data_user_source: tool.user.source,
+      data_org_uid: tool.organization.uid,
+      data_org_source: tool.organization.source,
+      data_tool: tool.tool,
+      data_used_at: usedAt,
+      data_recorded_at: recordedAt,
       data_origin: origin,
     });
   }

@@ -6,7 +6,12 @@ mutation insert_faros_metric_value_tag(
 ) {
   insert_faros_MetricValueTag_one(
     object: {
-      tag: $data_tag_id
+      faros_Tag: {
+        data: {
+          uid: $data_tag_id
+        }
+        on_conflict: {constraint: faros_Tag_pkey, update_columns: refreshedAt}
+      }
       faros_MetricValue: {
         data: {
           uid: $data_value_uid

@@ -114,11 +114,13 @@ export class Hasura {
   async postMetricDefinition(
     uid: string,
     name: string,
+    valueType: any,
     origin: string
   ): Promise<void> {
     await this.api.post('faros_metric_definition', {
       data_uid: uid,
       data_name: name,
+      data_value_type: valueType,
       data_origin: origin,
     });
   }
@@ -249,7 +251,7 @@ export class Hasura {
     tool: any,
     inactive: boolean,
     startedAt: DateTime,
-    endedAt: DateTime,
+    endedAt: DateTime | null | undefined,
     origin: string,
   ): Promise<void> {
     await this.api.post('vcs_user_tool', {
@@ -373,6 +375,12 @@ export class Hasura {
 
   async deleteIncidentApplicationImpact(origin: string): Promise<void> {
     await this.api.post('delete_ims_incident_application_impact', {
+      data_origin: origin,
+    });
+  }
+
+  async deleteMetricDefinition(origin: string): Promise<void> {
+    await this.api.post('delete_faros_metric_definition', {
       data_origin: origin,
     });
   }

@@ -6,7 +6,7 @@ mutation insert_vcs_user_tool(
   $data_tool: jsonb!
   $data_inactive: Boolean!
   $data_started_at: timestamptz!
-  $data_ended_at: timestamptz!
+  $data_ended_at: timestamptz
   $data_origin: String
 ) {
   insert_vcs_UserTool_one(

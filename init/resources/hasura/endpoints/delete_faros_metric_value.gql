@@ -1,0 +1,5 @@
+mutation delete_faros_metric_value($data_origin: String) {
+	delete_faros_MetricValue(where: { origin: { _eq: $data_origin } }) {
+		affected_rows
+	}
+}

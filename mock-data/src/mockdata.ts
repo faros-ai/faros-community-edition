@@ -103,9 +103,15 @@ export class MockData {
       this.hasura.deleteIncidentApplicationImpact(ORIGIN),
       this.hasura.deletePullRequestReview(ORIGIN),
       this.hasura.deleteTask(ORIGIN),
+      this.hasura.deleteUserToolUsage(ORIGIN),
+      this.hasura.deleteUserTool(ORIGIN),
+      this.hasura.deleteMetricValue(ORIGIN),
+      this.hasura.deleteMetricValueTag(ORIGIN),
+      this.hasura.deleteTag(ORIGIN),
     ]);
 
     await Promise.all([
+      this.hasura.deleteMetricDefinition(ORIGIN),
       this.hasura.deleteArtifact(ORIGIN),
       this.hasura.deleteDeployment(ORIGIN),
       this.hasura.deleteIncident(ORIGIN),
@@ -317,53 +323,53 @@ export class MockData {
 
   private async writeCopilot(weekNum: number, week: DateTime): Promise<void> {
     // test writes
-    await this.hasura.postMetricDefinition(
-      'myuid',
-      'myname',
-      ORIGIN
-    );
+    // await this.hasura.postMetricDefinition(
+    //   'myuid',
+    //   'myname',
+    //   ORIGIN
+    // );
 
-    await this.hasura.postMetricValue(
-      'uid',
-      DateTime.now(),
-      'value',
-      'DailyGeneratedLineCount_Discard',
-      ORIGIN
-    );
+    // await this.hasura.postMetricValue(
+    //   'uid',
+    //   DateTime.now(),
+    //   'value',
+    //   'DailyGeneratedLineCount_Discard',
+    //   ORIGIN
+    // );
 
-    await this.hasura.postTag(
-      'uid',
-      'key',
-      'value',
-      ORIGIN
-    );
+    // await this.hasura.postTag(
+    //   'uid',
+    //   'key',
+    //   'value',
+    //   ORIGIN
+    // );
 
-    await this.hasura.postMetricValueTag(
-      {uid: 'uid', definition: 'myuid'},
-      'uid',
-      ORIGIN
-    );
+    // await this.hasura.postMetricValueTag(
+    //   {uid: 'uid', definition: 'DailyGeneratedLineCount_Discard'},
+    //   'uid',
+    //   ORIGIN
+    // );
 
-    await this.hasura.postUserTool(
-      {uid: 'octocat', source:'GitHub'},
-      {uid: 'github', source: 'GitHub'},
-      {category: 'GitHubCopilot'},
-      false,
-      DateTime.now(),
-      DateTime.now(),
-      ORIGIN
-    );
+    // await this.hasura.postUserTool(
+    //   {uid: 'octocat', source:'GitHub'},
+    //   {uid: 'github', source: 'GitHub'},
+    //   {category: 'GitHubCopilot'},
+    //   false,
+    //   DateTime.now(),
+    //   DateTime.now(),
+    //   ORIGIN
+    // );
 
-    await this.hasura.postUserToolUsage(
-      {
-        user: {uid: 'octocat', source: 'GitHub'},
-        organization: {uid: 'github', source: 'GitHub'},
-        tool: {category: 'GitHubCopilot'}
-      },
-      DateTime.now(),
-      DateTime.now(),
-      ORIGIN,
-    );
+    // await this.hasura.postUserToolUsage(
+    //   {
+    //     user: {uid: 'octocat', source: 'GitHub'},
+    //     organization: {uid: 'github', source: 'GitHub'},
+    //     tool: {category: 'GitHubCopilot'}
+    //   },
+    //   DateTime.now(),
+    //   DateTime.now(),
+    //   ORIGIN,
+    // );
     // end test
 
     const languageTags = [
@@ -422,6 +428,7 @@ export class MockData {
       await this.hasura.postMetricDefinition(
         def.faros_MetricDefinition.uid,
         def.faros_MetricDefinition.name,
+        def.faros_MetricDefinition.valueType,
         ORIGIN
       );
     }
@@ -436,6 +443,31 @@ export class MockData {
       DailyChatAcceptanceCount: (): number => MockData.randomInt(10, 1),
       DailyChatTurnCount: (): number => MockData.randomInt(20, 3),
     };
+
+    const tools = [1, 2, 3].map((u) => {
+      return {
+        user: {uid: `author-${u}`, source: SOURCE},
+        organization: {uid: ORG, source: SOURCE},
+        tool: {category: 'GitHubCopilot'},
+        inactive: false,
+        startedAt: DateTime.now().minus({weeks: MockData.randomInt(4, 2)}),
+        endedAt: DateTime.now(),
+        origin: ORIGIN,
+      };
+    });
+
+    for (const t of tools) {
+      await this.hasura.postUserTool(
+        t.user,
+        t.organization,
+        t.tool,
+        t.inactive,
+        t.startedAt,
+        t.endedAt,
+        t.origin
+      );
+    }
+
 
     for (let i = 1; i <= 10; i++) {
       for (const def of metricDefs) {

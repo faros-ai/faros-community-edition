@@ -1,12 +1,14 @@
 mutation insert_faros_metric_definition(
   $data_uid: String!
   $data_name: String!
+  $data_value_type: jsonb
   $data_origin: String
 ) {
   insert_faros_MetricDefinition_one(
     object: {
       uid: $data_uid
       name: $data_name
+      valueType: $data_value_type
       origin: $data_origin
     }
     on_conflict: {

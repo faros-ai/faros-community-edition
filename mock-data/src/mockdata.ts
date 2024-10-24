@@ -500,6 +500,14 @@ export class MockData {
           ORIGIN
         );
 
+        const usedAt = week.plus({days: MockData.randomInt(6)});
+        await this.hasura.postUserToolUsage(
+          tools[MockData.randomInt(tools.length, 1)],
+          usedAt,
+          usedAt.plus({hours: 2}),
+          ORIGIN
+        );
+
       }
     }
 

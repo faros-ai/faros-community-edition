@@ -364,18 +364,12 @@ export class MockData {
       DateTime.now(),
       ORIGIN,
     );
+    // end test
 
     const languageTags = [
-      'c++',
       'go',
-      'java',
       'python',
-      'ruby',
-      'scala',
-      'sql',
       'typescript',
-      'xlsx',
-      'yaml',
     ].map((lang) => {
       return {
         faros_Tag: {
@@ -385,16 +379,8 @@ export class MockData {
         },
       };
     });
-    for (const tag of languageTags) {
-      await this.hasura.postTag(
-        tag.faros_Tag.uid,
-        tag.faros_Tag.key,
-        tag.faros_Tag.value,
-        ORIGIN
-      );
-    }
 
-    const ideTags = ['jetbrains', 'neovim', 'vscode'].map((i) => {
+    const ideTags = ['jetbrains', 'vscode'].map((i) => {
       return {
         faros_Tag: {
           uid: 'copilotEditor__' + i,
@@ -440,6 +426,50 @@ export class MockData {
       );
     }
 
+    const metricDefToFun: Record<string, () => number> = {
+      DailyActiveUserTrend: (): number => MockData.randomInt(3, 1),
+      DailyGeneratedLineCount_Accept: (): number => MockData.randomInt(10, 2),
+      DailyGeneratedLineCount_Discard: (): number => MockData.randomInt(100, 10),
+      DailySuggestionReferenceCount_Accept: (): number => MockData.randomInt(10, 2),
+      DailySuggestionReferenceCount_Discard: (): number => MockData.randomInt(100, 10),
+      DailyActiveChatUserTrend: (): number => MockData.randomInt(3, 1),
+      DailyChatAcceptanceCount: (): number => MockData.randomInt(10, 1),
+      DailyChatTurnCount: (): number => MockData.randomInt(20, 3),
+    };
+
+    for (let i = 1; i <= 10; i++) {
+      for (const def of metricDefs) {
+
+        const metricValue = {
+          uid: `mv-week${weekNum}-${i}`,
+          computedAt: week.plus({days: MockData.randomInt(6)}),
+          value: metricDefToFun[def.faros_MetricDefinition.name]().toString(),
+          definition: def.faros_MetricDefinition.uid,
+          origin: ORIGIN
+        };
+
+        await this.hasura.postMetricValue(
+          metricValue.uid,
+          metricValue.computedAt,
+          metricValue.value,
+          metricValue.definition,
+          metricValue.origin,
+        );
+
+        await this.hasura.postMetricValueTag(
+          metricValue,
+          languageTags[MockData.randomInt(languageTags.length)].faros_Tag.uid,
+          ORIGIN
+        );
+
+        await this.hasura.postMetricValueTag(
+          metricValue,
+          ideTags[MockData.randomInt(ideTags.length)].faros_Tag.uid,
+          ORIGIN
+        );
+
+      }
+    }
 
 
 

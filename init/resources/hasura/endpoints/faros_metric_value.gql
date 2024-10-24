@@ -10,7 +10,12 @@ mutation insert_faros_metric_value(
       uid: $data_uid
       computedAt: $data_computedAt
       value: $data_value
-      definition: $data_definition
+      faros_MetricDefinition: {
+        data: {
+          uid: $data_definition
+        }
+        on_conflict: {constraint: faros_MetricDefinition_pkey, update_columns:refreshedAt}
+      }
       origin: $data_origin
     }
     on_conflict: {

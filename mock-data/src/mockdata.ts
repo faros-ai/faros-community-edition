@@ -89,8 +89,6 @@ export class MockData {
     }
   }
 
-  // TODO add deletes!!!!
-
   /**
    * Deletes mock data, i.e. data uploaded by the upload script of
    * this module. Data is deleted in the order of table foreign key
@@ -103,15 +101,9 @@ export class MockData {
       this.hasura.deleteIncidentApplicationImpact(ORIGIN),
       this.hasura.deletePullRequestReview(ORIGIN),
       this.hasura.deleteTask(ORIGIN),
-      this.hasura.deleteUserToolUsage(ORIGIN),
-      this.hasura.deleteUserTool(ORIGIN),
-      this.hasura.deleteMetricValue(ORIGIN),
-      this.hasura.deleteMetricValueTag(ORIGIN),
-      this.hasura.deleteTag(ORIGIN),
     ]);
 
     await Promise.all([
-      this.hasura.deleteMetricDefinition(ORIGIN),
       this.hasura.deleteArtifact(ORIGIN),
       this.hasura.deleteDeployment(ORIGIN),
       this.hasura.deleteIncident(ORIGIN),
@@ -121,17 +113,23 @@ export class MockData {
     await Promise.all([
       this.hasura.deleteComputeApplication(ORIGIN),
       this.hasura.deleteCommit(ORIGIN),
+      this.hasura.deleteMetricValueTag(ORIGIN),
+      this.hasura.deleteUserToolUsage(ORIGIN),
     ]);
 
     await Promise.all([
       this.hasura.deleteCICDRepository(ORIGIN),
       this.hasura.deleteVCSRepository(ORIGIN),
+      this.hasura.deleteMetricValue(ORIGIN),
+      this.hasura.deleteTag(ORIGIN),
+      this.hasura.deleteUserTool(ORIGIN),
     ]);
 
     await Promise.all([
       this.hasura.deleteCICDOrganization(ORIGIN),
       this.hasura.deleteVCSUser(ORIGIN),
       this.hasura.deleteVCSOrganization(ORIGIN),
+      this.hasura.deleteMetricDefinition(ORIGIN),
     ]);
   }
 
@@ -322,56 +320,6 @@ export class MockData {
   }
 
   private async writeCopilot(weekNum: number, week: DateTime): Promise<void> {
-    // test writes
-    // await this.hasura.postMetricDefinition(
-    //   'myuid',
-    //   'myname',
-    //   ORIGIN
-    // );
-
-    // await this.hasura.postMetricValue(
-    //   'uid',
-    //   DateTime.now(),
-    //   'value',
-    //   'DailyGeneratedLineCount_Discard',
-    //   ORIGIN
-    // );
-
-    // await this.hasura.postTag(
-    //   'uid',
-    //   'key',
-    //   'value',
-    //   ORIGIN
-    // );
-
-    // await this.hasura.postMetricValueTag(
-    //   {uid: 'uid', definition: 'DailyGeneratedLineCount_Discard'},
-    //   'uid',
-    //   ORIGIN
-    // );
-
-    // await this.hasura.postUserTool(
-    //   {uid: 'octocat', source:'GitHub'},
-    //   {uid: 'github', source: 'GitHub'},
-    //   {category: 'GitHubCopilot'},
-    //   false,
-    //   DateTime.now(),
-    //   DateTime.now(),
-    //   ORIGIN
-    // );
-
-    // await this.hasura.postUserToolUsage(
-    //   {
-    //     user: {uid: 'octocat', source: 'GitHub'},
-    //     organization: {uid: 'github', source: 'GitHub'},
-    //     tool: {category: 'GitHubCopilot'}
-    //   },
-    //   DateTime.now(),
-    //   DateTime.now(),
-    //   ORIGIN,
-    // );
-    // end test
-
     const languageTags = [
       'go',
       'python',

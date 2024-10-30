@@ -418,11 +418,20 @@ export class MockData {
 
 
     for (let i = 1; i <= 10; i++) {
+      const computedAt = week.plus({days: MockData.randomInt(6)});
+
+      const usedAt = computedAt;
+      await this.hasura.postUserToolUsage(
+        tools[MockData.randomInt(tools.length, 1)],
+        usedAt,
+        usedAt.plus({hours: 2}),
+        ORIGIN
+      );
       for (const def of metricDefs) {
 
         const metricValue = {
           uid: `mv-week${weekNum}-${i}`,
-          computedAt: week.plus({days: MockData.randomInt(6)}),
+          computedAt,
           value: metricDefToFun[def.faros_MetricDefinition.name]().toString(),
           definition: def.faros_MetricDefinition.uid,
           origin: ORIGIN
@@ -447,19 +456,7 @@ export class MockData {
           ideTags[MockData.randomInt(ideTags.length)].faros_Tag.uid,
           ORIGIN
         );
-
-        const usedAt = week.plus({days: MockData.randomInt(6)});
-        await this.hasura.postUserToolUsage(
-          tools[MockData.randomInt(tools.length, 1)],
-          usedAt,
-          usedAt.plus({hours: 2}),
-          ORIGIN
-        );
-
       }
     }
-
-
-
   }
 }

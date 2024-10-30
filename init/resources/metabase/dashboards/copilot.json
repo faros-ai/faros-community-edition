@@ -5,58 +5,18 @@
       "name": "Copilot Metrics",
       "description": null,
       "display": "table",
-      "table_id": {{ table "faros_MetricValue" }},
+      "table_id": null,
       "dataset_query": {
-        "type": "query",
-        "query": {
-          "source-table": {{ table "faros_MetricValue" }},
-          "joins": [
-            {
-              "fields": "all",
-              "source-table": {{ table "faros_MetricValueTag" }},
-              "condition": [
-                "=",
-                [
-                  "field",
-                  {{ field "faros_MetricValue.id" }},
-                  null
-                ],
-                [
-                  "field",
-                  {{ field "faros_MetricValueTag.value" }},
-                  {
-                    "join-alias": "Faros MetricValueTag"
-                  }
-                ]
-              ],
-              "alias": "Faros MetricValueTag"
-            },
-            {
-              "fields": "all",
-              "source-table": {{ table "faros_Tag" }},
-              "condition": [
-                "=",
-                [
-                  "field",
-                  {{ field "faros_MetricValueTag.tag" }},
-                  {
-                    "join-alias": "Faros MetricValueTag"
-                  }
-                ],
-                [
-                  "field",
-                  {{ field "faros_Tag.id" }},
-                  {
-                    "join-alias": "Faros Tag - Tag"
-                  }
-                ]
-              ],
-              "alias": "Faros Tag - Tag"
-            }
-          ]
+        "type": "native",
+        "native": {
+          "query": "SELECT \"public\".\"faros_MetricValue\".\"id\" AS \"id\", \"public\".\"faros_MetricValue\".\"definition\" AS \"definition\", \"public\".\"faros_MetricValue\".\"computedAt\" AS \"computedAt\", \"public\".\"faros_MetricValue\".\"value\" :: integer AS \"value\", max(CASE WHEN \"Faros Tag - Tag\".\"key\" = 'copilotEditor' THEN coalesce(\"Faros Tag - Tag\".\"value\", 'all_editors') END) AS \"copilotEditor\", max(CASE WHEN \"Faros Tag - Tag\".\"key\" = 'copilotLanguage' THEN coalesce(\"Faros Tag - Tag\".\"value\", 'all_languages') END) AS \"copilotLanguage\", max(CASE WHEN \"Faros Tag - Tag\".\"key\" = 'copilotOrg' THEN coalesce(\"Faros Tag - Tag\".\"value\", 'all_orgs') END) AS \"copilotOrg\", max(CASE WHEN \"Faros Tag - Tag\".\"key\" = 'copilotTeam' THEN coalesce(\"Faros Tag - Tag\".\"value\", 'all_teams') END) AS \"copilotTeam\"\nFROM \"public\".\"faros_MetricValue\"\nLEFT JOIN \"public\".\"faros_MetricValueTag\" \"Faros MetricValueTag\" ON \"public\".\"faros_MetricValue\".\"id\" = \"Faros MetricValueTag\".\"value\" LEFT JOIN \"public\".\"faros_Tag\" \"Faros Tag - Tag\" ON \"Faros MetricValueTag\".\"tag\" = \"Faros Tag - Tag\".\"id\"\nGROUP BY \"public\".\"faros_MetricValue\".\"id\", \"public\".\"faros_MetricValue\".\"definition\", \"public\".\"faros_MetricValue\".\"computedAt\", \"public\".\"faros_MetricValue\".\"value\"\nORDER BY \"public\".\"faros_MetricValue\".\"id\" ASC, \"public\".\"faros_MetricValue\".\"definition\" ASC, \"public\".\"faros_MetricValue\".\"computedAt\" ASC, \"public\".\"faros_MetricValue\".\"value\" ASC",
+          "template-tags": {}
         }
       },
-      "visualization_settings": {}
+      "visualization_settings": {
+        "table.pivot_column": "origin",
+        "table.cell_column": "value_3"
+      }
     },
     {
       "name": "Number of Devs with Licenses",
@@ -163,10 +123,10 @@
       }
     },
     {
-      "name": "metric value keys",
+      "name": "Lines of Code Accepted by GitHub Team",
       "description": null,
-      "display": "table",
-      "table_id": {{ table "faros_MetricValue" }},
+      "display": "line",
+      "table_id": null,
       "dataset_query": {
         "type": "query",
         "query": {
@@ -174,72 +134,61 @@
           "breakout": [
             [
               "field",
-              {{ field "faros_Tag.key" }},
+              "copilotOrg",
               {
-                "join-alias": "Faros Tag - Tag"
+                "base-type": "type/Text"
+              }
+            ],
+            [
+              "field",
+              "computedAt",
+              {
+                "temporal-unit": "week",
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              "definition",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "DailyGeneratedLineCount_Accept"
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "sum",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ]
+              ],
+              {
+                "name": "Lines Accepted",
+                "display-name": "Lines Accepted"
               }
             ]
           ]
         }
       },
-      "visualization_settings": {}
-    },
-    {
-      "name": "Copilot Metrics",
-      "description": null,
-      "display": "table",
-      "table_id": {{ table "faros_MetricValue" }},
-      "dataset_query": {
-        "type": "query",
-        "query": {
-          "source-table": {{ table "faros_MetricValue" }},
-          "joins": [
-            {
-              "fields": "all",
-              "source-table": {{ table "faros_MetricValueTag" }},
-              "condition": [
-                "=",
-                [
-                  "field",
-                  {{ field "faros_MetricValue.id" }},
-                  null
-                ],
-                [
-                  "field",
-                  {{ field "faros_MetricValueTag.value" }},
-                  {
-                    "join-alias": "Faros MetricValueTag"
-                  }
-                ]
-              ],
-              "alias": "Faros MetricValueTag"
-            },
-            {
-              "fields": "all",
-              "source-table": {{ table "faros_Tag" }},
-              "condition": [
-                "=",
-                [
-                  "field",
-                  {{ field "faros_MetricValueTag.tag" }},
-                  {
-                    "join-alias": "Faros MetricValueTag"
-                  }
-                ],
-                [
-                  "field",
-                  {{ field "faros_Tag.id" }},
-                  {
-                    "join-alias": "Faros Tag - Tag"
-                  }
-                ]
-              ],
-              "alias": "Faros Tag - Tag"
-            }
-          ]
-        }
-      },
-      "visualization_settings": {}
+      "visualization_settings": {
+        "graph.dimensions": [
+          "computedAt",
+          "copilotOrg"
+        ],
+        "graph.metrics": [
+          "Lines Accepted"
+        ]
+      }
     }
   ],
   "parameters": [
@@ -302,19 +251,9 @@
     {
       "row": 4,
       "col": 0,
-      "sizeX": 4,
-      "sizeY": 3,
-      "card_id": {{ card "metric value keys" }},
-      "series": [],
-      "parameter_mappings": [],
-      "visualization_settings": {}
-    },
-    {
-      "row": 0,
-      "col": 10,
-      "sizeX": 4,
-      "sizeY": 3,
-      "card_id": {{ card "Copilot Metrics" }},
+      "sizeX": 18,
+      "sizeY": 5,
+      "card_id": {{ card "Lines of Code Accepted by GitHub Team" }},
       "series": [],
       "parameter_mappings": [],
       "visualization_settings": {}

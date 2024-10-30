@@ -1626,7 +1626,7 @@
       "id": "b8769942",
       "type": "date/all-options",
       "sectionId": "date",
-      "default": "past3months"
+      "default": "past3months~"
     },
     {
       "name": "Org",

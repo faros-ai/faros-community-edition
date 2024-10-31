@@ -1,0 +1,1434 @@
+{
+  "name": "AI Copilot Evaluation - Impact",
+  "cards": [
+    {
+      "name": "Pull Request Merge Rate with Tool",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_UserTool" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.author" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_UserTool.user" }},
+                  {
+                    "join-alias": "Vcs UserTool - Author"
+                  }
+                ]
+              ],
+              "alias": "Vcs UserTool - Author"
+            }
+          ],
+          "expressions": {
+            "Tool": [
+              "case",
+              [
+                [
+                  [
+                    "and",
+                    [
+                      ">",
+                      [
+                        "field",
+                        {{ field "vcs_PullRequest.createdAt" }},
+                        null
+                      ],
+                      [
+                        "field",
+                        {{ field "vcs_UserTool.startedAt" }},
+                        {
+                          "join-alias": "Vcs UserTool - Author"
+                        }
+                      ]
+                    ],
+                    [
+                      "or",
+                      [
+                        "is-null",
+                        [
+                          "field",
+                          {{ field "vcs_UserTool.endedAt" }},
+                          {
+                            "join-alias": "Vcs UserTool - Author"
+                          }
+                        ]
+                      ],
+                      [
+                        "<",
+                        [
+                          "field",
+                          {{ field "vcs_PullRequest.createdAt" }},
+                          null
+                        ],
+                        [
+                          "field",
+                          {{ field "vcs_UserTool.endedAt" }},
+                          {
+                            "join-alias": "Vcs UserTool - Author"
+                          }
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "coalesce",
+                    [
+                      "field",
+                      {{ field "vcs_UserTool.toolDetail" }},
+                      {
+                        "join-alias": "Vcs UserTool - Author"
+                      }
+                    ],
+                    [
+                      "field",
+                      {{ field "vcs_UserTool.toolCategory" }},
+                      {
+                        "join-alias": "Vcs UserTool - Author"
+                      }
+                    ]
+                  ]
+                ]
+              ],
+              {
+                "default": "No Tool"
+              }
+            ],
+            "group": [
+              "trim",
+              ""
+            ]
+          },
+          "breakout": [
+            [
+              "expression",
+              "Tool"
+            ],
+            [
+              "expression",
+              "group"
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.id" }},
+                  null
+                ]
+              ],
+              {
+                "name": "PR Count",
+                "display-name": "PR Count"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.author" }},
+                  null
+                ]
+              ],
+              {
+                "name": "Author Count",
+                "display-name": "Author Count"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "distinct",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.id" }},
+                    null
+                  ]
+                ],
+                [
+                  "distinct",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.author" }},
+                    null
+                  ]
+                ]
+              ],
+              {
+                "name": "PRs Merged per User",
+                "display-name": "PRs Merged per User"
+              }
+            ]
+          ],
+          "filter": [
+            "not-null",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "group",
+          "Tool"
+        ],
+        "graph.series_order_dimension": "Tool",
+        "graph.series_order": [
+          {
+            "key": "No Tool",
+            "color": "#88BF4D",
+            "enabled": true,
+            "name": "No Tool"
+          },
+          {
+            "key": "GitHubCopilot",
+            "color": "#7172AD",
+            "enabled": true,
+            "name": "GitHubCopilot"
+          }
+        ],
+        "graph.x_axis.labels_enabled": false,
+        "graph.metrics": [
+          "PRs Merged per User"
+        ]
+      }
+    },
+    {
+      "name": "Pull Request Merge Time with Tool over Time",
+      "description": null,
+      "display": "line",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_UserTool" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.author" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_UserTool.user" }},
+                  {
+                    "join-alias": "Vcs UserTool - Author"
+                  }
+                ]
+              ],
+              "alias": "Vcs UserTool - Author"
+            }
+          ],
+          "expressions": {
+            "Tool": [
+              "case",
+              [
+                [
+                  [
+                    "and",
+                    [
+                      ">",
+                      [
+                        "field",
+                        {{ field "vcs_PullRequest.createdAt" }},
+                        null
+                      ],
+                      [
+                        "field",
+                        {{ field "vcs_UserTool.startedAt" }},
+                        {
+                          "join-alias": "Vcs UserTool - Author"
+                        }
+                      ]
+                    ],
+                    [
+                      "or",
+                      [
+                        "is-null",
+                        [
+                          "field",
+                          {{ field "vcs_UserTool.endedAt" }},
+                          {
+                            "join-alias": "Vcs UserTool - Author"
+                          }
+                        ]
+                      ],
+                      [
+                        "<",
+                        [
+                          "field",
+                          {{ field "vcs_PullRequest.createdAt" }},
+                          null
+                        ],
+                        [
+                          "field",
+                          {{ field "vcs_UserTool.endedAt" }},
+                          {
+                            "join-alias": "Vcs UserTool - Author"
+                          }
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "coalesce",
+                    [
+                      "field",
+                      {{ field "vcs_UserTool.toolDetail" }},
+                      {
+                        "join-alias": "Vcs UserTool - Author"
+                      }
+                    ],
+                    [
+                      "field",
+                      {{ field "vcs_UserTool.toolCategory" }},
+                      {
+                        "join-alias": "Vcs UserTool - Author"
+                      }
+                    ]
+                  ]
+                ]
+              ],
+              {
+                "default": "No Tool"
+              }
+            ],
+            "Merge Time Hours": [
+              "datetime-diff",
+              [
+                "field",
+                {{ field "vcs_PullRequest.createdAt" }},
+                null
+              ],
+              [
+                "field",
+                {{ field "vcs_PullRequest.mergedAt" }},
+                null
+              ],
+              "hour"
+            ]
+          },
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ],
+            [
+              "expression",
+              "Tool"
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.id" }},
+                  null
+                ]
+              ],
+              {
+                "name": "PR Count",
+                "display-name": "PR Count"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "avg",
+                [
+                  "expression",
+                  "Merge Time Hours"
+                ]
+              ],
+              {
+                "name": "Average Merge Time",
+                "display-name": "Average Merge Time"
+              }
+            ]
+          ],
+          "filter": [
+            "not-null",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "createdAt",
+          "Tool"
+        ],
+        "graph.series_order_dimension": null,
+        "graph.series_order": null,
+        "column_settings": {
+          "[\"name\",\"Average Merge Time\"]": {
+            "suffix": " h",
+            "decimals": 1
+          }
+        },
+        "graph.metrics": [
+          "Average Merge Time"
+        ]
+      }
+    },
+    {
+      "name": "Pull Request Merge Rate with Tool over Time",
+      "description": null,
+      "display": "line",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_UserTool" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.author" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_UserTool.user" }},
+                  {
+                    "join-alias": "Vcs UserTool - Author"
+                  }
+                ]
+              ],
+              "alias": "Vcs UserTool - Author"
+            }
+          ],
+          "expressions": {
+            "Tool": [
+              "case",
+              [
+                [
+                  [
+                    "and",
+                    [
+                      ">",
+                      [
+                        "field",
+                        {{ field "vcs_PullRequest.createdAt" }},
+                        null
+                      ],
+                      [
+                        "field",
+                        {{ field "vcs_UserTool.startedAt" }},
+                        {
+                          "join-alias": "Vcs UserTool - Author"
+                        }
+                      ]
+                    ],
+                    [
+                      "or",
+                      [
+                        "is-null",
+                        [
+                          "field",
+                          {{ field "vcs_UserTool.endedAt" }},
+                          {
+                            "join-alias": "Vcs UserTool - Author"
+                          }
+                        ]
+                      ],
+                      [
+                        "<",
+                        [
+                          "field",
+                          {{ field "vcs_PullRequest.createdAt" }},
+                          null
+                        ],
+                        [
+                          "field",
+                          {{ field "vcs_UserTool.endedAt" }},
+                          {
+                            "join-alias": "Vcs UserTool - Author"
+                          }
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "coalesce",
+                    [
+                      "field",
+                      {{ field "vcs_UserTool.toolDetail" }},
+                      {
+                        "join-alias": "Vcs UserTool - Author"
+                      }
+                    ],
+                    [
+                      "field",
+                      {{ field "vcs_UserTool.toolCategory" }},
+                      {
+                        "join-alias": "Vcs UserTool - Author"
+                      }
+                    ]
+                  ]
+                ]
+              ],
+              {
+                "default": "No Tool"
+              }
+            ]
+          },
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ],
+            [
+              "expression",
+              "Tool"
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.id" }},
+                  null
+                ]
+              ],
+              {
+                "name": "PR Count",
+                "display-name": "PR Count"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.author" }},
+                  null
+                ]
+              ],
+              {
+                "name": "Author Count",
+                "display-name": "Author Count"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "distinct",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.id" }},
+                    null
+                  ]
+                ],
+                [
+                  "distinct",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.author" }},
+                    null
+                  ]
+                ]
+              ],
+              {
+                "name": "PRs Merged per User",
+                "display-name": "PRs Merged per User"
+              }
+            ]
+          ],
+          "filter": [
+            "not-null",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "createdAt",
+          "Tool"
+        ],
+        "graph.series_order_dimension": null,
+        "graph.series_order": null,
+        "graph.metrics": [
+          "PRs Merged per User"
+        ]
+      }
+    },
+    {
+      "name": "Pull Request Merge Time with Tool",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_UserTool" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.author" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_UserTool.user" }},
+                  {
+                    "join-alias": "Vcs UserTool - Author"
+                  }
+                ]
+              ],
+              "alias": "Vcs UserTool - Author"
+            }
+          ],
+          "expressions": {
+            "Tool": [
+              "case",
+              [
+                [
+                  [
+                    "and",
+                    [
+                      ">",
+                      [
+                        "field",
+                        {{ field "vcs_PullRequest.createdAt" }},
+                        null
+                      ],
+                      [
+                        "field",
+                        {{ field "vcs_UserTool.startedAt" }},
+                        {
+                          "join-alias": "Vcs UserTool - Author"
+                        }
+                      ]
+                    ],
+                    [
+                      "or",
+                      [
+                        "is-null",
+                        [
+                          "field",
+                          {{ field "vcs_UserTool.endedAt" }},
+                          {
+                            "join-alias": "Vcs UserTool - Author"
+                          }
+                        ]
+                      ],
+                      [
+                        "<",
+                        [
+                          "field",
+                          {{ field "vcs_PullRequest.createdAt" }},
+                          null
+                        ],
+                        [
+                          "field",
+                          {{ field "vcs_UserTool.endedAt" }},
+                          {
+                            "join-alias": "Vcs UserTool - Author"
+                          }
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "coalesce",
+                    [
+                      "field",
+                      {{ field "vcs_UserTool.toolDetail" }},
+                      {
+                        "join-alias": "Vcs UserTool - Author"
+                      }
+                    ],
+                    [
+                      "field",
+                      {{ field "vcs_UserTool.toolCategory" }},
+                      {
+                        "join-alias": "Vcs UserTool - Author"
+                      }
+                    ]
+                  ]
+                ]
+              ],
+              {
+                "default": "No Tool"
+              }
+            ],
+            "Merge Time Hours": [
+              "datetime-diff",
+              [
+                "field",
+                {{ field "vcs_PullRequest.createdAt" }},
+                null
+              ],
+              [
+                "field",
+                {{ field "vcs_PullRequest.mergedAt" }},
+                null
+              ],
+              "hour"
+            ],
+            "group": [
+              "trim",
+              ""
+            ]
+          },
+          "breakout": [
+            [
+              "expression",
+              "Tool"
+            ],
+            [
+              "expression",
+              "group"
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.id" }},
+                  null
+                ]
+              ],
+              {
+                "name": "PR Count",
+                "display-name": "PR Count"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "avg",
+                [
+                  "expression",
+                  "Merge Time Hours"
+                ]
+              ],
+              {
+                "name": "Average Merge Time",
+                "display-name": "Average Merge Time"
+              }
+            ]
+          ],
+          "filter": [
+            "not-null",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "group",
+          "Tool"
+        ],
+        "graph.series_order_dimension": "Tool",
+        "graph.series_order": [
+          {
+            "key": "No Tool",
+            "color": "#88BF4D",
+            "enabled": true,
+            "name": "No Tool"
+          },
+          {
+            "key": "GitHubCopilot",
+            "color": "#7172AD",
+            "enabled": true,
+            "name": "GitHubCopilot"
+          }
+        ],
+        "graph.x_axis.labels_enabled": false,
+        "column_settings": {
+          "[\"name\",\"Average Merge Time\"]": {
+            "suffix": " h",
+            "decimals": 1
+          }
+        },
+        "graph.metrics": [
+          "Average Merge Time"
+        ]
+      }
+    },
+    {
+      "name": "Pull Request Size with Tool over Time",
+      "description": null,
+      "display": "line",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_UserTool" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.author" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_UserTool.user" }},
+                  {
+                    "join-alias": "Vcs UserTool - Author"
+                  }
+                ]
+              ],
+              "alias": "Vcs UserTool - Author"
+            }
+          ],
+          "expressions": {
+            "Tool": [
+              "case",
+              [
+                [
+                  [
+                    "and",
+                    [
+                      ">",
+                      [
+                        "field",
+                        {{ field "vcs_PullRequest.createdAt" }},
+                        null
+                      ],
+                      [
+                        "field",
+                        {{ field "vcs_UserTool.startedAt" }},
+                        {
+                          "join-alias": "Vcs UserTool - Author"
+                        }
+                      ]
+                    ],
+                    [
+                      "or",
+                      [
+                        "is-null",
+                        [
+                          "field",
+                          {{ field "vcs_UserTool.endedAt" }},
+                          {
+                            "join-alias": "Vcs UserTool - Author"
+                          }
+                        ]
+                      ],
+                      [
+                        "<",
+                        [
+                          "field",
+                          {{ field "vcs_PullRequest.createdAt" }},
+                          null
+                        ],
+                        [
+                          "field",
+                          {{ field "vcs_UserTool.endedAt" }},
+                          {
+                            "join-alias": "Vcs UserTool - Author"
+                          }
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "coalesce",
+                    [
+                      "field",
+                      {{ field "vcs_UserTool.toolDetail" }},
+                      {
+                        "join-alias": "Vcs UserTool - Author"
+                      }
+                    ],
+                    [
+                      "field",
+                      {{ field "vcs_UserTool.toolCategory" }},
+                      {
+                        "join-alias": "Vcs UserTool - Author"
+                      }
+                    ]
+                  ]
+                ]
+              ],
+              {
+                "default": "No Tool"
+              }
+            ]
+          },
+          "breakout": [
+            [
+              "expression",
+              "Tool"
+            ],
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.id" }},
+                  null
+                ]
+              ],
+              {
+                "name": "PR Count",
+                "display-name": "PR Count"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "median",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.linesAdded" }},
+                  null
+                ]
+              ],
+              {
+                "name": "Median Lines Added",
+                "display-name": "Median Lines Added"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "median",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.linesDeleted" }},
+                  null
+                ]
+              ],
+              {
+                "name": "Median Lines Deleted",
+                "display-name": "Median Lines Deleted"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "-",
+                [
+                  "median",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.linesAdded" }},
+                    null
+                  ]
+                ],
+                [
+                  "median",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.linesDeleted" }},
+                    null
+                  ]
+                ]
+              ],
+              {
+                "name": "Net Lines Added",
+                "display-name": "Net Lines Added"
+              }
+            ]
+          ],
+          "filter": [
+            "not-null",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "expression",
+                "Tool"
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.x_axis.labels_enabled": false,
+        "graph.series_order": null,
+        "graph.series_order_dimension": null,
+        "graph.dimensions": [
+          "createdAt",
+          "Tool"
+        ],
+        "series_settings": {
+          "Median Lines Deleted": {
+            "color": "#EF8C8C"
+          }
+        },
+        "graph.metrics": [
+          "Net Lines Added"
+        ]
+      }
+    },
+    {
+      "name": "Pull Request Size with Tool",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "vcs_PullRequest" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "vcs_PullRequest" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_UserTool" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.author" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_UserTool.user" }},
+                  {
+                    "join-alias": "Vcs UserTool - Author"
+                  }
+                ]
+              ],
+              "alias": "Vcs UserTool - Author"
+            }
+          ],
+          "expressions": {
+            "Tool": [
+              "case",
+              [
+                [
+                  [
+                    "and",
+                    [
+                      ">",
+                      [
+                        "field",
+                        {{ field "vcs_PullRequest.createdAt" }},
+                        null
+                      ],
+                      [
+                        "field",
+                        {{ field "vcs_UserTool.startedAt" }},
+                        {
+                          "join-alias": "Vcs UserTool - Author"
+                        }
+                      ]
+                    ],
+                    [
+                      "or",
+                      [
+                        "is-null",
+                        [
+                          "field",
+                          {{ field "vcs_UserTool.endedAt" }},
+                          {
+                            "join-alias": "Vcs UserTool - Author"
+                          }
+                        ]
+                      ],
+                      [
+                        "<",
+                        [
+                          "field",
+                          {{ field "vcs_PullRequest.createdAt" }},
+                          null
+                        ],
+                        [
+                          "field",
+                          {{ field "vcs_UserTool.endedAt" }},
+                          {
+                            "join-alias": "Vcs UserTool - Author"
+                          }
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "coalesce",
+                    [
+                      "field",
+                      {{ field "vcs_UserTool.toolDetail" }},
+                      {
+                        "join-alias": "Vcs UserTool - Author"
+                      }
+                    ],
+                    [
+                      "field",
+                      {{ field "vcs_UserTool.toolCategory" }},
+                      {
+                        "join-alias": "Vcs UserTool - Author"
+                      }
+                    ]
+                  ]
+                ]
+              ],
+              {
+                "default": "No Tool"
+              }
+            ]
+          },
+          "breakout": [
+            [
+              "expression",
+              "Tool"
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.id" }},
+                  null
+                ]
+              ],
+              {
+                "name": "PR Count",
+                "display-name": "PR Count"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "median",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.linesAdded" }},
+                  null
+                ]
+              ],
+              {
+                "name": "Median Lines Added",
+                "display-name": "Median Lines Added"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "median",
+                [
+                  "field",
+                  {{ field "vcs_PullRequest.linesDeleted" }},
+                  null
+                ]
+              ],
+              {
+                "name": "Median Lines Deleted",
+                "display-name": "Median Lines Deleted"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "-",
+                [
+                  "median",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.linesAdded" }},
+                    null
+                  ]
+                ],
+                [
+                  "median",
+                  [
+                    "field",
+                    {{ field "vcs_PullRequest.linesDeleted" }},
+                    null
+                  ]
+                ]
+              ],
+              {
+                "name": "Net Lines Added",
+                "display-name": "Net Lines Added"
+              }
+            ]
+          ],
+          "filter": [
+            "not-null",
+            [
+              "field",
+              {{ field "vcs_PullRequest.mergedAt" }},
+              null
+            ]
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "expression",
+                "Tool"
+              ]
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.x_axis.labels_enabled": false,
+        "graph.series_order": [
+          {
+            "key": "No Tool",
+            "color": "#88BF4D",
+            "enabled": true,
+            "name": "No Tool"
+          },
+          {
+            "key": "GitHubCopilot",
+            "color": "#7172AD",
+            "enabled": true,
+            "name": "GitHubCopilot"
+          }
+        ],
+        "graph.series_order_dimension": "Tool",
+        "graph.dimensions": [
+          "Tool"
+        ],
+        "series_settings": {
+          "Median Lines Deleted": {
+            "color": "#EF8C8C"
+          }
+        },
+        "graph.metrics": [
+          "Median Lines Added",
+          "Median Lines Deleted",
+          "Net Lines Added"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Date",
+      "slug": "date",
+      "id": "f8b47360",
+      "type": "date/all-options",
+      "sectionId": "date",
+      "default": "past3months~"
+    }
+  ],
+  "layout": [
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "Pull Request Merge Rate with Tool" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "f8b47360",
+          "card_id": {{ card "Pull Request Merge Rate with Tool" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 5,
+      "sizeX": 10,
+      "sizeY": 4,
+      "card_id": {{ card "Pull Request Merge Time with Tool over Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "f8b47360",
+          "card_id": {{ card "Pull Request Merge Time with Tool over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 5,
+      "sizeX": 10,
+      "sizeY": 4,
+      "card_id": {{ card "Pull Request Merge Rate with Tool over Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "f8b47360",
+          "card_id": {{ card "Pull Request Merge Rate with Tool over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "Pull Request Merge Time with Tool" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "f8b47360",
+          "card_id": {{ card "Pull Request Merge Time with Tool" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 8,
+      "col": 5,
+      "sizeX": 10,
+      "sizeY": 4,
+      "card_id": {{ card "Pull Request Size with Tool over Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "f8b47360",
+          "card_id": {{ card "Pull Request Size with Tool over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 8,
+      "col": 0,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "Pull Request Size with Tool" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "f8b47360",
+          "card_id": {{ card "Pull Request Size with Tool" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_PullRequest.createdAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    }
+  ],
+  "path": "/Faros CE/GitHub/Copilot"
+}
+

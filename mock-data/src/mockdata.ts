@@ -1,6 +1,7 @@
 import {DateTime} from 'luxon';
 
 import {Hasura} from './hasura';
+import { randomBytes } from 'crypto';
 
 const ORIGIN = 'faros-ce-mock-data';
 const SOURCE = 'FarosCE-MockData';
@@ -147,6 +148,8 @@ export class MockData {
       commitSha,
       prCreateTime,
       mergedAt,
+      MockData.randomInt(200, 2000),
+      MockData.randomInt(0, 1000),
       REPO,
       ORG,
       SOURCE,

@@ -116,6 +116,7 @@ export class MockData {
       this.hasura.deleteCommit(ORIGIN),
       this.hasura.deleteMetricValueTag(ORIGIN),
       this.hasura.deleteUserToolUsage(ORIGIN),
+      this.hasura.deleteSurveyQuestionResponse(ORIGIN),
     ]);
 
     await Promise.all([
@@ -124,6 +125,7 @@ export class MockData {
       this.hasura.deleteMetricValue(ORIGIN),
       this.hasura.deleteTag(ORIGIN),
       this.hasura.deleteUserTool(ORIGIN),
+      this.hasura.deleteSurveyQuestionAssociation(ORIGIN),
     ]);
 
     await Promise.all([
@@ -131,6 +133,8 @@ export class MockData {
       this.hasura.deleteVCSUser(ORIGIN),
       this.hasura.deleteVCSOrganization(ORIGIN),
       this.hasura.deleteMetricDefinition(ORIGIN),
+      this.hasura.deleteSurveySurvey(ORIGIN),
+      this.hasura.deleteSurveyQuestion(ORIGIN)
     ]);
   }
 

@@ -206,6 +206,75 @@ export class Hasura {
     });
   }
 
+  async postSurveyQuestion(
+    uid: string,
+    question: string,
+    response: any,
+    questionType: any,
+    source: string,
+    origin: string
+  ): Promise<void> {
+    await this.api.post('survey_question', {
+      data_uid: uid,
+      data_question: question,
+      data_response_category: response.category,
+      data_response_detail: response.detail,
+      data_question_category: questionType.category,
+      data_question_detail: questionType.detail,
+      data_source: source,
+      data_origin: origin,
+    });
+  }
+
+  async postSurveyQuestionResponse(
+    uid: string,
+    origin: string,
+    submittedAt: DateTime,
+    response: string,
+    survey: any,
+    question: any
+  ): Promise<void> {
+    await this.api.post('survey_question_response', {
+      data_uid: uid,
+      data_origin: origin,
+      data_submitted_at: submittedAt,
+      data_response: response,
+      data_survey_uid: survey.uid,
+      data_survey_source: survey.source,
+      data_question_uid: question.uid,
+      data_question_source: question.source,
+    });
+  }
+
+  async postSurveySurvey(
+    uid: string,
+    name: string,
+    type: any,
+    source: string,
+    origin: string
+  ): Promise<void> {
+    await this.api.post('survey_survey', {
+      data_uid: uid,
+      data_name: name,
+      data_type_category: type.category,
+      data_type_detail: type.detail,
+      data_source: source,
+      data_origin: origin,
+    });
+  }
+
+  async postSurveyQuestionAssociation(
+    survey: any,
+    question: any
+  ): Promise<void> {
+    await this.api.post('survey_question_association', {
+      data_survey_uid: survey.uid,
+      data_survey_source: survey.source,
+      data_question_uid: question.uid,
+      data_question_source: question.source,
+    });
+  }
+
   async postTag(
     uid: string,
     key: string,
@@ -415,6 +484,30 @@ export class Hasura {
 
   async deleteUserToolUsage(origin: string): Promise<void> {
     await this.api.post('delete_vcs_user_tool_usage', {
+      data_origin: origin,
+    });
+  }
+
+  async deleteSurveyQuestion(origin: string): Promise<void> {
+    await this.api.post('delete_survey_question', {
+      data_origin: origin,
+    });
+  }
+
+  async deleteSurveyQuestionResponse(origin: string): Promise<void> {
+    await this.api.post('delete_survey_question_response', {
+      data_origin: origin,
+    });
+  }
+
+  async deleteSurveySurvey(origin: string): Promise<void> {
+    await this.api.post('delete_survey_survey', {
+      data_origin: origin,
+    });
+  }
+
+  async deleteSurveyQuestionAssociation(origin: string): Promise<void> {
+    await this.api.post('delete_survey_question_association', {
       data_origin: origin,
     });
   }

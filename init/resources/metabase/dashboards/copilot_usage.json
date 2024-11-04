@@ -1691,7 +1691,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 4,
+      "row": 5,
       "col": 0,
       "sizeX": 18,
       "sizeY": 5,
@@ -1730,7 +1730,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 9,
+      "row": 10,
       "col": 0,
       "sizeX": 5,
       "sizeY": 4,
@@ -1783,7 +1783,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 13,
+      "row": 14,
       "col": 0,
       "sizeX": 5,
       "sizeY": 4,
@@ -1836,7 +1836,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 9,
+      "row": 10,
       "col": 5,
       "sizeX": 5,
       "sizeY": 4,
@@ -1889,7 +1889,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 13,
+      "row": 14,
       "col": 10,
       "sizeX": 8,
       "sizeY": 4,
@@ -1942,7 +1942,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 13,
+      "row": 14,
       "col": 5,
       "sizeX": 5,
       "sizeY": 4,
@@ -1995,7 +1995,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 9,
+      "row": 10,
       "col": 10,
       "sizeX": 8,
       "sizeY": 4,
@@ -2048,7 +2048,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 21,
+      "row": 22,
       "col": 0,
       "sizeX": 18,
       "sizeY": 1,
@@ -2069,7 +2069,7 @@
       }
     },
     {
-      "row": 17,
+      "row": 18,
       "col": 0,
       "sizeX": 5,
       "sizeY": 4,
@@ -2122,7 +2122,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 17,
+      "row": 18,
       "col": 5,
       "sizeX": 5,
       "sizeY": 4,
@@ -2175,7 +2175,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 17,
+      "row": 18,
       "col": 10,
       "sizeX": 8,
       "sizeY": 4,
@@ -2228,7 +2228,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 22,
+      "row": 23,
       "col": 6,
       "sizeX": 6,
       "sizeY": 4,
@@ -2281,7 +2281,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 22,
+      "row": 23,
       "col": 0,
       "sizeX": 6,
       "sizeY": 4,
@@ -2334,7 +2334,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 22,
+      "row": 23,
       "col": 12,
       "sizeX": 6,
       "sizeY": 4,
@@ -2385,6 +2385,27 @@
         }
       ],
       "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "",
+        "text.align_vertical": "middle",
+        "dashcard.background": false
+      }
     }
   ],
   "path": "/Faros CE/GitHub/Copilot"

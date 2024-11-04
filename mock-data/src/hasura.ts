@@ -267,7 +267,7 @@ export class Hasura {
     survey: any,
     question: any
   ): Promise<void> {
-    await this.api.post('survey_question_association', {
+    await this.api.post('survey_survey_question_association', {
       data_survey_uid: survey.uid,
       data_survey_source: survey.source,
       data_question_uid: question.uid,
@@ -507,7 +507,7 @@ export class Hasura {
   }
 
   async deleteSurveyQuestionAssociation(origin: string): Promise<void> {
-    await this.api.post('delete_survey_question_association', {
+    await this.api.post('delete_survey_survey_question_association', {
       data_origin: origin,
     });
   }

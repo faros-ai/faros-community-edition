@@ -1,0 +1,46 @@
+mutation insert_survey_question_response(
+  $data_uid: String!
+  $data_origin: String!
+  $data_submitted_at: timestamptz
+  $data_response: String
+  $data_survey_uid: String
+  $data_survey_source: String
+  $data_question_uid: String
+  $data_question_source:String
+) {
+  insert_survey_QuestionResponse_one(
+    object: {
+      uid: $data_uid
+      submittedAt: $data_submitted_at
+      response: $data_response
+      survey_SurveyQuestionAssociation: {
+        data: {
+          survey_Survey: {
+            data: {
+              uid: $data_survey_uid
+              source: $data_survey_source
+            }
+            on_conflict: {constraint: survey_Survey_pkey, update_columns: refreshedAt}
+          }
+          survey_Question: {
+            data: {
+              uid: $data_question_uid
+              source: $data_question_source
+            }
+          }
+        }
+        on_conflict: {constraint: survey_SurveyQuestionAssociation_pkey, update_columns: refreshedAt}
+      }
+      origin: $data_origin
+    }
+    on_conflict: {
+      constraint: survey_QuestionResponse_pkey
+      update_columns: [
+        origin
+        refreshedAt
+      ]
+    }
+  ) {
+    id
+  }
+}

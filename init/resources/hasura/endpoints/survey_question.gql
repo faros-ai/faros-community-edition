@@ -1,0 +1,39 @@
+mutation insert_survey_question(
+  $data_uid: String!
+	$data_question: String
+  $data_response_category: String
+  $data_response_detail: String
+  $data_question_category: String
+  $data_question_detail: String
+  $data_source: String!
+  $data_origin: String!
+) {
+  insert_survey_Question_one(
+    object: {
+      uid: $data_uid
+      question: $data_question
+      responseType: {
+        category: $data_response_category
+        detail: $data_response_detail
+      }
+    	questionCategory: {
+        category: $data_question_category
+        detail: $data_question_detail
+      }
+      source: $data_source
+      origin: $data_origin
+    }
+    on_conflict: {
+      constraint: survey_Question_pkey
+      update_columns: [
+        question
+        responseType
+        questionCategory
+        origin
+        refreshedAt
+      ]
+    }
+  ) {
+    id
+  }
+}

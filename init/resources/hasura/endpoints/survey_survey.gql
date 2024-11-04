@@ -1,0 +1,32 @@
+mutation insert_survey_survey(
+  $data_uid: String!
+  $data_name: String
+  $data_typeCategory: String
+  $data_typeDetail: String
+  $data_source: String!
+  $data_origin: String
+) {
+  insert_survey_Survey_one(
+    object: {
+      uid: $data_uid
+      name: $data_name
+      type: {
+      	category: $data_typeCategory
+      	detail: $data_typeDetail
+      }
+      source: $data_source
+      origin: $data_origin
+    }
+    on_conflict: {
+      constraint: survey_Survey_pkey
+      update_columns: [
+        name
+        type
+        origin
+        refreshedAt
+      ]
+    }
+  ) {
+    id
+  }
+}

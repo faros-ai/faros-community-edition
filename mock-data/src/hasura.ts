@@ -209,7 +209,7 @@ export class Hasura {
   async postSurveyQuestion(
     uid: string,
     question: string,
-    response: any,
+    responseType: any,
     questionType: any,
     source: string,
     origin: string
@@ -217,8 +217,8 @@ export class Hasura {
     await this.api.post('survey_question', {
       data_uid: uid,
       data_question: question,
-      data_response_category: response.category,
-      data_response_detail: response.detail,
+      data_response_category: responseType.category,
+      data_response_detail: responseType.detail,
       data_question_category: questionType.category,
       data_question_detail: questionType.detail,
       data_source: source,
@@ -265,13 +265,15 @@ export class Hasura {
 
   async postSurveyQuestionAssociation(
     survey: any,
-    question: any
+    question: any,
+    origin: string
   ): Promise<void> {
     await this.api.post('survey_survey_question_association', {
       data_survey_uid: survey.uid,
       data_survey_source: survey.source,
       data_question_uid: question.uid,
       data_question_source: question.source,
+      data_origin: origin
     });
   }
 

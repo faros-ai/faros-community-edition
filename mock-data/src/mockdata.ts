@@ -1,7 +1,7 @@
 import {DateTime} from 'luxon';
 
 import {Hasura} from './hasura';
-import { randomBytes } from 'crypto';
+import { randomBytes, randomInt } from 'crypto';
 
 const ORIGIN = 'faros-ce-mock-data';
 const SOURCE = 'FarosCE-MockData';
@@ -87,6 +87,7 @@ export class MockData {
       }
       await this.writeTasks(week, weekStart);
       await this.writeCopilot(week, weekStart);
+      await this.writeSurveys(numWeeks);
     }
   }
 
@@ -465,5 +466,106 @@ export class MockData {
         );
       }
     }
+  }
+
+
+
+  private async writeSurveys(numWeeks: number): Promise<void> {
+    const nResponses = 10;
+    const likerts = [
+      'Strongly Disagree',
+      'Disagree',
+      'Neutral',
+      'Agree',
+      'Strongly Agree',
+    ];
+
+
+
+    // Cadence Surveys
+    const cSurvey = {
+      uid: 'survey-1',
+      name: 'Copilot Weekly Survey',
+      type: {category: 'Custom', detail: 'AI Transformation'},
+      source: SOURCE,
+      origin: ORIGIN
+    };
+
+    await this.hasura.postSurveySurvey(
+      cSurvey.uid,
+      cSurvey.name,
+      cSurvey.type,
+      cSurvey.source,
+      cSurvey.origin
+    );
+
+    interface questionInfo {
+      question: string;
+      responseType?: {category: string; detail: string};
+      generateResponse: () => string;
+    }
+
+    const cQuestions: questionInfo[] = [
+      {
+        question: 'How often are you using your coding assistant?',
+        responseType: {category: 'MultipleChoice', detail: 'MultipleChoice'},
+        generateResponse: (): string => {
+          const opts = [
+            'I have not started to use it yet',
+            'I used it for some time, but not anymore',
+            'Rarely',
+            'Frequently',
+            'Very Frequently',
+          ];
+          return opts[randomInt(0, opts.length)];
+        }
+      }
+    ];
+
+    let qid = 0;
+    for (const qi of cQuestions) {
+      const q = {
+        uid: `question-${qid}`,
+        source: SOURCE
+      };
+      await this.hasura.postSurveyQuestion(
+        q.uid,
+        qi.question,
+        {category: 'CodingAssistants', detail: 'CodingAssistants'},
+        qi.responseType,
+        SOURCE,
+        ORIGIN
+      );
+      qid++;
+      await this.hasura.postSurveyQuestionAssociation(cSurvey, q, ORIGIN);
+      for (let i = 0; i <= nResponses; i++) {
+        await this.hasura.postSurveyQuestionResponse(
+          `response-${i}`,
+          ORIGIN,
+          DateTime.now().minus({days: randomInt(0, numWeeks * 7)}),
+          qi.generateResponse(),
+          cSurvey,
+          q
+        );
+      }
+    }
+
+
+
+    // PR Surveys
+    const PRSurvey = {
+      uid: 'survey-2',
+      name: 'GitHub Copilot Survey',
+      type: {category: 'Custom', detail: 'AI Transformation'},
+    };
+
+    // await this.hasura.postSurveySurvey(
+    //   PRSurvey.uid,
+    //   PRSurvey.name,
+    //   PRSurvey.type,
+    //   SOURCE,
+    //   ORIGIN
+    // );
+
   }
 }

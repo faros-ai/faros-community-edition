@@ -505,6 +505,40 @@ export class MockData {
       generateResponse: () => string;
     }
 
+    async function writeQuestions(
+      questions: questionInfo[],
+      survey: any,
+      hasura: Hasura
+    ): Promise<void> {
+      let qid = 0;
+      for (const qi of questions) {
+        const q = {
+          uid: `question-${qid}`,
+          source: SOURCE
+        };
+        await hasura.postSurveyQuestion(
+          q.uid,
+          qi.question,
+          {category: 'CodingAssistants', detail: 'CodingAssistants'},
+          qi.responseType,
+          SOURCE,
+          ORIGIN
+        );
+        qid++;
+        await hasura.postSurveyQuestionAssociation(cSurvey, q, ORIGIN);
+        for (let i = 0; i <= nResponses; i++) {
+          await hasura.postSurveyQuestionResponse(
+            `response-${i}`,
+            ORIGIN,
+            DateTime.now().minus({days: randomInt(0, numWeeks * 7)}),
+            qi.generateResponse(),
+            survey,
+            q
+          );
+        }
+      }
+    }
+
     const cQuestions: questionInfo[] = [
       {
         question: 'How often are you using your coding assistant?',
@@ -540,51 +574,51 @@ export class MockData {
         };
       })
     ];
-
-    let qid = 0;
-    for (const qi of cQuestions) {
-      const q = {
-        uid: `question-${qid}`,
-        source: SOURCE
-      };
-      await this.hasura.postSurveyQuestion(
-        q.uid,
-        qi.question,
-        {category: 'CodingAssistants', detail: 'CodingAssistants'},
-        qi.responseType,
-        SOURCE,
-        ORIGIN
-      );
-      qid++;
-      await this.hasura.postSurveyQuestionAssociation(cSurvey, q, ORIGIN);
-      for (let i = 0; i <= nResponses; i++) {
-        await this.hasura.postSurveyQuestionResponse(
-          `response-${i}`,
-          ORIGIN,
-          DateTime.now().minus({days: randomInt(0, numWeeks * 7)}),
-          qi.generateResponse(),
-          cSurvey,
-          q
-        );
-      }
-    }
+    await writeQuestions(cQuestions, cSurvey, this.hasura);
 
 
 
     // PR Surveys
-    const PRSurvey = {
+    const prSurvey = {
       uid: 'survey-2',
       name: 'GitHub Copilot Survey',
       type: {category: 'Custom', detail: 'AI Transformation'},
+      source: SOURCE,
+      origin: ORIGIN
     };
+    await this.hasura.postSurveySurvey(
+      prSurvey.uid,
+      prSurvey.name,
+      prSurvey.type,
+      prSurvey.source,
+      prSurvey.origin
+    );
 
-    // await this.hasura.postSurveySurvey(
-    //   PRSurvey.uid,
-    //   PRSurvey.name,
-    //   PRSurvey.type,
-    //   SOURCE,
-    //   ORIGIN
-    // );
+    const prQuestions: questionInfo[] = [
+      {
+        question:
+          'Based on your experience, estimate how much total coding time' +
+          'you saved using copilot for this PR? (in minutes)',
+        responseType: {category: 'NumericEntry', detail: 'NumericEntry'},
+        generateResponse: () => randomInt(5, 60).toString(),
+      }, ...[
+        'Be happier in my job',
+        'Be more productive',
+        'Deal with repetitive tasks',
+        'Improve Productivity',
+        'Learn new skills',
+        'Refactor or debug code',
+        'Stay in flow',
+        'Write better code',
+      ].map((task) => {
+        return {
+          question: `(optional) Copilot helps me to: [${task}]`,
+          responseType: {category: 'LikertScale', detail: 'LikertScale'},
+          generateResponse: () => randArr(likerts),
+        };
+      })
+    ];
+    await writeQuestions(prQuestions, prSurvey, this.hasura);
 
   }
 }

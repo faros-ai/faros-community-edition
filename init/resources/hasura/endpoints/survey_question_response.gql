@@ -27,6 +27,7 @@ mutation insert_survey_question_response(
               uid: $data_question_uid
               source: $data_question_source
             }
+            on_conflict: {constraint: survey_Question_pkey, update_columns: refreshedAt}
           }
         }
         on_conflict: {constraint: survey_SurveyQuestionAssociation_pkey, update_columns: refreshedAt}

@@ -1,8 +1,8 @@
 mutation insert_survey_survey(
   $data_uid: String!
   $data_name: String
-  $data_typeCategory: String
-  $data_typeDetail: String
+  $data_type_category: String
+  $data_type_detail: String
   $data_source: String!
   $data_origin: String
 ) {
@@ -11,8 +11,8 @@ mutation insert_survey_survey(
       uid: $data_uid
       name: $data_name
       type: {
-      	category: $data_typeCategory
-      	detail: $data_typeDetail
+      	category: $data_type_category
+      	detail: $data_type_detail
       }
       source: $data_source
       origin: $data_origin

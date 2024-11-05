@@ -3,6 +3,7 @@ mutation insert_survey_question(
   $data_survey_source: String!
   $data_question_uid: String!
   $data_question_source: String!
+  $data_origin: String!
 ) {
   insert_survey_SurveyQuestionAssociation_one(
     object: {
@@ -20,6 +21,7 @@ mutation insert_survey_question(
         }
         on_conflict: {constraint: survey_Question_pkey, update_columns: refreshedAt}
       }
+      origin: $data_origin
     }
     on_conflict: {
       constraint: survey_SurveyQuestionAssociation_pkey

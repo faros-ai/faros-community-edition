@@ -479,7 +479,7 @@ export class MockData {
       'Agree',
       'Strongly Agree',
     ];
-
+    function randArr(arr: any[]): any {return arr[randomInt(0, arr.length)]};
 
 
     // Cadence Surveys
@@ -509,17 +509,36 @@ export class MockData {
       {
         question: 'How often are you using your coding assistant?',
         responseType: {category: 'MultipleChoice', detail: 'MultipleChoice'},
-        generateResponse: (): string => {
-          const opts = [
-            'I have not started to use it yet',
-            'I used it for some time, but not anymore',
-            'Rarely',
-            'Frequently',
-            'Very Frequently',
-          ];
-          return opts[randomInt(0, opts.length)];
-        }
-      }
+        generateResponse: (): string => randArr([
+          'I have not started to use it yet',
+          'I used it for some time, but not anymore',
+          'Rarely',
+          'Frequently',
+          'Very Frequently',
+        ])
+      },
+      {
+        question: 'On average how many hours per day did you save ' +
+                  'in the past week?',
+        responseType: {category: 'NumericEntry', detail: 'NumericEntry'},
+        generateResponse: () => randomInt(0, 10).toString()
+      }, ...[
+        'Understanding code',
+        'Preparing to code',
+        'Writing new code',
+        'Debugging code',
+        'Refactoring code',
+        'Reviewing code',
+        'Documenting code',
+        'Writing tests',
+      ].map((task) => {
+        return {
+          question: 'In the past week, Copilot helped me with the following ' +
+                    `tasks: [${task}]`,
+          responseType: {category: 'LikertScale', detail: 'LikertScale'},
+          generateResponse: () => randArr(likerts),
+        };
+      })
     ];
 
     let qid = 0;

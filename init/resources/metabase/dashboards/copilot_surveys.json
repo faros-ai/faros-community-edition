@@ -227,6 +227,7 @@
       "display": "row",
       "table_id": {{ table "survey_QuestionResponse" }},
       "dataset_query": {
+        "type": "query",
         "query": {
           "source-table": {{ table "survey_QuestionResponse" }},
           "joins": [
@@ -361,14 +362,27 @@
             ]
           ],
           "filter": [
-            "not-null",
+            "and",
             [
-              "expression",
-              "all_tasks"
+              "not-null",
+              [
+                "expression",
+                "all_tasks"
+              ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "survey_Question.responseTypeCategory" }},
+                {
+                  "join-alias": "Survey Question - Question"
+                }
+              ],
+              "CodingAssistants"
             ]
           ]
-        },
-        "type": "query"
+        }
       },
       "visualization_settings": {
         "graph.y_axis.title_text": "Response Count",
@@ -434,6 +448,91 @@
         ],
         "stackable.stack_type": "stacked"
       }
+    },
+    {
+      "name": "Cumulative Time Savings",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT\n   (\n      CAST(\n         date_trunc(\n            'week',\n            (\n               \"public\".\"survey_QuestionResponse\".\"submittedAt\" + (INTERVAL '1 day')\n            )\n         ) AS timestamp\n      ) + (INTERVAL '-1 day')\n   ) AS \"Submitted At\",\n   sum(\n      \"public\".\"survey_QuestionResponse\".\"response\" :: integer\n   ) AS \"Time Saved (min)\",\n   sum(\n      sum(\n         \"public\".\"survey_QuestionResponse\".\"response\" :: integer\n      )\n   ) OVER (\n      ORDER BY\n         (\n            CAST(\n               date_trunc(\n                  'week',\n                  (\n                     \"public\".\"survey_QuestionResponse\".\"submittedAt\" + (INTERVAL '1 day')\n                  )\n               ) AS timestamp\n            ) + (INTERVAL '-1 day')\n         )\n   ) AS \"Cumulative Time Saved (min)\"\nFROM\n   \"public\".\"survey_QuestionResponse\"\n   LEFT JOIN \"public\".\"survey_SurveyQuestionAssociation\" \"Survey SurveyQuestionAssociation - SurveyQuestion\" ON \"public\".\"survey_QuestionResponse\".\"surveyQuestion\" = \"Survey SurveyQuestionAssociation - SurveyQuestion\".\"id\"\n   LEFT JOIN \"public\".\"survey_Question\" \"Survey Question - Question\" ON \"Survey SurveyQuestionAssociation - SurveyQuestion\".\"question\" = \"Survey Question - Question\".\"id\"\n   LEFT JOIN \"public\".\"survey_Survey\" \"Survey Survey - Survey\" ON \"Survey SurveyQuestionAssociation - SurveyQuestion\".\"survey\" = \"Survey Survey - Survey\".\"id\"\nWHERE\n   (\n      \"Survey Question - Question\".\"responseTypeCategory\" = 'CodingAssistants'\n      AND (\n         \"Survey Question - Question\".\"question\" = 'Based on your experience, estimate how much total coding timeyou saved using copilot for this PR? (in minutes)'\n         OR \"Survey Question - Question\".\"question\" = 'On average how many hours per day did you save in the past week?'\n      ) [[AND \"Survey Survey - Survey\".\"name\" = <<survey_name>>]]\n   )\nGROUP BY\n   (\n      CAST(\n         date_trunc(\n            'week',\n            (\n               \"public\".\"survey_QuestionResponse\".\"submittedAt\" + (INTERVAL '1 day')\n            )\n         ) AS timestamp\n      ) + (INTERVAL '-1 day')\n   )\nORDER BY\n   (\n      CAST(\n         date_trunc(\n            'week',\n            (\n               \"public\".\"survey_QuestionResponse\".\"submittedAt\" + (INTERVAL '1 day')\n            )\n         ) AS timestamp\n      ) + (INTERVAL '-1 day')\n   ) ASC",
+          "template-tags": {
+            "survey_name": {
+              "id": "3f790505-ef25-cfdc-1f83-096409adca5d",
+              "name": "survey_name",
+              "display-name": "Survey name",
+              "type": "text"
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "graph.show_trendline": true,
+        "graph.y_axis.title_text": "Total Time Saved (min)",
+        "graph.show_values": true,
+        "table.cell_column": "question",
+        "graph.series_order_dimension": "response",
+        "graph.x_axis.title_text": "Response Submitted At",
+        "graph.metrics": [
+          "Cumulative Time Saved (min)"
+        ],
+        "graph.series_order": [
+          {
+            "key": "Strongly Disagree",
+            "color": "#E75454",
+            "enabled": true,
+            "name": "Strongly Disagree"
+          },
+          {
+            "key": "Disagree",
+            "color": "#EF8C8C",
+            "enabled": true,
+            "name": "Disagree"
+          },
+          {
+            "key": "Neutral",
+            "color": "#F9D45C",
+            "enabled": true,
+            "name": "Neutral"
+          },
+          {
+            "key": "Agree",
+            "color": "#A7D07C",
+            "enabled": true,
+            "name": "Agree"
+          },
+          {
+            "key": "Strongly Agree",
+            "color": "#689636",
+            "enabled": true,
+            "name": "Strongly Agree"
+          }
+        ],
+        "table.pivot_column": "Task Type",
+        "series_settings": {
+          "Strongly Agree": {
+            "color": "#689636"
+          },
+          "Agree": {
+            "color": "#A7D07C"
+          },
+          "Strongly Disagree": {
+            "color": "#E75454"
+          },
+          "Disagree": {
+            "color": "#EF8C8C"
+          },
+          "Neutral": {
+            "color": "#F9D45C"
+          }
+        },
+        "graph.dimensions": [
+          "Submitted At"
+        ],
+        "stackable.stack_type": "stacked"
+      }
     }
   ],
   "parameters": [
@@ -444,13 +543,6 @@
       "type": "date/all-options",
       "sectionId": "date",
       "default": "past3months~"
-    },
-    {
-      "name": "Team",
-      "slug": "team",
-      "id": "56548982",
-      "type": "string/=",
-      "sectionId": "string"
     },
     {
       "name": "Survey Name",
@@ -468,27 +560,138 @@
       "sizeY": 4,
       "card_id": {{ card "AI Transformation Surveys" }},
       "series": [],
-      "parameter_mappings": [],
-      "visualization_settings": {}
-    },
-    {
-      "row": 0,
-      "col": 13,
-      "sizeX": 4,
-      "sizeY": 3,
-      "card_id": {{ card "Survey Responses over Time" }},
-      "series": [],
-      "parameter_mappings": [],
-      "visualization_settings": {}
+      "parameter_mappings": [
+        {
+          "parameter_id": "a0143bc7",
+          "card_id": {{ card "AI Transformation Surveys" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {
+        "column_settings": {
+          "[\"ref\",[\"field\",{{ field "survey_Survey.name" }},null]]": {
+            "click_behavior": {
+              "type": "crossfilter",
+              "parameterMapping": {
+                "a0143bc7": {
+                  "source": {
+                    "type": "column",
+                    "id": "name",
+                    "name": "Name"
+                  },
+                  "target": {
+                    "type": "parameter",
+                    "id": "a0143bc7"
+                  },
+                  "id": "a0143bc7"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     {
       "row": 4,
+      "col": 0,
+      "sizeX": 12,
+      "sizeY": 5,
+      "card_id": {{ card "Survey Responses over Time" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "15e648d4",
+          "card_id": {{ card "Survey Responses over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_QuestionResponse.submittedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a0143bc7",
+          "card_id": {{ card "Survey Responses over Time" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              {
+                "join-alias": "Survey Survey - Survey"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 14,
       "col": 0,
       "sizeX": 11,
       "sizeY": 9,
       "card_id": {{ card "Copilot helps me to:" }},
       "series": [],
-      "parameter_mappings": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "15e648d4",
+          "card_id": {{ card "Copilot helps me to:" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_QuestionResponse.submittedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a0143bc7",
+          "card_id": {{ card "Copilot helps me to:" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              {
+                "join-alias": "Survey Survey - Survey"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 9,
+      "col": 0,
+      "sizeX": 12,
+      "sizeY": 5,
+      "card_id": {{ card "Cumulative Time Savings" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "a0143bc7",
+          "card_id": {{ card "Cumulative Time Savings" }},
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "survey_name"
+            ]
+          ]
+        }
+      ],
       "visualization_settings": {}
     }
   ],

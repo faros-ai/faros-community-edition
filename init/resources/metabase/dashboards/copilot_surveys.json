@@ -350,7 +350,14 @@
           ],
           "aggregation": [
             [
-              "count"
+              "aggregation-options",
+              [
+                "count"
+              ],
+              {
+                "name": "Response Count",
+                "display-name": "Response Count"
+              }
             ]
           ],
           "filter": [
@@ -364,6 +371,46 @@
         "type": "query"
       },
       "visualization_settings": {
+        "graph.y_axis.title_text": "Response Count",
+        "table.cell_column": "question",
+        "graph.series_order_dimension": "response",
+        "graph.x_axis.title_text": "Tasks",
+        "graph.metrics": [
+          "Response Count"
+        ],
+        "graph.series_order": [
+          {
+            "key": "Strongly Disagree",
+            "color": "#E75454",
+            "enabled": true,
+            "name": "Strongly Disagree"
+          },
+          {
+            "key": "Disagree",
+            "color": "#EF8C8C",
+            "enabled": true,
+            "name": "Disagree"
+          },
+          {
+            "key": "Neutral",
+            "color": "#F9D45C",
+            "enabled": true,
+            "name": "Neutral"
+          },
+          {
+            "key": "Agree",
+            "color": "#A7D07C",
+            "enabled": true,
+            "name": "Agree"
+          },
+          {
+            "key": "Strongly Agree",
+            "color": "#689636",
+            "enabled": true,
+            "name": "Strongly Agree"
+          }
+        ],
+        "table.pivot_column": "Task Type",
         "series_settings": {
           "Strongly Agree": {
             "color": "#689636"
@@ -381,49 +428,11 @@
             "color": "#F9D45C"
           }
         },
-        "table.pivot_column": "Task Type",
-        "table.cell_column": "question",
         "graph.dimensions": [
           "all_tasks",
           "response"
         ],
-        "graph.series_order_dimension": "response",
-        "graph.series_order": [
-          {
-            "key": "Strongly Disagree",
-            "color": "#7172AD",
-            "enabled": true,
-            "name": "Strongly Disagree"
-          },
-          {
-            "key": "Disagree",
-            "color": "#98D9D9",
-            "enabled": true,
-            "name": "Disagree"
-          },
-          {
-            "key": "Neutral",
-            "color": "#88BF4D",
-            "enabled": true,
-            "name": "Neutral"
-          },
-          {
-            "key": "Agree",
-            "color": "#F9D45C",
-            "enabled": true,
-            "name": "Agree"
-          },
-          {
-            "key": "Strongly Agree",
-            "color": "#509EE3",
-            "enabled": true,
-            "name": "Strongly Agree"
-          }
-        ],
-        "stackable.stack_type": "stacked",
-        "graph.metrics": [
-          "count"
-        ]
+        "stackable.stack_type": "stacked"
       }
     }
   ],
@@ -483,6 +492,6 @@
       "visualization_settings": {}
     }
   ],
-  "path": "/Faros CE/GitHub/Copilot"
+  "path": "/Faros CE/AI Copilot Evaluation"
 }
 

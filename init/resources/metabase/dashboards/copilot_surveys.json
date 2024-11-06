@@ -1,0 +1,488 @@
+{
+  "name": "AI Copilot Evaluation - Surveys",
+  "cards": [
+    {
+      "name": "AI Transformation Surveys",
+      "description": null,
+      "display": "table",
+      "table_id": {{ table "survey_Survey" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "survey_Survey" }},
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "survey_Survey.typeDetail" }},
+              null
+            ],
+            "AI Transformation"
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_SurveyQuestionAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_Survey.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.survey" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation"
+                  }
+                ]
+              ],
+              "alias": "Survey SurveyQuestionAssociation"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Question" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.question" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Question.id" }},
+                  {
+                    "join-alias": "Survey Question - Question"
+                  }
+                ]
+              ],
+              "alias": "Survey Question - Question"
+            }
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "survey_Survey.id" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "survey_Survey.startedAt" }},
+              {
+                "temporal-unit": "minute"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.question" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation"
+                  }
+                ]
+              ],
+              {
+                "name": "Question Count",
+                "display-name": "Question Count"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "startedAt",
+        "table.cell_column": "Question Count"
+      }
+    },
+    {
+      "name": "Survey Responses over Time",
+      "description": null,
+      "display": "line",
+      "table_id": {{ table "survey_QuestionResponse" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "survey_QuestionResponse" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_SurveyQuestionAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_QuestionResponse.surveyQuestion" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.id" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ]
+              ],
+              "alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Survey" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.survey" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Survey.id" }},
+                  {
+                    "join-alias": "Survey Survey - Survey"
+                  }
+                ]
+              ],
+              "alias": "Survey Survey - Survey"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Question" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.question" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Question.id" }},
+                  {
+                    "join-alias": "Survey Question - Question"
+                  }
+                ]
+              ],
+              "alias": "Survey Question - Question"
+            }
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "survey_Survey.typeDetail" }},
+              {
+                "join-alias": "Survey Survey - Survey"
+              }
+            ],
+            "AI Transformation"
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "survey_QuestionResponse.submittedAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "origin",
+        "table.cell_column": "order",
+        "graph.dimensions": [
+          "submittedAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Copilot helps me to:",
+      "description": null,
+      "display": "row",
+      "table_id": {{ table "survey_QuestionResponse" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "survey_QuestionResponse" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_SurveyQuestionAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_QuestionResponse.surveyQuestion" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.id" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ]
+              ],
+              "alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Question" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.question" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Question.id" }},
+                  {
+                    "join-alias": "Survey Question - Question"
+                  }
+                ]
+              ],
+              "alias": "Survey Question - Question"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Survey" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.survey" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Survey.id" }},
+                  {
+                    "join-alias": "Survey Survey - Survey"
+                  }
+                ]
+              ],
+              "alias": "Survey Survey - Survey"
+            }
+          ],
+          "expressions": {
+            "Task Type": [
+              "regex-match-first",
+              [
+                "field",
+                {{ field "survey_Question.question" }},
+                {
+                  "join-alias": "Survey Question - Question"
+                }
+              ],
+              "In the past week, Copilot helped me with the following tasks: \\[(.+)\\]"
+            ],
+            "Activity": [
+              "regex-match-first",
+              [
+                "field",
+                {{ field "survey_Question.question" }},
+                {
+                  "join-alias": "Survey Question - Question"
+                }
+              ],
+              "\\(optional\\) Copilot helps me to: \\[(.+)\\]"
+            ],
+            "all_tasks": [
+              "coalesce",
+              [
+                "expression",
+                "Task Type"
+              ],
+              [
+                "expression",
+                "Activity"
+              ]
+            ]
+          },
+          "breakout": [
+            [
+              "expression",
+              "all_tasks"
+            ],
+            [
+              "field",
+              {{ field "survey_QuestionResponse.response" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "survey_Question.question" }},
+              {
+                "join-alias": "Survey Question - Question"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ],
+          "filter": [
+            "not-null",
+            [
+              "expression",
+              "all_tasks"
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "series_settings": {
+          "Strongly Agree": {
+            "color": "#689636"
+          },
+          "Agree": {
+            "color": "#A7D07C"
+          },
+          "Strongly Disagree": {
+            "color": "#E75454"
+          },
+          "Disagree": {
+            "color": "#EF8C8C"
+          },
+          "Neutral": {
+            "color": "#F9D45C"
+          }
+        },
+        "table.pivot_column": "Task Type",
+        "table.cell_column": "question",
+        "graph.dimensions": [
+          "all_tasks",
+          "response"
+        ],
+        "graph.series_order_dimension": "response",
+        "graph.series_order": [
+          {
+            "key": "Strongly Disagree",
+            "color": "#7172AD",
+            "enabled": true,
+            "name": "Strongly Disagree"
+          },
+          {
+            "key": "Disagree",
+            "color": "#98D9D9",
+            "enabled": true,
+            "name": "Disagree"
+          },
+          {
+            "key": "Neutral",
+            "color": "#88BF4D",
+            "enabled": true,
+            "name": "Neutral"
+          },
+          {
+            "key": "Agree",
+            "color": "#F9D45C",
+            "enabled": true,
+            "name": "Agree"
+          },
+          {
+            "key": "Strongly Agree",
+            "color": "#509EE3",
+            "enabled": true,
+            "name": "Strongly Agree"
+          }
+        ],
+        "stackable.stack_type": "stacked",
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Date",
+      "slug": "date",
+      "id": "15e648d4",
+      "type": "date/all-options",
+      "sectionId": "date",
+      "default": "past3months~"
+    },
+    {
+      "name": "Team",
+      "slug": "team",
+      "id": "56548982",
+      "type": "string/=",
+      "sectionId": "string"
+    },
+    {
+      "name": "Survey Name",
+      "slug": "survey_name",
+      "id": "a0143bc7",
+      "type": "string/=",
+      "sectionId": "string"
+    }
+  ],
+  "layout": [
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 13,
+      "sizeY": 4,
+      "card_id": {{ card "AI Transformation Surveys" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 13,
+      "sizeX": 4,
+      "sizeY": 3,
+      "card_id": {{ card "Survey Responses over Time" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "sizeX": 11,
+      "sizeY": 9,
+      "card_id": {{ card "Copilot helps me to:" }},
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {}
+    }
+  ],
+  "path": "/Faros CE/GitHub/Copilot"
+}
+

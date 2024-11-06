@@ -505,12 +505,12 @@ export class MockData {
       generateResponse: () => string;
     }
 
+    let qid = 0;
     async function writeQuestions(
       questions: questionInfo[],
       survey: any,
       hasura: Hasura
     ): Promise<void> {
-      let qid = 0;
       for (const qi of questions) {
         const q = {
           uid: `question-${qid}`,
@@ -525,7 +525,7 @@ export class MockData {
           ORIGIN
         );
         qid++;
-        await hasura.postSurveyQuestionAssociation(cSurvey, q, ORIGIN);
+        await hasura.postSurveyQuestionAssociation(survey, q, ORIGIN);
         for (let i = 0; i <= nResponses; i++) {
           await hasura.postSurveyQuestionResponse(
             `response-${i}`,

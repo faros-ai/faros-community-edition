@@ -1,7 +1,6 @@
 import {DateTime} from 'luxon';
 
 import {Hasura} from './hasura';
-import { randomBytes, randomInt } from 'crypto';
 
 const ORIGIN = 'faros-ce-mock-data';
 const SOURCE = 'FarosCE-MockData';
@@ -479,7 +478,9 @@ export class MockData {
       'Agree',
       'Strongly Agree',
     ];
-    function randArr(arr: any[]): any {return arr[randomInt(0, arr.length)]};
+    function randArr(arr: any[]): any {
+      return arr[MockData.randomInt(0, arr.length)]
+    }
 
 
     // Cadence Surveys
@@ -530,7 +531,7 @@ export class MockData {
           await hasura.postSurveyQuestionResponse(
             `response-${i}`,
             ORIGIN,
-            DateTime.now().minus({days: randomInt(0, numWeeks * 7)}),
+            DateTime.now().minus({days: MockData.randomInt(0, numWeeks * 7)}),
             qi.generateResponse(),
             survey,
             q
@@ -555,7 +556,7 @@ export class MockData {
         question: 'On average how many hours per day did you save ' +
                   'in the past week?',
         responseType: {category: 'NumericEntry', detail: 'NumericEntry'},
-        generateResponse: () => randomInt(0, 10).toString()
+        generateResponse: () => MockData.randomInt(0, 10).toString()
       }, ...[
         'Understanding code',
         'Preparing to code',
@@ -600,7 +601,7 @@ export class MockData {
           'Based on your experience, estimate how much total coding time ' +
           'you saved using copilot for this PR? (in minutes)',
         responseType: {category: 'NumericEntry', detail: 'NumericEntry'},
-        generateResponse: () => randomInt(5, 60).toString(),
+        generateResponse: () => MockData.randomInt(5, 60).toString(),
       }, ...[
         'Be happier in my job',
         'Be more productive',

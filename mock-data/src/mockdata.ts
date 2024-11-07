@@ -597,7 +597,7 @@ export class MockData {
     const prQuestions: questionInfo[] = [
       {
         question:
-          'Based on your experience, estimate how much total coding time' +
+          'Based on your experience, estimate how much total coding time ' +
           'you saved using copilot for this PR? (in minutes)',
         responseType: {category: 'NumericEntry', detail: 'NumericEntry'},
         generateResponse: () => randomInt(5, 60).toString(),

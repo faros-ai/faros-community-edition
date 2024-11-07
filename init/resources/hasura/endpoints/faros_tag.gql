@@ -24,4 +24,3 @@ mutation insert_faros_tag(
     id
   }
 }
-

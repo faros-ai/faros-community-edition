@@ -32,4 +32,3 @@ mutation insert_faros_metric_value_tag(
     id
   }
 }
-

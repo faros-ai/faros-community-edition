@@ -540,10 +540,12 @@
         "column_settings": {
           "[\"name\",\"Cumulative Time Saved hours\"]": {
             "prefix": "",
-            "suffix": " h"
+            "suffix": " h",
+            "decimals": 0
           },
           "[\"name\",\"Time Saved hours\"]": {
-            "suffix": " h"
+            "suffix": " h",
+            "decimals": 0
           }
         },
         "series_settings": {
@@ -1719,6 +1721,11 @@
         "graph.dimensions": [
           "submittedAt"
         ],
+        "column_settings": {
+          "[\"name\",\"Total Time Saved\"]": {
+            "decimals": 0
+          }
+        },
         "graph.metrics": [
           "count"
         ]

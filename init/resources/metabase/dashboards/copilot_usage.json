@@ -55,7 +55,7 @@
     {
       "name": "Daily Active User Count",
       "description": null,
-      "display": "line",
+      "display": "bar",
       "table_id": {{ table "vcs_UserToolUsage" }},
       "dataset_query": {
         "type": "query",
@@ -117,8 +117,16 @@
         "graph.dimensions": [
           "usedAt"
         ],
+        "series_settings": {
+          "Daily Active Users": {
+            "line.missing": "zero"
+          }
+        },
+        "column_settings": {
+          "[\"name\",\"Daily Active Users\"]": {}
+        },
         "graph.metrics": [
-          "count"
+          "Daily Active Users"
         ]
       }
     },
@@ -134,7 +142,7 @@
           "breakout": [
             [
               "field",
-              "copilotOrg",
+              "copilotTeam",
               {
                 "base-type": "type/Text"
               }
@@ -183,7 +191,7 @@
       "visualization_settings": {
         "graph.dimensions": [
           "computedAt",
-          "copilotOrg"
+          "copilotTeam"
         ],
         "graph.metrics": [
           "Lines Accepted"
@@ -1645,7 +1653,7 @@
   ],
   "layout": [
     {
-      "row": 0,
+      "row": 1,
       "col": 0,
       "sizeX": 5,
       "sizeY": 4,
@@ -1668,7 +1676,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 0,
+      "row": 1,
       "col": 5,
       "sizeX": 13,
       "sizeY": 4,
@@ -1691,7 +1699,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 5,
+      "row": 6,
       "col": 0,
       "sizeX": 18,
       "sizeY": 5,
@@ -1725,12 +1733,26 @@
               }
             ]
           ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Lines of Code Accepted by GitHub Team" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
         }
       ],
       "visualization_settings": {}
     },
     {
-      "row": 10,
+      "row": 11,
       "col": 0,
       "sizeX": 5,
       "sizeY": 4,
@@ -1783,7 +1805,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 14,
+      "row": 15,
       "col": 0,
       "sizeX": 5,
       "sizeY": 4,
@@ -1836,7 +1858,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 10,
+      "row": 11,
       "col": 5,
       "sizeX": 5,
       "sizeY": 4,
@@ -1889,7 +1911,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 14,
+      "row": 15,
       "col": 10,
       "sizeX": 8,
       "sizeY": 4,
@@ -1942,7 +1964,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 14,
+      "row": 15,
       "col": 5,
       "sizeX": 5,
       "sizeY": 4,
@@ -1995,7 +2017,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 10,
+      "row": 11,
       "col": 10,
       "sizeX": 8,
       "sizeY": 4,
@@ -2048,7 +2070,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 22,
+      "row": 23,
       "col": 0,
       "sizeX": 18,
       "sizeY": 1,
@@ -2069,7 +2091,7 @@
       }
     },
     {
-      "row": 18,
+      "row": 19,
       "col": 0,
       "sizeX": 5,
       "sizeY": 4,
@@ -2122,7 +2144,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 18,
+      "row": 19,
       "col": 5,
       "sizeX": 5,
       "sizeY": 4,
@@ -2175,7 +2197,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 18,
+      "row": 19,
       "col": 10,
       "sizeX": 8,
       "sizeY": 4,
@@ -2228,7 +2250,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 23,
+      "row": 24,
       "col": 6,
       "sizeX": 6,
       "sizeY": 4,
@@ -2281,7 +2303,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 23,
+      "row": 24,
       "col": 0,
       "sizeX": 6,
       "sizeY": 4,
@@ -2334,7 +2356,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 23,
+      "row": 24,
       "col": 12,
       "sizeX": 6,
       "sizeY": 4,
@@ -2387,7 +2409,7 @@
       "visualization_settings": {}
     },
     {
-      "row": 4,
+      "row": 5,
       "col": 0,
       "sizeX": 18,
       "sizeY": 1,
@@ -2402,7 +2424,28 @@
           "dataset_query": {},
           "archived": false
         },
-        "text": "",
+        "text": "## Usage",
+        "text.align_vertical": "middle",
+        "dashcard.background": false
+      }
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "## Adoption",
         "text.align_vertical": "middle",
         "dashcard.background": false
       }

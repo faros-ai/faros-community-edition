@@ -391,9 +391,12 @@ export class MockData {
     const metricDefToFun: Record<string, () => number> = {
       DailyActiveUserTrend: (): number => MockData.randomInt(3, 1),
       DailyGeneratedLineCount_Accept: (): number => MockData.randomInt(10, 2),
-      DailyGeneratedLineCount_Discard: (): number => MockData.randomInt(100, 10),
-      DailySuggestionReferenceCount_Accept: (): number => MockData.randomInt(10, 2),
-      DailySuggestionReferenceCount_Discard: (): number => MockData.randomInt(100, 10),
+      DailyGeneratedLineCount_Discard: (): number =>
+        MockData.randomInt(100, 10),
+      DailySuggestionReferenceCount_Accept: (): number =>
+        MockData.randomInt(10, 2),
+      DailySuggestionReferenceCount_Discard: (): number =>
+        MockData.randomInt(100, 10),
       DailyActiveChatUserTrend: (): number => MockData.randomInt(3, 1),
       DailyChatAcceptanceCount: (): number => MockData.randomInt(10, 1),
       DailyChatTurnCount: (): number => MockData.randomInt(20, 3),
@@ -479,7 +482,7 @@ export class MockData {
       'Strongly Agree',
     ];
     function randArr(arr: any[]): any {
-      return arr[MockData.randomInt(0, arr.length)]
+      return arr[MockData.randomInt(0, arr.length)];
     }
 
 

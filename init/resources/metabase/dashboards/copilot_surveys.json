@@ -227,7 +227,6 @@
       "display": "row",
       "table_id": {{ table "survey_QuestionResponse" }},
       "dataset_query": {
-        "type": "query",
         "query": {
           "source-table": {{ table "survey_QuestionResponse" }},
           "joins": [
@@ -297,17 +296,6 @@
             }
           ],
           "expressions": {
-            "Task Type": [
-              "regex-match-first",
-              [
-                "field",
-                {{ field "survey_Question.question" }},
-                {
-                  "join-alias": "Survey Question - Question"
-                }
-              ],
-              "In the past week, Copilot helped me with the following tasks: \\[(.+)\\]"
-            ],
             "Activity": [
               "regex-match-first",
               [
@@ -318,24 +306,9 @@
                 }
               ],
               "\\(optional\\) Copilot helps me to: \\[(.+)\\]"
-            ],
-            "all_tasks": [
-              "coalesce",
-              [
-                "expression",
-                "Task Type"
-              ],
-              [
-                "expression",
-                "Activity"
-              ]
             ]
           },
           "breakout": [
-            [
-              "expression",
-              "all_tasks"
-            ],
             [
               "field",
               {{ field "survey_QuestionResponse.response" }},
@@ -347,6 +320,10 @@
               {
                 "join-alias": "Survey Question - Question"
               }
+            ],
+            [
+              "expression",
+              "Activity"
             ]
           ],
           "aggregation": [
@@ -364,13 +341,6 @@
           "filter": [
             "and",
             [
-              "not-null",
-              [
-                "expression",
-                "all_tasks"
-              ]
-            ],
-            [
               "=",
               [
                 "field",
@@ -380,9 +350,17 @@
                 }
               ],
               "CodingAssistants"
+            ],
+            [
+              "not-empty",
+              [
+                "expression",
+                "Activity"
+              ]
             ]
           ]
-        }
+        },
+        "type": "query"
       },
       "visualization_settings": {
         "graph.y_axis.title_text": "Response Count",
@@ -443,7 +421,7 @@
           }
         },
         "graph.dimensions": [
-          "all_tasks",
+          "Activity",
           "response"
         ],
         "stackable.stack_type": "stacked"
@@ -530,6 +508,212 @@
         },
         "graph.dimensions": [
           "Submitted At"
+        ],
+        "stackable.stack_type": "stacked"
+      }
+    },
+    {
+      "name": "Copilot helped me with the following tasks",
+      "description": null,
+      "display": "row",
+      "table_id": {{ table "survey_QuestionResponse" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "survey_QuestionResponse" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_SurveyQuestionAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_QuestionResponse.surveyQuestion" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.id" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ]
+              ],
+              "alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Question" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.question" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Question.id" }},
+                  {
+                    "join-alias": "Survey Question - Question"
+                  }
+                ]
+              ],
+              "alias": "Survey Question - Question"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Survey" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.survey" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Survey.id" }},
+                  {
+                    "join-alias": "Survey Survey - Survey"
+                  }
+                ]
+              ],
+              "alias": "Survey Survey - Survey"
+            }
+          ],
+          "expressions": {
+            "Task Type": [
+              "regex-match-first",
+              [
+                "field",
+                {{ field "survey_Question.question" }},
+                {
+                  "join-alias": "Survey Question - Question"
+                }
+              ],
+              "In the past week, Copilot helped me with the following tasks: \\[(.+)\\]"
+            ]
+          },
+          "breakout": [
+            [
+              "field",
+              {{ field "survey_QuestionResponse.response" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "survey_Question.question" }},
+              {
+                "join-alias": "Survey Question - Question"
+              }
+            ],
+            [
+              "expression",
+              "Task Type"
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "count"
+              ],
+              {
+                "name": "Response Count",
+                "display-name": "Response Count"
+              }
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "=",
+              [
+                "field",
+                {{ field "survey_Question.responseTypeCategory" }},
+                {
+                  "join-alias": "Survey Question - Question"
+                }
+              ],
+              "CodingAssistants"
+            ],
+            [
+              "not-empty",
+              [
+                "expression",
+                "Task Type"
+              ]
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.y_axis.title_text": "Response Count",
+        "table.cell_column": "question",
+        "graph.series_order_dimension": "response",
+        "graph.x_axis.title_text": "Tasks",
+        "graph.metrics": [
+          "Response Count"
+        ],
+        "graph.series_order": [
+          {
+            "key": "Strongly Disagree",
+            "color": "#E75454",
+            "enabled": true,
+            "name": "Strongly Disagree"
+          },
+          {
+            "key": "Disagree",
+            "color": "#EF8C8C",
+            "enabled": true,
+            "name": "Disagree"
+          },
+          {
+            "key": "Neutral",
+            "color": "#F9D45C",
+            "enabled": true,
+            "name": "Neutral"
+          },
+          {
+            "key": "Agree",
+            "color": "#A7D07C",
+            "enabled": true,
+            "name": "Agree"
+          },
+          {
+            "key": "Strongly Agree",
+            "color": "#689636",
+            "enabled": true,
+            "name": "Strongly Agree"
+          }
+        ],
+        "table.pivot_column": "Task Type",
+        "series_settings": {
+          "Strongly Agree": {
+            "color": "#689636"
+          },
+          "Agree": {
+            "color": "#A7D07C"
+          },
+          "Strongly Disagree": {
+            "color": "#E75454"
+          },
+          "Disagree": {
+            "color": "#EF8C8C"
+          },
+          "Neutral": {
+            "color": "#F9D45C"
+          }
+        },
+        "graph.dimensions": [
+          "Task Type",
+          "response"
         ],
         "stackable.stack_type": "stacked"
       }
@@ -638,8 +822,8 @@
     {
       "row": 14,
       "col": 0,
-      "sizeX": 11,
-      "sizeY": 9,
+      "sizeX": 13,
+      "sizeY": 5,
       "card_id": {{ card "Copilot helps me to:" }},
       "series": [],
       "parameter_mappings": [
@@ -688,6 +872,43 @@
             [
               "template-tag",
               "survey_name"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 19,
+      "col": 0,
+      "sizeX": 13,
+      "sizeY": 5,
+      "card_id": {{ card "Copilot helped me with the following tasks" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "15e648d4",
+          "card_id": {{ card "Copilot helped me with the following tasks" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_QuestionResponse.submittedAt" }},
+              null
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a0143bc7",
+          "card_id": {{ card "Copilot helped me with the following tasks" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              {
+                "join-alias": "Survey Survey - Survey"
+              }
             ]
           ]
         }

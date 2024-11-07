@@ -5,11 +5,11 @@ export class Hasura {
   private readonly api: AxiosInstance;
   constructor(private readonly baseURL: string, adminSecret?: string) {
     this.api = axios.create(
-      { 
+      {
         baseURL: `${baseURL}/api/rest/`,
         headers: {
-          "Content-Type": "application/json",
-          ...(adminSecret && {"X-Hasura-Admin-Secret": adminSecret}),
+          'Content-Type': 'application/json',
+          ...(adminSecret && {'X-Hasura-Admin-Secret': adminSecret}),
         }
       }
     );

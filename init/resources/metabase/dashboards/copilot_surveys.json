@@ -7,6 +7,7 @@
       "display": "table",
       "table_id": {{ table "survey_Survey" }},
       "dataset_query": {
+        "type": "query",
         "query": {
           "source-table": {{ table "survey_Survey" }},
           "filter": [
@@ -60,6 +61,28 @@
                 ]
               ],
               "alias": "Survey Question - Question"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_QuestionResponse" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.id" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_QuestionResponse.surveyQuestion" }},
+                  {
+                    "join-alias": "Survey QuestionResponse"
+                  }
+                ]
+              ],
+              "alias": "Survey QuestionResponse"
             }
           ],
           "breakout": [
@@ -98,10 +121,26 @@
                 "name": "Question Count",
                 "display-name": "Question Count"
               }
+            ],
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "survey_QuestionResponse.id" }},
+                  {
+                    "join-alias": "Survey QuestionResponse"
+                  }
+                ]
+              ],
+              {
+                "name": "Response Count",
+                "display-name": "Response Count"
+              }
             ]
           ]
-        },
-        "type": "query"
+        }
       },
       "visualization_settings": {
         "table.pivot_column": "startedAt",
@@ -227,6 +266,7 @@
       "display": "row",
       "table_id": {{ table "survey_QuestionResponse" }},
       "dataset_query": {
+        "type": "query",
         "query": {
           "source-table": {{ table "survey_QuestionResponse" }},
           "joins": [
@@ -358,9 +398,17 @@
               ],
               "AI Transformation"
             ]
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "expression",
+                "Activity"
+              ]
+            ]
           ]
-        },
-        "type": "query"
+        }
       },
       "visualization_settings": {
         "graph.y_axis.title_text": "Response Count",
@@ -435,7 +483,7 @@
       "dataset_query": {
         "type": "native",
         "native": {
-          "query": "SELECT\n   (\n      CAST(\n         date_trunc(\n            'week',\n            (\n               \"public\".\"survey_QuestionResponse\".\"submittedAt\" + (INTERVAL '1 day')\n            )\n         ) AS timestamp\n      ) + (INTERVAL '-1 day')\n   ) AS \"Submitted At\",\n   sum(\n      \"public\".\"survey_QuestionResponse\".\"response\" :: integer\n   ) AS \"Time Saved (min)\",\n   sum(\n      sum(\n         \"public\".\"survey_QuestionResponse\".\"response\" :: integer\n      )\n   ) OVER (\n      ORDER BY\n         (\n            CAST(\n               date_trunc(\n                  'week',\n                  (\n                     \"public\".\"survey_QuestionResponse\".\"submittedAt\" + (INTERVAL '1 day')\n                  )\n               ) AS timestamp\n            ) + (INTERVAL '-1 day')\n         )\n   ) AS \"Cumulative Time Saved (min)\"\nFROM\n   \"public\".\"survey_QuestionResponse\"\n   LEFT JOIN \"public\".\"survey_SurveyQuestionAssociation\" \"Survey SurveyQuestionAssociation - SurveyQuestion\" ON \"public\".\"survey_QuestionResponse\".\"surveyQuestion\" = \"Survey SurveyQuestionAssociation - SurveyQuestion\".\"id\"\n   LEFT JOIN \"public\".\"survey_Question\" \"Survey Question - Question\" ON \"Survey SurveyQuestionAssociation - SurveyQuestion\".\"question\" = \"Survey Question - Question\".\"id\"\n   LEFT JOIN \"public\".\"survey_Survey\" \"Survey Survey - Survey\" ON \"Survey SurveyQuestionAssociation - SurveyQuestion\".\"survey\" = \"Survey Survey - Survey\".\"id\"\nWHERE\n   (\n      \"Survey Question - Question\".\"responseTypeCategory\" = 'CodingAssistants'\n      AND (\n         \"Survey Question - Question\".\"question\" = 'Based on your experience, estimate how much total coding timeyou saved using copilot for this PR? (in minutes)'\n         OR \"Survey Question - Question\".\"question\" = 'On average how many hours per day did you save in the past week?'\n      ) [[AND \"Survey Survey - Survey\".\"name\" = <<survey_name>>]]\n   )\nGROUP BY\n   (\n      CAST(\n         date_trunc(\n            'week',\n            (\n               \"public\".\"survey_QuestionResponse\".\"submittedAt\" + (INTERVAL '1 day')\n            )\n         ) AS timestamp\n      ) + (INTERVAL '-1 day')\n   )\nORDER BY\n   (\n      CAST(\n         date_trunc(\n            'week',\n            (\n               \"public\".\"survey_QuestionResponse\".\"submittedAt\" + (INTERVAL '1 day')\n            )\n         ) AS timestamp\n      ) + (INTERVAL '-1 day')\n   ) ASC",
+          "query": "SELECT\n   (\n      CAST(\n         date_trunc(\n            'week',\n            (\n               \"public\".\"survey_QuestionResponse\".\"submittedAt\" + (INTERVAL '1 day')\n            )\n         ) AS timestamp\n      ) + (INTERVAL '-1 day')\n   ) AS \"Submitted At\",\n   sum(\n      CASE\n         WHEN \"Survey Question - Question\".\"question\" = 'Based on your experience, estimate how much total coding time you saved using copilot for this PR? (in minutes)' THEN (\n               \"public\".\"survey_QuestionResponse\".\"response\" :: float\n         ) / 60\n         WHEN \"Survey Question - Question\".\"question\" = 'On average how many hours per day did you save in the past week?' THEN (\n               \"public\".\"survey_QuestionResponse\".\"response\" :: float\n         ) * 5\n      END\n   ) AS \"Time Saved hours\",\n   sum(\n      sum(\n         CASE\n            WHEN \"Survey Question - Question\".\"question\" = 'Based on your experience, estimate how much total coding time you saved using copilot for this PR? (in minutes)' THEN (\n                \"public\".\"survey_QuestionResponse\".\"response\" :: float\n            ) / 60\n            WHEN \"Survey Question - Question\".\"question\" = 'On average how many hours per day did you save in the past week?' THEN (\n                \"public\".\"survey_QuestionResponse\".\"response\" :: float\n            ) * 5\n        END\n      )\n   ) OVER (\n      ORDER BY\n         (\n            CAST(\n               date_trunc(\n                  'week',\n                  (\n                     \"public\".\"survey_QuestionResponse\".\"submittedAt\" + (INTERVAL '1 day')\n                  )\n               ) AS timestamp\n            ) + (INTERVAL '-1 day')\n         )\n   ) AS \"Cumulative Time Saved hours\"\nFROM\n   \"public\".\"survey_QuestionResponse\"\n   LEFT JOIN \"public\".\"survey_SurveyQuestionAssociation\" \"Survey SurveyQuestionAssociation - SurveyQuestion\" ON \"public\".\"survey_QuestionResponse\".\"surveyQuestion\" = \"Survey SurveyQuestionAssociation - SurveyQuestion\".\"id\"\n   LEFT JOIN \"public\".\"survey_Question\" \"Survey Question - Question\" ON \"Survey SurveyQuestionAssociation - SurveyQuestion\".\"question\" = \"Survey Question - Question\".\"id\"\n   LEFT JOIN \"public\".\"survey_Survey\" \"Survey Survey - Survey\" ON \"Survey SurveyQuestionAssociation - SurveyQuestion\".\"survey\" = \"Survey Survey - Survey\".\"id\"\nWHERE\n   (\n      \"Survey Question - Question\".\"responseTypeCategory\" = 'CodingAssistants'\n      AND (\n         \"Survey Question - Question\".\"question\" = 'Based on your experience, estimate how much total coding time you saved using copilot for this PR? (in minutes)'\n         OR \"Survey Question - Question\".\"question\" = 'On average how many hours per day did you save in the past week?'\n      ) [[AND \"Survey Survey - Survey\".\"name\" = <<survey_name>>]]\n   )\nGROUP BY\n   (\n      CAST(\n         date_trunc(\n            'week',\n            (\n               \"public\".\"survey_QuestionResponse\".\"submittedAt\" + (INTERVAL '1 day')\n            )\n         ) AS timestamp\n      ) + (INTERVAL '-1 day')\n   )\nORDER BY\n   (\n      CAST(\n         date_trunc(\n            'week',\n            (\n               \"public\".\"survey_QuestionResponse\".\"submittedAt\" + (INTERVAL '1 day')\n            )\n         ) AS timestamp\n      ) + (INTERVAL '-1 day')\n   ) ASC",
           "template-tags": {
             "survey_name": {
               "id": "3f790505-ef25-cfdc-1f83-096409adca5d",
@@ -448,13 +496,13 @@
       },
       "visualization_settings": {
         "graph.show_trendline": true,
-        "graph.y_axis.title_text": "Total Time Saved (min)",
+        "graph.y_axis.title_text": "Total Time Saved",
         "graph.show_values": true,
         "table.cell_column": "question",
         "graph.series_order_dimension": "response",
         "graph.x_axis.title_text": "Response Submitted At",
         "graph.metrics": [
-          "Cumulative Time Saved (min)"
+          "Cumulative Time Saved hours"
         ],
         "graph.series_order": [
           {
@@ -489,6 +537,15 @@
           }
         ],
         "table.pivot_column": "Task Type",
+        "column_settings": {
+          "[\"name\",\"Cumulative Time Saved hours\"]": {
+            "prefix": "",
+            "suffix": " h"
+          },
+          "[\"name\",\"Time Saved hours\"]": {
+            "suffix": " h"
+          }
+        },
         "series_settings": {
           "Strongly Agree": {
             "color": "#689636"
@@ -518,6 +575,7 @@
       "display": "row",
       "table_id": {{ table "survey_QuestionResponse" }},
       "dataset_query": {
+        "type": "query",
         "query": {
           "source-table": {{ table "survey_QuestionResponse" }},
           "joins": [
@@ -649,9 +707,17 @@
               ],
               "AI Transformation"
             ]
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "expression",
+                "Task Type"
+              ]
+            ]
           ]
-        },
-        "type": "query"
+        }
       },
       "visualization_settings": {
         "graph.y_axis.title_text": "Response Count",
@@ -717,6 +783,946 @@
         ],
         "stackable.stack_type": "stacked"
       }
+    },
+    {
+      "name": "Number of Surveys",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "survey_Survey" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "survey_Survey" }},
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "survey_Survey.typeDetail" }},
+              null
+            ],
+            "AI Transformation"
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "Number of Questions Asked",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "survey_Question" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "survey_Question" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_SurveyQuestionAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_Question.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.question" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation"
+                  }
+                ]
+              ],
+              "alias": "Survey SurveyQuestionAssociation"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Survey" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.survey" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Survey.id" }},
+                  {
+                    "join-alias": "Survey Survey - Survey"
+                  }
+                ]
+              ],
+              "alias": "Survey Survey - Survey"
+            }
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "survey_Survey.typeDetail" }},
+              {
+                "join-alias": "Survey Survey - Survey"
+              }
+            ],
+            "AI Transformation"
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {}
+    },
+    {
+      "name": "Survey Response Count",
+      "description": null,
+      "display": "scalar",
+      "table_id": {{ table "survey_QuestionResponse" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "survey_QuestionResponse" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_SurveyQuestionAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_QuestionResponse.surveyQuestion" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.id" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ]
+              ],
+              "alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Survey" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.survey" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Survey.id" }},
+                  {
+                    "join-alias": "Survey Survey - Survey"
+                  }
+                ]
+              ],
+              "alias": "Survey Survey - Survey"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Question" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.question" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Question.id" }},
+                  {
+                    "join-alias": "Survey Question - Question"
+                  }
+                ]
+              ],
+              "alias": "Survey Question - Question"
+            }
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "survey_Survey.typeDetail" }},
+              {
+                "join-alias": "Survey Survey - Survey"
+              }
+            ],
+            "AI Transformation"
+          ],
+          "aggregation": [
+            [
+              "count"
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "origin",
+        "table.cell_column": "order",
+        "graph.dimensions": [
+          "submittedAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Survey Questions",
+      "description": null,
+      "display": "table",
+      "table_id": {{ table "survey_Survey" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "survey_Survey" }},
+          "filter": [
+            "=",
+            [
+              "field",
+              {{ field "survey_Survey.typeDetail" }},
+              null
+            ],
+            "AI Transformation"
+          ],
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_SurveyQuestionAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_Survey.id" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.survey" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation"
+                  }
+                ]
+              ],
+              "alias": "Survey SurveyQuestionAssociation"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Question" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.question" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Question.id" }},
+                  {
+                    "join-alias": "Survey Question - Question"
+                  }
+                ]
+              ],
+              "alias": "Survey Question - Question"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_QuestionResponse" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.id" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_QuestionResponse.surveyQuestion" }},
+                  {
+                    "join-alias": "Survey QuestionResponse"
+                  }
+                ]
+              ],
+              "alias": "Survey QuestionResponse"
+            }
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "survey_Question.question" }},
+              {
+                "join-alias": "Survey Question - Question"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "survey_QuestionResponse.id" }},
+                  {
+                    "join-alias": "Survey QuestionResponse"
+                  }
+                ]
+              ],
+              {
+                "name": "Response Count",
+                "display-name": "Response Count"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "survey_QuestionResponse.response" }},
+                  {
+                    "join-alias": "Survey QuestionResponse"
+                  }
+                ]
+              ],
+              {
+                "name": "Unique Responses",
+                "display-name": "Unique Responses"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "table.pivot_column": "startedAt",
+        "table.cell_column": "Question Count",
+        "pivot_table.column_split": {
+          "rows": [
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              null
+            ],
+            [
+              "field",
+              {{ field "survey_Question.question" }},
+              {
+                "join-alias": "Survey Question - Question"
+              }
+            ]
+          ],
+          "columns": [],
+          "values": [
+            [
+              "aggregation",
+              0
+            ],
+            [
+              "aggregation",
+              1
+            ]
+          ]
+        },
+        "column_settings": {
+          "[\"ref\",[\"field\",{{ field "survey_Survey.name" }},null]]": {
+            "pivot_table.column_show_totals": false,
+            "column_title": "Survey Name"
+          },
+          "[\"ref\",[\"field\",{{ field "survey_Question.question" }},null]]": {
+            "column_title": "Question"
+          }
+        }
+      }
+    },
+    {
+      "name": "Net Promoter Score - Tasks",
+      "description": "Net Promoter Score is the difference between \"Agree\" responses and \"Disagree\" responses as a percentage of total responses.",
+      "display": "table",
+      "table_id": {{ table "survey_QuestionResponse" }},
+      "dataset_query": {
+        "query": {
+          "source-table": {{ table "survey_QuestionResponse" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_SurveyQuestionAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_QuestionResponse.surveyQuestion" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.id" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ]
+              ],
+              "alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Question" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.question" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Question.id" }},
+                  {
+                    "join-alias": "Survey Question - Question"
+                  }
+                ]
+              ],
+              "alias": "Survey Question - Question"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Survey" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.survey" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Survey.id" }},
+                  {
+                    "join-alias": "Survey Survey - Survey"
+                  }
+                ]
+              ],
+              "alias": "Survey Survey - Survey"
+            }
+          ],
+          "expressions": {
+            "Task Type": [
+              "regex-match-first",
+              [
+                "field",
+                {{ field "survey_Question.question" }},
+                {
+                  "join-alias": "Survey Question - Question"
+                }
+              ],
+              "In the past week, Copilot helped me with the following tasks: \\[(.+)\\]"
+            ]
+          },
+          "breakout": [
+            [
+              "expression",
+              "Task Type"
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "-",
+                  [
+                    "count-where",
+                    [
+                      "or",
+                      [
+                        "=",
+                        [
+                          "field",
+                          {{ field "survey_QuestionResponse.response" }},
+                          null
+                        ],
+                        "Strongly Agree"
+                      ],
+                      [
+                        "=",
+                        [
+                          "field",
+                          {{ field "survey_QuestionResponse.response" }},
+                          null
+                        ],
+                        "Agree"
+                      ]
+                    ]
+                  ],
+                  [
+                    "count-where",
+                    [
+                      "or",
+                      [
+                        "=",
+                        [
+                          "field",
+                          {{ field "survey_QuestionResponse.response" }},
+                          null
+                        ],
+                        "Strongly Disagree"
+                      ],
+                      [
+                        "=",
+                        [
+                          "field",
+                          {{ field "survey_QuestionResponse.response" }},
+                          null
+                        ],
+                        "Disagree"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "count"
+                ]
+              ],
+              {
+                "name": "Net Promtoer Score",
+                "display-name": "Net Promtoer Score"
+              }
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "not-empty",
+              [
+                "expression",
+                "Task Type"
+              ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "survey_Survey.typeDetail" }},
+                {
+                  "join-alias": "Survey Survey - Survey"
+                }
+              ],
+              "AI Transformation"
+            ]
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "expression",
+                "Task Type"
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.y_axis.title_text": "Net Promoter Score",
+        "table.cell_column": "question",
+        "graph.series_order_dimension": "response",
+        "graph.x_axis.title_text": "Tasks",
+        "graph.metrics": [
+          "Net Promtoer Score"
+        ],
+        "graph.series_order": [
+          {
+            "key": "Strongly Disagree",
+            "color": "#E75454",
+            "enabled": true,
+            "name": "Strongly Disagree"
+          },
+          {
+            "key": "Disagree",
+            "color": "#EF8C8C",
+            "enabled": true,
+            "name": "Disagree"
+          },
+          {
+            "key": "Neutral",
+            "color": "#F9D45C",
+            "enabled": true,
+            "name": "Neutral"
+          },
+          {
+            "key": "Agree",
+            "color": "#A7D07C",
+            "enabled": true,
+            "name": "Agree"
+          },
+          {
+            "key": "Strongly Agree",
+            "color": "#689636",
+            "enabled": true,
+            "name": "Strongly Agree"
+          }
+        ],
+        "table.pivot_column": "Task Type",
+        "column_settings": {
+          "[\"name\",\"Net Promtoer Score\"]": {
+            "number_style": "percent",
+            "decimals": 1,
+            "show_mini_bar": true
+          }
+        },
+        "series_settings": {
+          "Strongly Agree": {
+            "color": "#689636"
+          },
+          "Agree": {
+            "color": "#A7D07C"
+          },
+          "Strongly Disagree": {
+            "color": "#E75454"
+          },
+          "Disagree": {
+            "color": "#EF8C8C"
+          },
+          "Neutral": {
+            "color": "#F9D45C"
+          }
+        },
+        "graph.dimensions": [
+          "Task Type"
+        ],
+        "stackable.stack_type": "stacked"
+      }
+    },
+    {
+      "name": "Net Promoter Score - Activity",
+      "description": "Net Promoter Score is the difference between \"Agree\" responses and \"Disagree\" responses as a percentage of total responses.",
+      "display": "table",
+      "table_id": {{ table "survey_QuestionResponse" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "survey_QuestionResponse" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_SurveyQuestionAssociation" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_QuestionResponse.surveyQuestion" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.id" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ]
+              ],
+              "alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Question" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.question" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Question.id" }},
+                  {
+                    "join-alias": "Survey Question - Question"
+                  }
+                ]
+              ],
+              "alias": "Survey Question - Question"
+            },
+            {
+              "fields": "all",
+              "source-table": {{ table "survey_Survey" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "survey_SurveyQuestionAssociation.survey" }},
+                  {
+                    "join-alias": "Survey SurveyQuestionAssociation - SurveyQuestion"
+                  }
+                ],
+                [
+                  "field",
+                  {{ field "survey_Survey.id" }},
+                  {
+                    "join-alias": "Survey Survey - Survey"
+                  }
+                ]
+              ],
+              "alias": "Survey Survey - Survey"
+            }
+          ],
+          "expressions": {
+            "Activity": [
+              "regex-match-first",
+              [
+                "field",
+                {{ field "survey_Question.question" }},
+                {
+                  "join-alias": "Survey Question - Question"
+                }
+              ],
+              "\\(optional\\) Copilot helps me to: \\[(.+)\\]"
+            ]
+          },
+          "breakout": [
+            [
+              "expression",
+              "Activity"
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "-",
+                  [
+                    "count-where",
+                    [
+                      "or",
+                      [
+                        "=",
+                        [
+                          "field",
+                          {{ field "survey_QuestionResponse.response" }},
+                          null
+                        ],
+                        "Strongly Agree"
+                      ],
+                      [
+                        "=",
+                        [
+                          "field",
+                          {{ field "survey_QuestionResponse.response" }},
+                          null
+                        ],
+                        "Agree"
+                      ]
+                    ]
+                  ],
+                  [
+                    "count-where",
+                    [
+                      "or",
+                      [
+                        "=",
+                        [
+                          "field",
+                          {{ field "survey_QuestionResponse.response" }},
+                          null
+                        ],
+                        "Strongly Disagree"
+                      ],
+                      [
+                        "=",
+                        [
+                          "field",
+                          {{ field "survey_QuestionResponse.response" }},
+                          null
+                        ],
+                        "Disagree"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "count"
+                ]
+              ],
+              {
+                "name": "Net Promoter Score",
+                "display-name": "Net Promoter Score"
+              }
+            ]
+          ],
+          "filter": [
+            "and",
+            [
+              "not-empty",
+              [
+                "expression",
+                "Activity"
+              ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "survey_Survey.typeDetail" }},
+                {
+                  "join-alias": "Survey Survey - Survey"
+                }
+              ],
+              "AI Transformation"
+            ]
+          ],
+          "order-by": [
+            [
+              "asc",
+              [
+                "expression",
+                "Activity"
+              ]
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.y_axis.title_text": "Response Count",
+        "table.cell_column": "question",
+        "graph.series_order_dimension": "response",
+        "graph.x_axis.title_text": "Activity",
+        "graph.metrics": [
+          "Response Count",
+          "Net Promoter Score"
+        ],
+        "table.column_formatting": [],
+        "graph.series_order": [
+          {
+            "key": "Strongly Disagree",
+            "color": "#E75454",
+            "enabled": true,
+            "name": "Strongly Disagree"
+          },
+          {
+            "key": "Disagree",
+            "color": "#EF8C8C",
+            "enabled": true,
+            "name": "Disagree"
+          },
+          {
+            "key": "Neutral",
+            "color": "#F9D45C",
+            "enabled": true,
+            "name": "Neutral"
+          },
+          {
+            "key": "Agree",
+            "color": "#A7D07C",
+            "enabled": true,
+            "name": "Agree"
+          },
+          {
+            "key": "Strongly Agree",
+            "color": "#689636",
+            "enabled": true,
+            "name": "Strongly Agree"
+          }
+        ],
+        "table.pivot_column": "Task Type",
+        "column_settings": {
+          "[\"name\",\"Net Promoter Score\"]": {
+            "show_mini_bar": true,
+            "number_style": "percent",
+            "decimals": 1
+          }
+        },
+        "series_settings": {
+          "Strongly Agree": {
+            "color": "#689636"
+          },
+          "Agree": {
+            "color": "#A7D07C"
+          },
+          "Strongly Disagree": {
+            "color": "#E75454"
+          },
+          "Disagree": {
+            "color": "#EF8C8C"
+          },
+          "Neutral": {
+            "color": "#F9D45C"
+          }
+        },
+        "graph.dimensions": [
+          "Activity",
+          "response"
+        ],
+        "stackable.stack_type": "stacked"
+      }
+    },
+    {
+      "name": "Total Time Saved (hours)",
+      "description": null,
+      "display": "scalar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT\n    sum(\n        CASE\n            WHEN \"Survey Question - Question\".\"question\" = 'Based on your experience, estimate how much total coding time you saved using copilot for this PR? (in minutes)' THEN (\n                \"public\".\"survey_QuestionResponse\".\"response\" :: float\n            ) / 60\n            WHEN \"Survey Question - Question\".\"question\" = 'On average how many hours per day did you save in the past week?' THEN (\n                \"public\".\"survey_QuestionResponse\".\"response\" :: float\n            ) * 5\n        END\n    ) AS \"Total Time Saved\"\nFROM\n    \"public\".\"survey_QuestionResponse\"\n    LEFT JOIN \"public\".\"survey_SurveyQuestionAssociation\" \"Survey SurveyQuestionAssociation - SurveyQuestion\" ON \"public\".\"survey_QuestionResponse\".\"surveyQuestion\" = \"Survey SurveyQuestionAssociation - SurveyQuestion\".\"id\"\n    LEFT JOIN \"public\".\"survey_Survey\" \"Survey Survey - Survey\" ON \"Survey SurveyQuestionAssociation - SurveyQuestion\".\"survey\" = \"Survey Survey - Survey\".\"id\"\n    LEFT JOIN \"public\".\"survey_Question\" \"Survey Question - Question\" ON \"Survey SurveyQuestionAssociation - SurveyQuestion\".\"question\" = \"Survey Question - Question\".\"id\"\nWHERE\n    (\n        \"Survey Survey - Survey\".\"typeDetail\" = 'AI Transformation'\n        AND (\n            \"Survey Question - Question\".\"question\" = 'Based on your experience, estimate how much total coding time you saved using copilot for this PR? (in minutes)'\n            OR \"Survey Question - Question\".\"question\" = 'On average how many hours per day did you save in the past week?'\n        )\n        [[AND \"Survey Survey - Survey\".\"name\" = <<survey_name>>]]\n    )",
+          "template-tags": {
+            "survey_name": {
+              "id": "fc334638-6a77-7ed6-fc8d-f2c943fe5452",
+              "name": "survey_name",
+              "display-name": "Survey name",
+              "type": "text"
+            }
+          }
+        }
+      },
+      "visualization_settings": {
+        "table.pivot_column": "origin",
+        "table.cell_column": "order",
+        "graph.dimensions": [
+          "submittedAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
     }
   ],
   "parameters": [
@@ -738,9 +1744,9 @@
   ],
   "layout": [
     {
-      "row": 0,
-      "col": 0,
-      "sizeX": 13,
+      "row": 1,
+      "col": 4,
+      "sizeX": 14,
       "sizeY": 4,
       "card_id": {{ card "AI Transformation Surveys" }},
       "series": [],
@@ -783,9 +1789,9 @@
       }
     },
     {
-      "row": 4,
-      "col": 0,
-      "sizeX": 12,
+      "row": 10,
+      "col": 5,
+      "sizeX": 13,
       "sizeY": 5,
       "card_id": {{ card "Survey Responses over Time" }},
       "series": [],
@@ -820,10 +1826,10 @@
       "visualization_settings": {}
     },
     {
-      "row": 14,
-      "col": 0,
+      "row": 30,
+      "col": 5,
       "sizeX": 13,
-      "sizeY": 5,
+      "sizeY": 7,
       "card_id": {{ card "Copilot helps me to:" }},
       "series": [],
       "parameter_mappings": [
@@ -857,9 +1863,9 @@
       "visualization_settings": {}
     },
     {
-      "row": 9,
-      "col": 0,
-      "sizeX": 12,
+      "row": 16,
+      "col": 5,
+      "sizeX": 13,
       "sizeY": 5,
       "card_id": {{ card "Cumulative Time Savings" }},
       "series": [],
@@ -879,10 +1885,10 @@
       "visualization_settings": {}
     },
     {
-      "row": 19,
-      "col": 0,
+      "row": 22,
+      "col": 5,
       "sizeX": 13,
-      "sizeY": 5,
+      "sizeY": 7,
       "card_id": {{ card "Copilot helped me with the following tasks" }},
       "series": [],
       "parameter_mappings": [
@@ -914,6 +1920,337 @@
         }
       ],
       "visualization_settings": {}
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Number of Surveys" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "a0143bc7",
+          "card_id": {{ card "Number of Surveys" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "sizeX": 4,
+      "sizeY": 4,
+      "card_id": {{ card "Number of Questions Asked" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "a0143bc7",
+          "card_id": {{ card "Number of Questions Asked" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              {
+                "join-alias": "Survey Survey - Survey"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 10,
+      "col": 0,
+      "sizeX": 5,
+      "sizeY": 5,
+      "card_id": {{ card "Survey Response Count" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "a0143bc7",
+          "card_id": {{ card "Survey Response Count" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              {
+                "join-alias": "Survey Survey - Survey"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "15e648d4",
+          "card_id": {{ card "Survey Response Count" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_QuestionResponse.submittedAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "sizeX": 14,
+      "sizeY": 4,
+      "card_id": {{ card "Survey Questions" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "a0143bc7",
+          "card_id": {{ card "Survey Questions" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {
+        "column_settings": {
+          "[\"ref\",[\"field\",{{ field "survey_Survey.name" }},null]]": {
+            "click_behavior": {
+              "type": "crossfilter",
+              "parameterMapping": {
+                "a0143bc7": {
+                  "source": {
+                    "type": "column",
+                    "id": "name",
+                    "name": "Name"
+                  },
+                  "target": {
+                    "type": "parameter",
+                    "id": "a0143bc7"
+                  },
+                  "id": "a0143bc7"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "row": 29,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "## Satisfaction",
+        "text.align_vertical": "middle",
+        "dashcard.background": false
+      }
+    },
+    {
+      "row": 21,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "## Benefits",
+        "text.align_vertical": "middle",
+        "dashcard.background": false
+      }
+    },
+    {
+      "row": 9,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "## Engagement",
+        "text.align_vertical": "middle",
+        "dashcard.background": false
+      }
+    },
+    {
+      "row": 15,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "## Time Savings",
+        "text.align_vertical": "middle",
+        "dashcard.background": false
+      }
+    },
+    {
+      "row": 22,
+      "col": 0,
+      "sizeX": 5,
+      "sizeY": 7,
+      "card_id": {{ card "Net Promoter Score - Tasks" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "a0143bc7",
+          "card_id": {{ card "Net Promoter Score - Tasks" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              {
+                "join-alias": "Survey Survey - Survey"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "15e648d4",
+          "card_id": {{ card "Net Promoter Score - Tasks" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_QuestionResponse.submittedAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 30,
+      "col": 0,
+      "sizeX": 5,
+      "sizeY": 7,
+      "card_id": {{ card "Net Promoter Score - Activity" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "a0143bc7",
+          "card_id": {{ card "Net Promoter Score - Activity" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_Survey.name" }},
+              {
+                "join-alias": "Survey Survey - Survey"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "15e648d4",
+          "card_id": {{ card "Net Promoter Score - Activity" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "survey_QuestionResponse.submittedAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 16,
+      "col": 0,
+      "sizeX": 5,
+      "sizeY": 5,
+      "card_id": {{ card "Total Time Saved (hours)" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "a0143bc7",
+          "card_id": {{ card "Total Time Saved (hours)" }},
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "survey_name"
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "## Surveys",
+        "text.align_vertical": "middle",
+        "dashcard.background": false
+      }
     }
   ],
   "path": "/Faros CE/AI Copilot Evaluation"

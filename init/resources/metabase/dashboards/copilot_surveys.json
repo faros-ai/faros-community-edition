@@ -341,22 +341,22 @@
           "filter": [
             "and",
             [
-              "=",
-              [
-                "field",
-                {{ field "survey_Question.responseTypeCategory" }},
-                {
-                  "join-alias": "Survey Question - Question"
-                }
-              ],
-              "CodingAssistants"
-            ],
-            [
               "not-empty",
               [
                 "expression",
                 "Activity"
               ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "survey_Survey.typeDetail" }},
+                {
+                  "join-alias": "Survey Survey - Survey"
+                }
+              ],
+              "AI Transformation"
             ]
           ]
         },
@@ -366,7 +366,7 @@
         "graph.y_axis.title_text": "Response Count",
         "table.cell_column": "question",
         "graph.series_order_dimension": "response",
-        "graph.x_axis.title_text": "Tasks",
+        "graph.x_axis.title_text": "Activity",
         "graph.metrics": [
           "Response Count"
         ],
@@ -518,7 +518,6 @@
       "display": "row",
       "table_id": {{ table "survey_QuestionResponse" }},
       "dataset_query": {
-        "type": "query",
         "query": {
           "source-table": {{ table "survey_QuestionResponse" }},
           "joins": [
@@ -633,25 +632,26 @@
           "filter": [
             "and",
             [
-              "=",
-              [
-                "field",
-                {{ field "survey_Question.responseTypeCategory" }},
-                {
-                  "join-alias": "Survey Question - Question"
-                }
-              ],
-              "CodingAssistants"
-            ],
-            [
               "not-empty",
               [
                 "expression",
                 "Task Type"
               ]
+            ],
+            [
+              "=",
+              [
+                "field",
+                {{ field "survey_Survey.typeDetail" }},
+                {
+                  "join-alias": "Survey Survey - Survey"
+                }
+              ],
+              "AI Transformation"
             ]
           ]
-        }
+        },
+        "type": "query"
       },
       "visualization_settings": {
         "graph.y_axis.title_text": "Response Count",

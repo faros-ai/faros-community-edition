@@ -1,0 +1,36 @@
+mutation insert_survey_question(
+	$data_survey_uid: String!
+  $data_survey_source: String!
+  $data_question_uid: String!
+  $data_question_source: String!
+  $data_origin: String!
+) {
+  insert_survey_SurveyQuestionAssociation_one(
+    object: {
+      survey_Survey: {
+        data: {
+          uid: $data_survey_uid
+          source: $data_survey_source
+        }
+        on_conflict: {constraint: survey_Survey_pkey, update_columns: refreshedAt}
+      }
+      survey_Question: {
+        data: {
+          uid: $data_question_uid
+          source: $data_question_source
+        }
+        on_conflict: {constraint: survey_Question_pkey, update_columns: refreshedAt}
+      }
+      origin: $data_origin
+    }
+    on_conflict: {
+      constraint: survey_SurveyQuestionAssociation_pkey
+      update_columns: [
+        origin
+        refreshedAt
+      ]
+    }
+  ) {
+    id
+  }
+}

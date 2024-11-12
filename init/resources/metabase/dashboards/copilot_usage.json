@@ -1,0 +1,2456 @@
+{
+  "name": "AI Copilot Evaluation - Adoption & Usage",
+  "cards": [
+    {
+      "name": "Copilot Metrics",
+      "description": null,
+      "display": "table",
+      "table_id": null,
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT \"public\".\"faros_MetricValue\".\"id\" AS \"id\", \"public\".\"faros_MetricValue\".\"definition\" AS \"definition\", \"public\".\"faros_MetricValue\".\"computedAt\" AS \"computedAt\", \"public\".\"faros_MetricValue\".\"value\" :: integer AS \"value\", max(CASE WHEN \"Faros Tag - Tag\".\"key\" = 'copilotEditor' THEN coalesce(\"Faros Tag - Tag\".\"value\", 'all_editors') END) AS \"copilotEditor\", max(CASE WHEN \"Faros Tag - Tag\".\"key\" = 'copilotLanguage' THEN coalesce(\"Faros Tag - Tag\".\"value\", 'all_languages') END) AS \"copilotLanguage\", max(CASE WHEN \"Faros Tag - Tag\".\"key\" = 'copilotOrg' THEN coalesce(\"Faros Tag - Tag\".\"value\", 'all_orgs') END) AS \"copilotOrg\", max(CASE WHEN \"Faros Tag - Tag\".\"key\" = 'copilotTeam' THEN coalesce(\"Faros Tag - Tag\".\"value\", 'all_teams') END) AS \"copilotTeam\"\nFROM \"public\".\"faros_MetricValue\"\nLEFT JOIN \"public\".\"faros_MetricValueTag\" \"Faros MetricValueTag\" ON \"public\".\"faros_MetricValue\".\"id\" = \"Faros MetricValueTag\".\"value\" LEFT JOIN \"public\".\"faros_Tag\" \"Faros Tag - Tag\" ON \"Faros MetricValueTag\".\"tag\" = \"Faros Tag - Tag\".\"id\"\nGROUP BY \"public\".\"faros_MetricValue\".\"id\", \"public\".\"faros_MetricValue\".\"definition\", \"public\".\"faros_MetricValue\".\"computedAt\", \"public\".\"faros_MetricValue\".\"value\"\nORDER BY \"public\".\"faros_MetricValue\".\"id\" ASC, \"public\".\"faros_MetricValue\".\"definition\" ASC, \"public\".\"faros_MetricValue\".\"computedAt\" ASC, \"public\".\"faros_MetricValue\".\"value\" ASC",
+          "template-tags": {}
+        }
+      },
+      "visualization_settings": {
+        "table.pivot_column": "origin",
+        "table.cell_column": "value_3"
+      }
+    },
+    {
+      "name": "Number of Devs with Licenses",
+      "description": null,
+      "display": "line",
+      "table_id": {{ table "vcs_UserTool" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "vcs_UserTool" }},
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_UserTool.startedAt" }},
+              {
+                "temporal-unit": "week"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "cum-count"
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "startedAt"
+        ],
+        "graph.metrics": [
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Daily Active User Count",
+      "description": null,
+      "display": "bar",
+      "table_id": {{ table "vcs_UserToolUsage" }},
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ table "vcs_UserToolUsage" }},
+          "joins": [
+            {
+              "fields": "all",
+              "source-table": {{ table "vcs_UserTool" }},
+              "condition": [
+                "=",
+                [
+                  "field",
+                  {{ field "vcs_UserToolUsage.userTool" }},
+                  null
+                ],
+                [
+                  "field",
+                  {{ field "vcs_UserTool.id" }},
+                  {
+                    "join-alias": "Vcs UserTool - UserTool"
+                  }
+                ]
+              ],
+              "alias": "Vcs UserTool - UserTool"
+            }
+          ],
+          "breakout": [
+            [
+              "field",
+              {{ field "vcs_UserToolUsage.usedAt" }},
+              {
+                "temporal-unit": "day"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "distinct",
+                [
+                  "field",
+                  {{ field "vcs_UserTool.user" }},
+                  {
+                    "join-alias": "Vcs UserTool - UserTool"
+                  }
+                ]
+              ],
+              {
+                "name": "Daily Active Users",
+                "display-name": "Daily Active Users"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "usedAt"
+        ],
+        "series_settings": {
+          "Daily Active Users": {
+            "line.missing": "zero"
+          }
+        },
+        "column_settings": {
+          "[\"name\",\"Daily Active Users\"]": {}
+        },
+        "graph.metrics": [
+          "Daily Active Users"
+        ]
+      }
+    },
+    {
+      "name": "Lines of Code Accepted by GitHub Team",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "breakout": [
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            [
+              "field",
+              "computedAt",
+              {
+                "temporal-unit": "week",
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ],
+          "filter": [
+            "=",
+            [
+              "field",
+              "definition",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "DailyGeneratedLineCount_Accept"
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "sum",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ]
+              ],
+              {
+                "name": "Lines Accepted",
+                "display-name": "Lines Accepted"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "computedAt",
+          "copilotTeam"
+        ],
+        "graph.metrics": [
+          "Lines Accepted"
+        ]
+      }
+    },
+    {
+      "name": "Lines Generated",
+      "description": null,
+      "display": "bar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "breakout": [
+            [
+              "field",
+              "computedAt",
+              {
+                "temporal-unit": "week",
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "=",
+                  [
+                    "field",
+                    "definition",
+                    {
+                      "base-type": "type/Text"
+                    }
+                  ],
+                  "DailyGeneratedLineCount_Accept"
+                ]
+              ],
+              {
+                "name": "Accepted Lines",
+                "display-name": "Accepted Lines"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "=",
+                  [
+                    "field",
+                    "definition",
+                    {
+                      "base-type": "type/Text"
+                    }
+                  ],
+                  "DailyGeneratedLineCount_Discard"
+                ]
+              ],
+              {
+                "name": "Discarded Lines",
+                "display-name": "Discarded Lines"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "or",
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Accept"
+                  ],
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Discard"
+                  ]
+                ]
+              ],
+              {
+                "name": "Total Lines",
+                "display-name": "Total Lines"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "sum-where",
+                  [
+                    "field",
+                    "value",
+                    {
+                      "base-type": "type/Integer"
+                    }
+                  ],
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Accept"
+                  ]
+                ],
+                [
+                  "sum-where",
+                  [
+                    "field",
+                    "value",
+                    {
+                      "base-type": "type/Integer"
+                    }
+                  ],
+                  [
+                    "or",
+                    [
+                      "=",
+                      [
+                        "field",
+                        "definition",
+                        {
+                          "base-type": "type/Text"
+                        }
+                      ],
+                      "DailyGeneratedLineCount_Accept"
+                    ],
+                    [
+                      "=",
+                      [
+                        "field",
+                        "definition",
+                        {
+                          "base-type": "type/Text"
+                        }
+                      ],
+                      "DailyGeneratedLineCount_Discard"
+                    ]
+                  ]
+                ]
+              ],
+              {
+                "name": "Acceptance Rate",
+                "display-name": "Acceptance Rate"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "computedAt"
+        ],
+        "series_settings": {
+          "Discarded Lines": {
+            "color": "#EF8C8C"
+          }
+        },
+        "column_settings": {
+          "[\"name\",\"Acceptance Rate\"]": {
+            "number_style": "percent"
+          }
+        },
+        "graph.metrics": [
+          "Accepted Lines",
+          "Discarded Lines"
+        ]
+      }
+    },
+    {
+      "name": "Acceptance Rate",
+      "description": null,
+      "display": "bar",
+      "table_id": null,
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "breakout": [
+            [
+              "field",
+              "computedAt",
+              {
+                "temporal-unit": "week",
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "=",
+                  [
+                    "field",
+                    "definition",
+                    {
+                      "base-type": "type/Text"
+                    }
+                  ],
+                  "DailyGeneratedLineCount_Accept"
+                ]
+              ],
+              {
+                "name": "Accepted Lines",
+                "display-name": "Accepted Lines"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "=",
+                  [
+                    "field",
+                    "definition",
+                    {
+                      "base-type": "type/Text"
+                    }
+                  ],
+                  "DailyGeneratedLineCount_Discard"
+                ]
+              ],
+              {
+                "name": "Discarded Lines",
+                "display-name": "Discarded Lines"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "or",
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Accept"
+                  ],
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Discard"
+                  ]
+                ]
+              ],
+              {
+                "name": "Total Lines",
+                "display-name": "Total Lines"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "sum-where",
+                  [
+                    "field",
+                    "value",
+                    {
+                      "base-type": "type/Integer"
+                    }
+                  ],
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Accept"
+                  ]
+                ],
+                [
+                  "sum-where",
+                  [
+                    "field",
+                    "value",
+                    {
+                      "base-type": "type/Integer"
+                    }
+                  ],
+                  [
+                    "or",
+                    [
+                      "=",
+                      [
+                        "field",
+                        "definition",
+                        {
+                          "base-type": "type/Text"
+                        }
+                      ],
+                      "DailyGeneratedLineCount_Accept"
+                    ],
+                    [
+                      "=",
+                      [
+                        "field",
+                        "definition",
+                        {
+                          "base-type": "type/Text"
+                        }
+                      ],
+                      "DailyGeneratedLineCount_Discard"
+                    ]
+                  ]
+                ]
+              ],
+              {
+                "name": "Acceptance Rate",
+                "display-name": "Acceptance Rate"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "computedAt"
+        ],
+        "series_settings": {
+          "Discarded Lines": {
+            "color": "#EF8C8C"
+          }
+        },
+        "column_settings": {
+          "[\"name\",\"Acceptance Rate\"]": {
+            "number_style": "percent"
+          }
+        },
+        "graph.metrics": [
+          "Acceptance Rate"
+        ]
+      }
+    },
+    {
+      "name": "Lines Generated by Language",
+      "description": null,
+      "display": "pie",
+      "table_id": null,
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "breakout": [
+            [
+              "field",
+              "copilotLanguage",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "or",
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Accept"
+                  ],
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Discard"
+                  ]
+                ]
+              ],
+              {
+                "name": "Total Lines",
+                "display-name": "Total Lines"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "computedAt"
+        ],
+        "series_settings": {
+          "Discarded Lines": {
+            "color": "#EF8C8C"
+          }
+        },
+        "column_settings": {
+          "[\"name\",\"Acceptance Rate\"]": {
+            "number_style": "percent"
+          }
+        },
+        "graph.metrics": [
+          "Accepted Lines",
+          "Discarded Lines"
+        ]
+      }
+    },
+    {
+      "name": "Acceptance Rate by Editor",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "breakout": [
+            [
+              "field",
+              "copilotEditor",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            [
+              "field",
+              "computedAt",
+              {
+                "temporal-unit": "week",
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "=",
+                  [
+                    "field",
+                    "definition",
+                    {
+                      "base-type": "type/Text"
+                    }
+                  ],
+                  "DailyGeneratedLineCount_Accept"
+                ]
+              ],
+              {
+                "name": "Accepted Lines",
+                "display-name": "Accepted Lines"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "=",
+                  [
+                    "field",
+                    "definition",
+                    {
+                      "base-type": "type/Text"
+                    }
+                  ],
+                  "DailyGeneratedLineCount_Discard"
+                ]
+              ],
+              {
+                "name": "Discarded Lines",
+                "display-name": "Discarded Lines"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "or",
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Accept"
+                  ],
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Discard"
+                  ]
+                ]
+              ],
+              {
+                "name": "Total Lines",
+                "display-name": "Total Lines"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "sum-where",
+                  [
+                    "field",
+                    "value",
+                    {
+                      "base-type": "type/Integer"
+                    }
+                  ],
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Accept"
+                  ]
+                ],
+                [
+                  "sum-where",
+                  [
+                    "field",
+                    "value",
+                    {
+                      "base-type": "type/Integer"
+                    }
+                  ],
+                  [
+                    "or",
+                    [
+                      "=",
+                      [
+                        "field",
+                        "definition",
+                        {
+                          "base-type": "type/Text"
+                        }
+                      ],
+                      "DailyGeneratedLineCount_Accept"
+                    ],
+                    [
+                      "=",
+                      [
+                        "field",
+                        "definition",
+                        {
+                          "base-type": "type/Text"
+                        }
+                      ],
+                      "DailyGeneratedLineCount_Discard"
+                    ]
+                  ]
+                ]
+              ],
+              {
+                "name": "Acceptance Rate",
+                "display-name": "Acceptance Rate"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": null,
+        "graph.dimensions": [
+          "computedAt",
+          "copilotEditor"
+        ],
+        "series_settings": {
+          "Discarded Lines": {
+            "color": "#EF8C8C"
+          }
+        },
+        "graph.series_order_dimension": null,
+        "graph.series_order": null,
+        "column_settings": {
+          "[\"name\",\"Acceptance Rate\"]": {
+            "number_style": "percent"
+          }
+        },
+        "graph.metrics": [
+          "Acceptance Rate"
+        ]
+      }
+    },
+    {
+      "name": "Acceptance Rate by Language",
+      "description": null,
+      "display": "row",
+      "table_id": null,
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "breakout": [
+            [
+              "field",
+              "copilotLanguage",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "=",
+                  [
+                    "field",
+                    "definition",
+                    {
+                      "base-type": "type/Text"
+                    }
+                  ],
+                  "DailyGeneratedLineCount_Accept"
+                ]
+              ],
+              {
+                "name": "Accepted Lines",
+                "display-name": "Accepted Lines"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "=",
+                  [
+                    "field",
+                    "definition",
+                    {
+                      "base-type": "type/Text"
+                    }
+                  ],
+                  "DailyGeneratedLineCount_Discard"
+                ]
+              ],
+              {
+                "name": "Discarded Lines",
+                "display-name": "Discarded Lines"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "or",
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Accept"
+                  ],
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Discard"
+                  ]
+                ]
+              ],
+              {
+                "name": "Total Lines",
+                "display-name": "Total Lines"
+              }
+            ],
+            [
+              "aggregation-options",
+              [
+                "/",
+                [
+                  "sum-where",
+                  [
+                    "field",
+                    "value",
+                    {
+                      "base-type": "type/Integer"
+                    }
+                  ],
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Accept"
+                  ]
+                ],
+                [
+                  "sum-where",
+                  [
+                    "field",
+                    "value",
+                    {
+                      "base-type": "type/Integer"
+                    }
+                  ],
+                  [
+                    "or",
+                    [
+                      "=",
+                      [
+                        "field",
+                        "definition",
+                        {
+                          "base-type": "type/Text"
+                        }
+                      ],
+                      "DailyGeneratedLineCount_Accept"
+                    ],
+                    [
+                      "=",
+                      [
+                        "field",
+                        "definition",
+                        {
+                          "base-type": "type/Text"
+                        }
+                      ],
+                      "DailyGeneratedLineCount_Discard"
+                    ]
+                  ]
+                ]
+              ],
+              {
+                "name": "Acceptance Rate",
+                "display-name": "Acceptance Rate"
+              }
+            ]
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "aggregation",
+                3,
+                null
+              ]
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": null,
+        "graph.dimensions": [
+          "copilotLanguage"
+        ],
+        "series_settings": {
+          "Discarded Lines": {
+            "color": "#EF8C8C"
+          }
+        },
+        "column_settings": {
+          "[\"name\",\"Acceptance Rate\"]": {
+            "number_style": "percent"
+          }
+        },
+        "graph.metrics": [
+          "Acceptance Rate"
+        ]
+      }
+    },
+    {
+      "name": "Lines Generated by Editor",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "type": "query",
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "breakout": [
+            [
+              "field",
+              "computedAt",
+              {
+                "temporal-unit": "week",
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ],
+            [
+              "field",
+              "copilotEditor",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "sum-where",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ],
+                [
+                  "or",
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Accept"
+                  ],
+                  [
+                    "=",
+                    [
+                      "field",
+                      "definition",
+                      {
+                        "base-type": "type/Text"
+                      }
+                    ],
+                    "DailyGeneratedLineCount_Discard"
+                  ]
+                ]
+              ],
+              {
+                "name": "Total Lines",
+                "display-name": "Total Lines"
+              }
+            ]
+          ]
+        }
+      },
+      "visualization_settings": {
+        "stackable.stack_type": "stacked",
+        "graph.dimensions": [
+          "computedAt",
+          "copilotEditor"
+        ],
+        "series_settings": {
+          "Discarded Lines": {
+            "color": "#EF8C8C"
+          }
+        },
+        "column_settings": {
+          "[\"name\",\"Acceptance Rate\"]": {
+            "number_style": "percent"
+          }
+        },
+        "graph.metrics": [
+          "Total Lines"
+        ]
+      }
+    },
+    {
+      "name": "Avg Daily Active Users",
+      "description": null,
+      "display": "bar",
+      "table_id": null,
+      "dataset_query": {
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "filter": [
+            "=",
+            [
+              "field",
+              "definition",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "DailyActiveUserTrend"
+          ],
+          "breakout": [
+            [
+              "field",
+              "computedAt",
+              {
+                "temporal-unit": "week",
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "avg",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ]
+              ],
+              {
+                "name": "Avg Daily Active Users",
+                "display-name": "Avg Daily Active Users"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "computedAt"
+        ],
+        "graph.metrics": [
+          "Avg Daily Active Users"
+        ]
+      }
+    },
+    {
+      "name": "Daily Active Users by Language",
+      "description": null,
+      "display": "row",
+      "table_id": null,
+      "dataset_query": {
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "filter": [
+            "=",
+            [
+              "field",
+              "definition",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "DailyActiveUserTrend"
+          ],
+          "breakout": [
+            [
+              "field",
+              "copilotLanguage",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "avg",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ]
+              ],
+              {
+                "name": "Avg Daily Active Users",
+                "display-name": "Avg Daily Active Users"
+              }
+            ]
+          ],
+          "order-by": [
+            [
+              "desc",
+              [
+                "aggregation",
+                0,
+                null
+              ]
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "copilotLanguage"
+        ],
+        "graph.metrics": [
+          "Avg Daily Active Users"
+        ]
+      }
+    },
+    {
+      "name": "Daily Active Users by Editor",
+      "description": null,
+      "display": "line",
+      "table_id": null,
+      "dataset_query": {
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "filter": [
+            "=",
+            [
+              "field",
+              "definition",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "DailyActiveUserTrend"
+          ],
+          "breakout": [
+            [
+              "field",
+              "copilotEditor",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            [
+              "field",
+              "computedAt",
+              {
+                "temporal-unit": "week",
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "avg",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ]
+              ],
+              {
+                "name": "Avg Daily Active Users",
+                "display-name": "Avg Daily Active Users"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "computedAt",
+          "copilotEditor"
+        ],
+        "graph.series_order_dimension": null,
+        "graph.series_order": null,
+        "graph.metrics": [
+          "Avg Daily Active Users"
+        ]
+      }
+    },
+    {
+      "name": "Avg Daily Chat Turns",
+      "description": null,
+      "display": "bar",
+      "table_id": null,
+      "dataset_query": {
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "filter": [
+            "=",
+            [
+              "field",
+              "definition",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "DailyChatTurnCount"
+          ],
+          "breakout": [
+            [
+              "field",
+              "computedAt",
+              {
+                "temporal-unit": "week",
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "avg",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ]
+              ],
+              {
+                "name": "Avg Daily Chat Turns",
+                "display-name": "Avg Daily Chat Turns"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "computedAt"
+        ],
+        "series_settings": {
+          "Avg Daily Chat Turns": {
+            "color": "#A989C5"
+          }
+        },
+        "graph.metrics": [
+          "Avg Daily Chat Turns"
+        ]
+      }
+    },
+    {
+      "name": "Avg Daily Chat Users",
+      "description": null,
+      "display": "bar",
+      "table_id": null,
+      "dataset_query": {
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "filter": [
+            "=",
+            [
+              "field",
+              "definition",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "DailyActiveChatUserTrend"
+          ],
+          "breakout": [
+            [
+              "field",
+              "computedAt",
+              {
+                "temporal-unit": "week",
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "avg",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ]
+              ],
+              {
+                "name": "Avg Daily Active Users",
+                "display-name": "Avg Daily Active Users"
+              }
+            ]
+          ]
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "computedAt"
+        ],
+        "series_settings": {
+          "Avg Daily Active Users": {
+            "color": "#F9D45C"
+          }
+        },
+        "graph.metrics": [
+          "Avg Daily Active Users"
+        ]
+      }
+    },
+    {
+      "name": "Chat Acceptances by GitHub Team",
+      "description": null,
+      "display": "bar",
+      "table_id": null,
+      "dataset_query": {
+        "query": {
+          "source-table": {{ card "Copilot Metrics" }},
+          "filter": [
+            "=",
+            [
+              "field",
+              "definition",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "DailyChatAcceptanceCount"
+          ],
+          "breakout": [
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            [
+              "expression",
+              "group"
+            ]
+          ],
+          "aggregation": [
+            [
+              "aggregation-options",
+              [
+                "avg",
+                [
+                  "field",
+                  "value",
+                  {
+                    "base-type": "type/Integer"
+                  }
+                ]
+              ],
+              {
+                "name": "Avg Daily Chat Acceptances",
+                "display-name": "Avg Daily Chat Acceptances"
+              }
+            ]
+          ],
+          "expressions": {
+            "group": [
+              "trim",
+              ""
+            ]
+          }
+        },
+        "type": "query"
+      },
+      "visualization_settings": {
+        "graph.dimensions": [
+          "group",
+          "copilotTeam"
+        ],
+        "graph.series_order_dimension": null,
+        "graph.series_order": null,
+        "graph.x_axis.labels_enabled": false,
+        "graph.metrics": [
+          "Avg Daily Chat Turns"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Date",
+      "slug": "date",
+      "id": "b8769942",
+      "type": "date/all-options",
+      "sectionId": "date",
+      "default": "past3months~"
+    },
+    {
+      "name": "Org",
+      "slug": "org",
+      "id": "66a8f2ae",
+      "type": "string/=",
+      "sectionId": "string"
+    },
+    {
+      "name": "Team",
+      "slug": "team",
+      "id": "a6b0f41",
+      "type": "string/=",
+      "sectionId": "string"
+    }
+  ],
+  "layout": [
+    {
+      "row": 1,
+      "col": 0,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "Number of Devs with Licenses" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Number of Devs with Licenses" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_UserTool.startedAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 1,
+      "col": 5,
+      "sizeX": 13,
+      "sizeY": 4,
+      "card_id": {{ card "Daily Active User Count" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Daily Active User Count" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              {{ field "vcs_UserToolUsage.usedAt" }},
+              null
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 5,
+      "card_id": {{ card "Lines of Code Accepted by GitHub Team" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Lines of Code Accepted by GitHub Team" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Lines of Code Accepted by GitHub Team" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Lines of Code Accepted by GitHub Team" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 11,
+      "col": 0,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "Lines Generated" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Lines Generated" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Lines Generated" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Lines Generated" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 15,
+      "col": 0,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "Acceptance Rate" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Acceptance Rate" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Acceptance Rate" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Acceptance Rate" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 11,
+      "col": 5,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "Lines Generated by Language" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Lines Generated by Language" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Lines Generated by Language" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Lines Generated by Language" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 15,
+      "col": 10,
+      "sizeX": 8,
+      "sizeY": 4,
+      "card_id": {{ card "Acceptance Rate by Editor" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Acceptance Rate by Editor" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Acceptance Rate by Editor" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Acceptance Rate by Editor" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 15,
+      "col": 5,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "Acceptance Rate by Language" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Acceptance Rate by Language" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Acceptance Rate by Language" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Acceptance Rate by Language" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 11,
+      "col": 10,
+      "sizeX": 8,
+      "sizeY": 4,
+      "card_id": {{ card "Lines Generated by Editor" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Lines Generated by Editor" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Lines Generated by Editor" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Lines Generated by Editor" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 23,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "## Copilot Chat",
+        "text.align_vertical": "middle",
+        "dashcard.background": false
+      }
+    },
+    {
+      "row": 19,
+      "col": 0,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "Avg Daily Active Users" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Avg Daily Active Users" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Avg Daily Active Users" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Avg Daily Active Users" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 19,
+      "col": 5,
+      "sizeX": 5,
+      "sizeY": 4,
+      "card_id": {{ card "Daily Active Users by Language" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Daily Active Users by Language" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Daily Active Users by Language" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Daily Active Users by Language" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 19,
+      "col": 10,
+      "sizeX": 8,
+      "sizeY": 4,
+      "card_id": {{ card "Daily Active Users by Editor" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Daily Active Users by Editor" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Daily Active Users by Editor" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Daily Active Users by Editor" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 24,
+      "col": 6,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Avg Daily Chat Turns" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Avg Daily Chat Turns" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Avg Daily Chat Turns" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Avg Daily Chat Turns" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 24,
+      "col": 0,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Avg Daily Chat Users" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Avg Daily Chat Users" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Avg Daily Chat Users" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Avg Daily Chat Users" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 24,
+      "col": 12,
+      "sizeX": 6,
+      "sizeY": 4,
+      "card_id": {{ card "Chat Acceptances by GitHub Team" }},
+      "series": [],
+      "parameter_mappings": [
+        {
+          "parameter_id": "b8769942",
+          "card_id": {{ card "Chat Acceptances by GitHub Team" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "computedAt",
+              {
+                "base-type": "type/DateTimeWithLocalTZ"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "66a8f2ae",
+          "card_id": {{ card "Chat Acceptances by GitHub Team" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotOrg",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        },
+        {
+          "parameter_id": "a6b0f41",
+          "card_id": {{ card "Chat Acceptances by GitHub Team" }},
+          "target": [
+            "dimension",
+            [
+              "field",
+              "copilotTeam",
+              {
+                "base-type": "type/Text"
+              }
+            ]
+          ]
+        }
+      ],
+      "visualization_settings": {}
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "## Usage",
+        "text.align_vertical": "middle",
+        "dashcard.background": false
+      }
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "sizeX": 18,
+      "sizeY": 1,
+      "card_id": null,
+      "series": [],
+      "parameter_mappings": [],
+      "visualization_settings": {
+        "virtual_card": {
+          "name": null,
+          "display": "text",
+          "visualization_settings": {},
+          "dataset_query": {},
+          "archived": false
+        },
+        "text": "## Adoption",
+        "text.align_vertical": "middle",
+        "dashcard.background": false
+      }
+    }
+  ],
+  "path": "/Faros CE/AI Copilot Evaluation"
+}
+

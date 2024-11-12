@@ -5,6 +5,8 @@ mutation insert_vcs_pull_request(
   $data_merge_commit_sha: String!
   $data_pull_request_create_time: timestamptz!
   $data_pull_request_merge_time: timestamptz!
+  $data_pull_request_lines_added: Int
+  $data_pull_request_lines_deleted: Int
   $data_pull_request_repository: String!
   $data_pull_request_organization: String!
   $data_pull_request_source: String!
@@ -16,6 +18,10 @@ mutation insert_vcs_pull_request(
       state: $data_pull_request_state
       createdAt: $data_pull_request_create_time
       mergedAt: $data_pull_request_merge_time
+      diffStats: {
+        linesAdded: $data_pull_request_lines_added
+        linesDeleted: $data_pull_request_lines_deleted
+      }
       vcs_User: {
         data: {
           uid: $data_pull_request_author

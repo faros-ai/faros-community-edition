@@ -85,6 +85,8 @@ export class MockData {
         num++;
       }
       await this.writeTasks(week, weekStart);
+      await this.writeCopilot(week, weekStart);
+      await this.writeSurveys(numWeeks);
     }
   }
 
@@ -112,17 +114,27 @@ export class MockData {
     await Promise.all([
       this.hasura.deleteComputeApplication(ORIGIN),
       this.hasura.deleteCommit(ORIGIN),
+      this.hasura.deleteMetricValueTag(ORIGIN),
+      this.hasura.deleteUserToolUsage(ORIGIN),
+      this.hasura.deleteSurveyQuestionResponse(ORIGIN),
     ]);
 
     await Promise.all([
       this.hasura.deleteCICDRepository(ORIGIN),
       this.hasura.deleteVCSRepository(ORIGIN),
+      this.hasura.deleteMetricValue(ORIGIN),
+      this.hasura.deleteTag(ORIGIN),
+      this.hasura.deleteUserTool(ORIGIN),
+      this.hasura.deleteSurveyQuestionAssociation(ORIGIN),
     ]);
 
     await Promise.all([
       this.hasura.deleteCICDOrganization(ORIGIN),
       this.hasura.deleteVCSUser(ORIGIN),
       this.hasura.deleteVCSOrganization(ORIGIN),
+      this.hasura.deleteMetricDefinition(ORIGIN),
+      this.hasura.deleteSurveySurvey(ORIGIN),
+      this.hasura.deleteSurveyQuestion(ORIGIN)
     ]);
   }
 
@@ -140,6 +152,8 @@ export class MockData {
       commitSha,
       prCreateTime,
       mergedAt,
+      MockData.randomInt(200, 2000),
+      MockData.randomInt(0, 1000),
       REPO,
       ORG,
       SOURCE,
@@ -310,5 +324,305 @@ export class MockData {
         ORIGIN
       );
     }
+  }
+
+  private async writeCopilot(weekNum: number, week: DateTime): Promise<void> {
+    const languageTags = [
+      'go',
+      'python',
+      'typescript',
+    ].map((lang) => {
+      return {
+        faros_Tag: {
+          uid: 'copilotLanguage__' + lang,
+          key: 'copilotLanguage',
+          value: lang,
+        },
+      };
+    });
+
+    const ideTags = ['jetbrains', 'vscode'].map((i) => {
+      return {
+        faros_Tag: {
+          uid: 'copilotEditor__' + i,
+          key: 'copilotEditor',
+          value: i,
+        },
+      };
+    });
+
+    for (const tag of [...languageTags, ...ideTags]) {
+      await this.hasura.postTag(
+        tag.faros_Tag.uid,
+        tag.faros_Tag.key,
+        tag.faros_Tag.value,
+        ORIGIN
+      );
+    }
+
+    const metricDefs = [
+      'DailyActiveUserTrend',
+      'DailyGeneratedLineCount_Accept',
+      'DailyGeneratedLineCount_Discard',
+      'DailySuggestionReferenceCount_Accept',
+      'DailySuggestionReferenceCount_Discard',
+      'DailyActiveChatUserTrend',
+      'DailyChatAcceptanceCount',
+      'DailyChatTurnCount',
+    ].map((d) => {
+      return {
+        faros_MetricDefinition: {
+          uid: d,
+          name: d,
+          valueType: {category: 'Numeric'},
+        },
+      };
+    });
+
+    for (const def of metricDefs) {
+      await this.hasura.postMetricDefinition(
+        def.faros_MetricDefinition.uid,
+        def.faros_MetricDefinition.name,
+        def.faros_MetricDefinition.valueType,
+        ORIGIN
+      );
+    }
+
+    const metricDefToFun: Record<string, () => number> = {
+      DailyActiveUserTrend: (): number => MockData.randomInt(3, 1),
+      DailyGeneratedLineCount_Accept: (): number => MockData.randomInt(10, 2),
+      DailyGeneratedLineCount_Discard: (): number =>
+        MockData.randomInt(100, 10),
+      DailySuggestionReferenceCount_Accept: (): number =>
+        MockData.randomInt(10, 2),
+      DailySuggestionReferenceCount_Discard: (): number =>
+        MockData.randomInt(100, 10),
+      DailyActiveChatUserTrend: (): number => MockData.randomInt(3, 1),
+      DailyChatAcceptanceCount: (): number => MockData.randomInt(10, 1),
+      DailyChatTurnCount: (): number => MockData.randomInt(20, 3),
+    };
+
+    const tools = [1, 2].map((u) => {
+      return {
+        user: {uid: `author-${u}`, source: SOURCE},
+        organization: {uid: ORG, source: SOURCE},
+        tool: {category: 'GitHubCopilot'},
+        inactive: false,
+        startedAt: DateTime.now().minus({weeks: MockData.randomInt(4, 2)}),
+        endedAt: DateTime.now(),
+        origin: ORIGIN,
+      };
+    });
+
+    for (const t of tools) {
+      await this.hasura.postUserTool(
+        t.user,
+        t.organization,
+        t.tool,
+        t.inactive,
+        t.startedAt,
+        t.endedAt,
+        t.origin
+      );
+    }
+
+
+    for (let i = 1; i <= 10; i++) {
+      const computedAt = week.plus({days: MockData.randomInt(6)});
+
+      const usedAt = computedAt;
+      await this.hasura.postUserToolUsage(
+        tools[MockData.randomInt(tools.length, 1)],
+        usedAt,
+        usedAt.plus({hours: 2}),
+        ORIGIN
+      );
+      for (const def of metricDefs) {
+
+        const metricValue = {
+          uid: `mv-week${weekNum}-${i}`,
+          computedAt,
+          value: metricDefToFun[def.faros_MetricDefinition.name]().toString(),
+          definition: def.faros_MetricDefinition.uid,
+          origin: ORIGIN
+        };
+
+        await this.hasura.postMetricValue(
+          metricValue.uid,
+          metricValue.computedAt,
+          metricValue.value,
+          metricValue.definition,
+          metricValue.origin,
+        );
+
+        await this.hasura.postMetricValueTag(
+          metricValue,
+          languageTags[MockData.randomInt(languageTags.length)].faros_Tag.uid,
+          ORIGIN
+        );
+
+        await this.hasura.postMetricValueTag(
+          metricValue,
+          ideTags[MockData.randomInt(ideTags.length)].faros_Tag.uid,
+          ORIGIN
+        );
+      }
+    }
+  }
+
+
+
+  private async writeSurveys(numWeeks: number): Promise<void> {
+    const nResponses = 10;
+    const likerts = [
+      'Strongly Disagree',
+      'Disagree',
+      'Neutral',
+      'Agree',
+      'Strongly Agree',
+    ];
+    function randArr(arr: any[]): any {
+      return arr[MockData.randomInt(0, arr.length)];
+    }
+
+
+    // Cadence Surveys
+    const cSurvey = {
+      uid: 'survey-1',
+      name: 'Copilot Weekly Survey',
+      type: {category: 'Custom', detail: 'AI Transformation'},
+      source: SOURCE,
+      origin: ORIGIN
+    };
+
+    await this.hasura.postSurveySurvey(
+      cSurvey.uid,
+      cSurvey.name,
+      cSurvey.type,
+      cSurvey.source,
+      cSurvey.origin
+    );
+
+    interface questionInfo {
+      question: string;
+      responseType?: {category: string; detail: string};
+      generateResponse: () => string;
+    }
+
+    let qid = 0;
+    async function writeQuestions(
+      questions: questionInfo[],
+      survey: any,
+      hasura: Hasura
+    ): Promise<void> {
+      for (const qi of questions) {
+        const q = {
+          uid: `question-${qid}`,
+          source: SOURCE
+        };
+        await hasura.postSurveyQuestion(
+          q.uid,
+          qi.question,
+          {category: 'CodingAssistants', detail: 'CodingAssistants'},
+          qi.responseType,
+          SOURCE,
+          ORIGIN
+        );
+        qid++;
+        await hasura.postSurveyQuestionAssociation(survey, q, ORIGIN);
+        for (let i = 0; i <= nResponses; i++) {
+          await hasura.postSurveyQuestionResponse(
+            `response-${i}`,
+            ORIGIN,
+            DateTime.now().minus({days: MockData.randomInt(0, numWeeks * 7)}),
+            qi.generateResponse(),
+            survey,
+            q
+          );
+        }
+      }
+    }
+
+    const cQuestions: questionInfo[] = [
+      {
+        question: 'How often are you using your coding assistant?',
+        responseType: {category: 'MultipleChoice', detail: 'MultipleChoice'},
+        generateResponse: (): string => randArr([
+          'I have not started to use it yet',
+          'I used it for some time, but not anymore',
+          'Rarely',
+          'Frequently',
+          'Very Frequently',
+        ])
+      },
+      {
+        question: 'On average how many hours per day did you save ' +
+                  'in the past week?',
+        responseType: {category: 'NumericEntry', detail: 'NumericEntry'},
+        generateResponse: () => MockData.randomInt(0, 10).toString()
+      }, ...[
+        'Understanding code',
+        'Preparing to code',
+        'Writing new code',
+        'Debugging code',
+        'Refactoring code',
+        'Reviewing code',
+        'Documenting code',
+        'Writing tests',
+      ].map((task) => {
+        return {
+          question: 'In the past week, Copilot helped me with the following ' +
+                    `tasks: [${task}]`,
+          responseType: {category: 'LikertScale', detail: 'LikertScale'},
+          generateResponse: () => randArr(likerts),
+        };
+      })
+    ];
+    await writeQuestions(cQuestions, cSurvey, this.hasura);
+
+
+
+    // PR Surveys
+    const prSurvey = {
+      uid: 'survey-2',
+      name: 'GitHub Copilot Survey',
+      type: {category: 'Custom', detail: 'AI Transformation'},
+      source: SOURCE,
+      origin: ORIGIN
+    };
+    await this.hasura.postSurveySurvey(
+      prSurvey.uid,
+      prSurvey.name,
+      prSurvey.type,
+      prSurvey.source,
+      prSurvey.origin
+    );
+
+    const prQuestions: questionInfo[] = [
+      {
+        question:
+          'Based on your experience, estimate how much total coding time ' +
+          'you saved using copilot for this PR? (in minutes)',
+        responseType: {category: 'NumericEntry', detail: 'NumericEntry'},
+        generateResponse: () => MockData.randomInt(5, 60).toString(),
+      }, ...[
+        'Be happier in my job',
+        'Be more productive',
+        'Deal with repetitive tasks',
+        'Improve Productivity',
+        'Learn new skills',
+        'Refactor or debug code',
+        'Stay in flow',
+        'Write better code',
+      ].map((task) => {
+        return {
+          question: `(optional) Copilot helps me to: [${task}]`,
+          responseType: {category: 'LikertScale', detail: 'LikertScale'},
+          generateResponse: () => randArr(likerts),
+        };
+      })
+    ];
+    await writeQuestions(prQuestions, prSurvey, this.hasura);
+
   }
 }

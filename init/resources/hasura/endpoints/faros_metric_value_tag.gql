@@ -1,0 +1,34 @@
+mutation insert_faros_metric_value_tag(
+  $data_value_uid: String!
+  $data_value_definition_uid: String!
+  $data_tag_id: String!
+  $data_origin: String
+) {
+  insert_faros_MetricValueTag_one(
+    object: {
+      faros_Tag: {
+        data: {
+          uid: $data_tag_id
+        }
+        on_conflict: {constraint: faros_Tag_pkey, update_columns: refreshedAt}
+      }
+      faros_MetricValue: {
+        data: {
+          uid: $data_value_uid
+          definition: $data_value_definition_uid
+        }
+        on_conflict: {constraint: faros_MetricValue_pkey, update_columns: refreshedAt}
+      }
+      origin: $data_origin
+    }
+    on_conflict: {
+      constraint: faros_MetricValueTag_pkey
+      update_columns: [
+        origin
+        refreshedAt
+      ]
+    }
+  ) {
+    id
+  }
+}

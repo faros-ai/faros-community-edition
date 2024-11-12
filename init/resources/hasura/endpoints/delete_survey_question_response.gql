@@ -1,0 +1,5 @@
+mutation delete_survey_question_response($data_origin: String) {
+  delete_survey_QuestionResponse(where: { origin: { _eq: $data_origin } }) {
+    affected_rows
+  }
+}

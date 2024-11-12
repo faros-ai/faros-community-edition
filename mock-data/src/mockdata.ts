@@ -402,7 +402,7 @@ export class MockData {
       DailyChatTurnCount: (): number => MockData.randomInt(20, 3),
     };
 
-    const tools = [1, 2, 3].map((u) => {
+    const tools = [1, 2].map((u) => {
       return {
         user: {uid: `author-${u}`, source: SOURCE},
         organization: {uid: ORG, source: SOURCE},

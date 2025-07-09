@@ -1,6 +1,7 @@
 # ![](img/faros.ico) Faros Community Edition
 
-[![GitHub Stars](https://img.shields.io/github/stars/faros-ai/faros-community-edition?style=social)](https://github.com/faros-ai/faros-community-edition/stargazers/) [![Community Slack](https://img.shields.io/badge/chat-Slack-%234a154b)](https://community.faros.ai/docs/slack) [![Release](https://github.com/faros-ai/faros-community-edition/actions/workflows/release.yml/badge.svg)](https://github.com/faros-ai/faros-community-edition/actions/workflows/release.yml)
+[![GitHub Stars](https://img.shields.io/github/stars/faros-ai/faros-community-edition?style=social)](https://github.com/faros-ai/faros-community-edition/stargazers/)  [![Community Slack](https://img.shields.io/badge/chat-Slack-%234a154b)](https://community.faros.ai/docs/slack)  [![Release](https://github.com/faros-ai/faros-community-edition/actions/workflows/release.yml/badge.svg)](https://github.com/faros-ai/faros-community-edition/actions/workflows/release.yml)  [![Visualise&nbsp;Repo](https://img.shields.io/badge/Visualise%20Repo-blue.svg)](https://repomapr.com/faros-ai/faros-community-edition)
+
 
 ![DORA Metrics](img/dora_metrics.png)
 

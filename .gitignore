@@ -110,3 +110,5 @@ lib/
 
 # Faros Email
 .faros-email
+
+.envrc

@@ -12,7 +12,9 @@ jobs:
     name: Publish Docker
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
+    permissions:
+      id-token: write # needed for signing the images with GitHub OIDC Token
+      contents: read
     steps:
       - name: Check out
         uses: actions/checkout@v2
@@ -126,10 +128,16 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+      - name: Sign Init Docker image
+        run: .github/actions/sign-image/run.sh farosai/faros-ce-init:${{ github.sha }}
+
   publish-cli-docker:
     name: Publish CLI Docker
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      id-token: write # needed for signing the images with GitHub OIDC Token
+      contents: read
     # Build and integration tests are run in the job above. So we just build and push if the above job is successful.
     needs: publish-docker
 
@@ -171,3 +179,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Sign CLI Docker image
+        run: .github/actions/sign-image/run.sh farosai/faros-ce-cli:${{ github.sha }}

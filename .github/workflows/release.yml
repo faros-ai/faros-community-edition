@@ -132,11 +132,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Sign Init Docker image
-        uses: faros-ai/infra-tools/.github/actions/sign_image_with_cosign@fcda08ac6e7ca7ddbb2ba9eaf7e2f84977cf5024
-        with:
-          docker-image: farosai/faros-ce-init:${{ github.sha }}
-          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: .github/actions/sign-image/run.sh farosai/faros-ce-init:${{ github.sha }}
 
   publish-cli-docker:
     name: Publish CLI Docker
@@ -188,8 +184,4 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Sign CLI Docker image
-        uses: faros-ai/infra-tools/.github/actions/sign_image_with_cosign@fcda08ac6e7ca7ddbb2ba9eaf7e2f84977cf5024
-        with:
-          docker-image: farosai/faros-ce-cli:${{ github.sha }}
-          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: .github/actions/sign-image/run.sh farosai/faros-ce-cli:${{ github.sha }}

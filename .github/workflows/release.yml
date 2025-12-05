@@ -157,7 +157,7 @@ jobs:
         with:
           docker-image: farosai/faros-ce-init:${{ github.sha }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }} 
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
 
   publish-cli-docker:
     name: Publish CLI Docker

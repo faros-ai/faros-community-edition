@@ -76,6 +76,12 @@ jobs:
             echo "Faros init container exit code was ${CONTAINER_EXIT_CODE}"
             [[ $CONTAINER_EXIT_CODE -eq 0 ]]
 
+      - name: Verify init container status
+        run: |
+          docker ps -a --filter name=faros-init
+          echo "--- Init container logs ---"
+          docker logs faros-community-edition-faros-init-1
+
       - name: Get Hasura Admin Secret
         run: |
           echo $(cat .env | grep "^HASURA_GRAPHQL_ADMIN_SECRET") >> "$GITHUB_ENV"

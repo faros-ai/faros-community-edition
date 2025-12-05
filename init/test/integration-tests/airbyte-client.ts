@@ -58,9 +58,10 @@ export class AirbyteClient {
   async checkDestinationConnection(destinationName: string): Promise<boolean> {
     const workspaceId = await this.getFirstWorkspace();
     const response = await this.api.post('/destinations/list', {workspaceId});
+    const destinations = response.data?.destinations ?? [];
     return (
-      response.data.destinations.filter(
-        (destination) => destination.name === destinationName
+      destinations.filter(
+        (destination: any) => destination.name === destinationName
       ).length > 0
     );
   }
@@ -70,8 +71,15 @@ export class AirbyteClient {
   ): Promise<ConnectionConfiguration> {
     const workspaceId = await this.getFirstWorkspace();
     const response = await this.api.post('/destinations/list', {workspaceId});
-    return response.data.destinations.filter(
-      (destination) => destination.name === destinationName
-    )[0].connectionConfiguration as ConnectionConfiguration;
+    const destinations = response.data?.destinations ?? [];
+    const destination = destinations.find(
+      (dest: any) => dest.name === destinationName
+    );
+    if (!destination) {
+      throw new VError(
+        `Destination '${destinationName}' not found in workspace ${workspaceId}`
+      );
+    }
+    return destination.connectionConfiguration as ConnectionConfiguration;
   }
 }

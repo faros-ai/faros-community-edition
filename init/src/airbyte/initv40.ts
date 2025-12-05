@@ -357,7 +357,6 @@ export class AirbyteInitV40 {
 
     const workspaceId = await this.getFirstWorkspace();
     logger.info('workspaceId: ' + workspaceId);
-    await this.completeFarosWorkspaceSetup(workspaceId);
 
     const farosDestinationDefintionId =
       await this.createFarosDestinationDefinition(
@@ -429,5 +428,8 @@ export class AirbyteInitV40 {
         yamlCatalogData
       );
     }
+
+    // Mark workspace setup as complete only after all resources are created successfully
+    await this.completeFarosWorkspaceSetup(workspaceId);
   }
 }

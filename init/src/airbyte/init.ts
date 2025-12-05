@@ -147,9 +147,18 @@ export class AirbyteInit {
       {params: {page, page_size: pageSize, ordering: 'last_updated'}}
     );
     const tags: {name: string}[] = response.data.results;
+    logger.info(
+      'getLatestImageTag for %s: page=%d, tags=%o',
+      repository,
+      page,
+      tags.map((t) => t.name)
+    );
     const version = find(
       tags,
-      (t) => t.name !== 'latest' && !t.name.endsWith('-rc')
+      (t) =>
+        t.name !== 'latest' &&
+        !t.name.endsWith('-rc') &&
+        !t.name.startsWith('sha256-')
     )?.name;
     if (!version) {
       if (response.data.next) {
@@ -164,6 +173,7 @@ export class AirbyteInit {
         repository
       );
     }
+    logger.info('Selected version for %s: %s', repository, version);
     return version;
   }
 }

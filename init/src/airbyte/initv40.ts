@@ -124,11 +124,21 @@ export class AirbyteInitV40 {
       documentationUrl: string;
     };
   }): Promise<string> {
-    const response = await this.api.post(
-      '/destination_definitions/create_custom',
-      params
-    );
-    return response.data.destinationDefinitionId as string;
+    try {
+      const response = await this.api.post(
+        '/destination_definitions/create_custom',
+        params
+      );
+      return response.data.destinationDefinitionId as string;
+    } catch (error: any) {
+      logger.error(
+        'Failed to create custom destination definition. Error: %s, Response: %o, Request: %o',
+        error.message,
+        error.response?.data,
+        params
+      );
+      throw error;
+    }
   }
 
   async createSource(params: {
@@ -147,8 +157,18 @@ export class AirbyteInitV40 {
     workspaceId: string;
     name: string;
   }): Promise<string> {
-    const response = await this.api.post('/destinations/create', params);
-    return response.data.destinationId as string;
+    try {
+      const response = await this.api.post('/destinations/create', params);
+      return response.data.destinationId as string;
+    } catch (error: any) {
+      logger.error(
+        'Failed to create destination. Error: %s, Response: %o, Request: %o',
+        error.message,
+        error.response?.data,
+        params
+      );
+      throw error;
+    }
   }
 
   async listDestinationNames(params: {workspaceId: string}): Promise<string[]> {

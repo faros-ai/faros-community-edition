@@ -99,6 +99,17 @@ jobs:
           docker ps -a --filter name=faros-init
           echo "--- Init container logs ---"
           docker logs faros-community-edition-faros-init-1
+          echo "--- Checking for successful completion ---"
+          if docker logs faros-community-edition-faros-init-1 2>&1 | grep -q "Airbyte initialization failed"; then
+            echo "ERROR: Init container logs show Airbyte initialization failed"
+            exit 1
+          fi
+          if docker logs faros-community-edition-faros-init-1 2>&1 | grep -q "Airbyte setup is complete"; then
+            echo "SUCCESS: Airbyte initialization completed successfully"
+          else
+            echo "WARNING: Could not confirm successful Airbyte initialization"
+            exit 1
+          fi
 
       - name: Get Hasura Admin Secret
         run: |
